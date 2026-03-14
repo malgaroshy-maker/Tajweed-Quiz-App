@@ -213,7 +213,7 @@ export default async function TeacherDashboard() {
                   <div className="p-5 bg-primary/5 dark:bg-primary/10 rounded-2xl border border-primary/10">
                     <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
                       يواجه الطلاب صعوبة ملحوظة في السؤال: 
-                      <span className="block mt-2 font-black text-slate-900 dark:text-white font-quran text-lg">"{insights[0].question_text}"</span>
+                      <span className="block mt-2 font-black text-slate-900 dark:text-white font-quran text-lg">&ldquo;{insights[0].question_text}&rdquo;</span>
                       تم رصد <span className="text-red-600 dark:text-red-400 font-black">{insights[0].wrong_count} إجابات خاطئة</span>.
                     </p>
                   </div>
