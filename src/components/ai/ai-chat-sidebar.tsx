@@ -15,11 +15,7 @@ export function AIChatSidebar({ currentSessionId, onNewChat }: { currentSessionI
   const supabase = createClient()
   const router = useRouter()
 
-  useEffect(() => {
-    fetchSessions()
-  }, [])
-
-  async function fetchSessions() {
+  const fetchSessions = async () => {
     setLoading(true)
     const { data } = await supabase
       .from('ai_chat_sessions')
@@ -28,6 +24,10 @@ export function AIChatSidebar({ currentSessionId, onNewChat }: { currentSessionI
     if (data) setSessions(data)
     setLoading(false)
   }
+
+  useEffect(() => {
+    fetchSessions()
+  }, [supabase])
 
   const deleteSession = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation()

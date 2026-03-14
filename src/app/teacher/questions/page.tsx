@@ -5,21 +5,27 @@ import { redirect } from 'next/navigation'
 import { Trash2 } from 'lucide-react'
 import { EditQuestionDialog } from '../quizzes/[id]/edit-question-dialog'
 import { deleteQuestion } from '../quizzes/[id]/delete-question-action'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import Link from 'next/link'
 
-export default async function QuestionBankPage() {
+export default async function QuestionBankPage({ searchParams }: { searchParams: { search?: string, type?: string } }) {
+  const params = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) {
-    redirect('/login')
-  }
+  if (!user) redirect('/login')
 
-  // Fetch all questions for this teacher, showing where they are used
-  const { data: questions } = await supabase
+  let query = supabase
     .from('questions')
     .select('*, quizzes(title), options(*)')
     .eq('teacher_id', user.id)
     .order('created_at', { ascending: false })
+
+  if (params.search) query = query.ilike('text', `%${params.search}%`)
+  if (params.type && params.type !== 'all') query = query.eq('type', params.type)
+
+  const { data: questions } = await query
 
   return (
     <div className="space-y-6">
@@ -27,11 +33,29 @@ export default async function QuestionBankPage() {
         <h2 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">بنك الأسئلة</h2>
       </div>
 
+      <div className="flex gap-4">
+        <form className="flex gap-4 flex-1">
+            <Input name="search" defaultValue={params.search} placeholder="بحث في الأسئلة..." />
+            <Select name="type" defaultValue={params.type || 'all'}>
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="النوع" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="all">الكل</SelectItem>
+                    <SelectItem value="multiple_choice">خيارات</SelectItem>
+                    <SelectItem value="true_false">صح/خطأ</SelectItem>
+                </SelectContent>
+            </Select>
+            <Button type="submit">تصفية</Button>
+            <Link href="/teacher/questions"><Button variant="outline">مسح</Button></Link>
+        </form>
+      </div>
+
       <div className="grid gap-4">
         {questions?.length === 0 ? (
-          <p className="text-muted-foreground">لا توجد أسئلة في البنك حتى الآن. ستظهر هنا الأسئلة التي تنشئها في الاختبارات.</p>
+          <p className="text-muted-foreground">لا توجد أسئلة تطابق المعايير.</p>
         ) : (
-          questions?.map((q: any, idx) => (
+          questions?.map((q: any) => (
             <Card key={q.id}>
               <CardContent className="p-4 flex flex-col gap-2">
                 <div className="flex justify-between items-start">
@@ -40,11 +64,6 @@ export default async function QuestionBankPage() {
                     <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full mr-2 inline-block">
                       {q.type === 'multiple_choice' ? 'خيارات' : q.type === 'true_false' ? 'صح/خطأ' : 'نص'}
                     </span>
-                    {q.image_url && (
-                      <div className="mt-2 w-32 aspect-video rounded border overflow-hidden">
-                        <img src={q.image_url} alt="Question" className="w-full h-full object-contain bg-muted" />
-                      </div>
-                    )}
                   </div>
                   <div className="flex gap-2 shrink-0">
                     <EditQuestionDialog question={q} />
@@ -55,19 +74,12 @@ export default async function QuestionBankPage() {
                     </form>
                   </div>
                 </div>
-                {/* Display Correct Answer */}
                 {q.options && q.options.length > 0 && (
                   <div className="text-sm mt-2 p-2 bg-muted rounded">
                     <span className="font-semibold text-green-700">الإجابة الصحيحة: </span>
                     {q.options.find((o: any) => o.is_correct)?.text || 'غير محددة'}
                   </div>
                 )}
-                <div className="text-sm text-muted-foreground flex justify-between items-center mt-2">
-                  <span>
-                    الاختبار المستضيف: {q.quizzes ? (q.quizzes as any).title : 'غير مرتبط باختبار'}
-                  </span>
-                  <span>{new Date(q.created_at).toLocaleDateString('ar-EG')}</span>
-                </div>
               </CardContent>
             </Card>
           ))

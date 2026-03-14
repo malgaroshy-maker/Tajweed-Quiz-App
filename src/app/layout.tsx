@@ -26,7 +26,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "معلم التجويد",
+  title: "اختبار التجويد",
   description: "منصة لاختبارات التجويد والقرآن الكريم",
   manifest: "/manifest.json",
   appleWebApp: {
