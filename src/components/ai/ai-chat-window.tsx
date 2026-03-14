@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Bot, User, Send, Loader2, Sparkles, FileUp, FileText, X } from 'lucide-react'
+import { Bot, User, Send, Loader2, FileUp, FileText, X, Plus, Trash2 } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { createClient } from '@/utils/supabase/client'
 
@@ -45,14 +45,14 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file && file.type === 'application/pdf') {
+    if (file && (file.type === 'application/pdf' || file.type.startsWith('image/'))) {
       setSelectedFile(file)
     } else {
-        alert('يرجى اختيار ملف PDF')
+        alert('يرجى اختيار ملف PDF أو صورة')
     }
   }
 
-  const parsePDF = async (file: File) => {
+  const parseFile = async (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
     setUploading(true)
@@ -60,10 +60,10 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
       const res = await fetch('/api/ai/parse-pdf', { method: 'POST', body: formData })
       const data = await res.json()
       if (data.text) {
-        setInput(prev => prev + "\n\n[محتوى ملف PDF]:\n" + data.text.slice(0, 10000))
+        setInput(prev => prev + "\n\n[محتوى الملف]:\n" + data.text.slice(0, 10000))
       }
     } catch {
-      alert('فشل في قراءة ملف PDF')
+      alert('فشل في قراءة الملف')
     } finally {
       setUploading(false)
       setSelectedFile(null)
@@ -72,7 +72,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
 
   const handleSendMessage = async () => {
     if (selectedFile) {
-        await parsePDF(selectedFile)
+        await parseFile(selectedFile)
         return
     }
     if (!input.trim()) return
@@ -116,14 +116,14 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
   }
 
   return (
-    <div className="flex flex-col h-full border-2 border-primary/20 rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-900 shadow-2xl">
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+    <div className="flex flex-col h-full bg-[#f8f8f5] dark:bg-slate-950 parchment-texture rounded-3xl overflow-hidden shadow-inner border border-primary/10">
+      <div className="flex-1 overflow-y-auto p-6 space-y-8">
         {messages.map((m, i) => (
           <div key={i} className={`flex gap-4 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${m.role === 'assistant' ? 'bg-primary text-white' : 'bg-white border-2 border-primary'}`}>
-              {m.role === 'assistant' ? <Bot className="w-6 h-6" /> : <User className="w-6 h-6" />}
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-md ${m.role === 'assistant' ? 'bg-primary text-white' : 'bg-white border border-primary/20 text-primary'}`}>
+              {m.role === 'assistant' ? <Bot className="w-5 h-5" /> : <User className="w-5 h-5" />}
             </div>
-            <div className={`p-4 rounded-2xl ${m.role === 'user' ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800'}`}>
+            <div className={`max-w-[80%] p-5 rounded-2xl shadow-sm ${m.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-tl-none'}`}>
                 {m.content}
             </div>
           </div>
@@ -132,25 +132,31 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 border-t-2 border-primary/10 bg-white dark:bg-slate-900">
+      <div className="p-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border-t border-primary/10">
         {selectedFile && (
-            <div className="flex items-center justify-between p-3 mb-4 bg-primary/10 rounded-xl">
-                <div className='flex items-center gap-2'><FileText /> {selectedFile.name}</div>
+            <div className="flex items-center justify-between p-3 mb-4 bg-white rounded-xl border border-primary/20">
+                <div className='flex items-center gap-2 text-sm font-bold'><FileText className="w-4 h-4"/> {selectedFile.name}</div>
                 <Button variant="ghost" size="icon" onClick={() => setSelectedFile(null)}><X className="w-4 h-4" /></Button>
             </div>
         )}
-        <div className="flex items-end gap-2">
-            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="application/pdf" className="hidden" />
-            <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
-                <FileUp className="w-5 h-5" />
+        <div className="flex items-end gap-2 bg-white dark:bg-slate-800 p-2 rounded-2xl border border-primary/20 shadow-sm">
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="application/pdf,image/*" className="hidden" />
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+                <FileUp className="w-5 h-5 text-primary" />
             </Button>
             <Textarea 
                 value={input} 
                 onChange={(e) => setInput(e.target.value)} 
-                placeholder={selectedFile ? "اضغطي على إرسال لتحليل الملف" : "اكتبي سؤالاً..."} 
-                className="flex-1 rounded-2xl resize-none"
+                placeholder="اكتبي سؤالاً أو ارفعي ملفاً..." 
+                className="flex-1 bg-transparent border-none focus-visible:ring-0 resize-none min-h-[40px] max-h-[120px]"
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault()
+                        handleSendMessage()
+                    }
+                }}
             />
-            <Button onClick={handleSendMessage} disabled={loading || uploading} className="h-12 w-12 rounded-2xl">
+            <Button onClick={handleSendMessage} disabled={loading || uploading} className="h-10 w-10 rounded-xl bg-primary">
                 {uploading ? <Loader2 className='animate-spin'/> : <Send className="w-5 h-5" />}
             </Button>
         </div>
