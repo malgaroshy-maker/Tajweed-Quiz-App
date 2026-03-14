@@ -2,8 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Bot, User, Send, Loader2, Sparkles, FileUp, FileText, X } from 'lucide-react'
+import { Bot, User, Send, Loader2, Sparkles, FileText, X } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { createClient } from '@/utils/supabase/client'
 
@@ -13,11 +12,8 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [uploading, setUploading] = useState(false)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(sessionId)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -49,7 +45,6 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
 
     let activeSessionId = currentSessionId
     if (!activeSessionId) {
-        // Create new session
         const { data: { user } } = await supabase.auth.getUser()
         const { data: session } = await supabase.from('ai_chat_sessions').insert({ 
             teacher_id: user?.id, 
@@ -67,12 +62,10 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
     setInput('')
     setLoading(true)
 
-    // Save to DB
     if (activeSessionId) {
       await supabase.from('ai_chat_messages').insert({ session_id: activeSessionId, role: 'user', content: userMsg.content })
     }
 
-    // Call API
     const res = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -89,32 +82,34 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
   }
 
   return (
-    <div className="flex flex-col h-[750px] border-2 border-primary/20 rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-900 shadow-2xl relative">
-      <div className="flex-1 overflow-y-auto p-6 space-y-10 bg-[#f8f8f5] dark:bg-slate-950 parchment-texture scroll-smooth">
+    <div className="flex flex-col h-full border-2 border-primary/20 rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-900 shadow-2xl">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {messages.map((m, i) => (
-          <div key={i} className={`flex gap-5 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${m.role === 'assistant' ? 'bg-primary text-white' : 'bg-white border-2 border-primary'}`}>
-              {m.role === 'assistant' ? <Bot className="w-7 h-7" /> : <User className="w-7 h-7" />}
+          <div key={i} className={`flex gap-4 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${m.role === 'assistant' ? 'bg-primary text-white' : 'bg-white border-2 border-primary'}`}>
+              {m.role === 'assistant' ? <Bot className="w-6 h-6" /> : <User className="w-6 h-6" />}
             </div>
-            <div className={`p-6 rounded-[2rem] ${m.role === 'user' ? 'bg-primary text-white' : 'bg-white'}`}>
+            <div className={`p-4 rounded-2xl ${m.role === 'user' ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800'}`}>
                 {m.content}
             </div>
           </div>
         ))}
-        {loading && <Loader2 className="w-8 h-8 animate-spin" />}
+        {loading && <div className="flex justify-start"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-8 border-t-2 border-primary/10 bg-white">
-        <Textarea 
-            value={input} 
-            onChange={(e) => setInput(e.target.value)} 
-            placeholder="اكتبي سؤالاً..." 
-            className="min-h-[100px] p-4 rounded-2xl"
-        />
-        <Button onClick={handleSendMessage} disabled={loading} className="w-full mt-4 h-12 rounded-2xl font-black">
-            إرسال <Send className="w-5 h-5 ml-2" />
-        </Button>
+      <div className="p-4 border-t-2 border-primary/10 bg-white dark:bg-slate-900">
+        <div className="flex items-end gap-2">
+            <Textarea 
+                value={input} 
+                onChange={(e) => setInput(e.target.value)} 
+                placeholder="اكتبي سؤالاً..." 
+                className="flex-1 rounded-2xl resize-none"
+            />
+            <Button onClick={handleSendMessage} disabled={loading} className="h-12 w-12 rounded-2xl">
+                <Send className="w-5 h-5" />
+            </Button>
+        </div>
       </div>
     </div>
   )
