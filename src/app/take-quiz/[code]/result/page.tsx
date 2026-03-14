@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CheckCircle2, XCircle, ArrowRight, Trophy, Medal, ListTodo, Sparkles } from 'lucide-react'
 import Link from 'next/link'
+import { ConfettiCelebration } from '@/components/confetti-celebration'
 
 export default async function QuizResultPage({
   params,
@@ -84,6 +85,8 @@ export default async function QuizResultPage({
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-8 pb-20">
+      <ConfettiCelebration score={Number(attempt.score)} total={attempt.total_questions} />
+      
       <div className="text-center space-y-4">
         <h1 className="text-3xl font-black text-primary tracking-tight">النتيجة: {attempt.quizzes?.title}</h1>
         
