@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tajweed-quiz-cache-v4'; 
+const CACHE_NAME = 'tajweed-quiz-cache-v5'; 
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -26,7 +26,7 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // 1. Navigation requests: return cached root (SPA fallback)
+  // 1. Navigation requests: Return cached root (fallback for SPA routing)
   if (event.request.mode === 'navigate') {
     event.respondWith(
       caches.match('/').then((response) => response || fetch(event.request))
@@ -34,19 +34,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. Other requests: Cache-first
+  // 2. Other requests: Cache-first, fetch from network if missing
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request).then((networkResponse) => {
-        // Cache dynamic GET requests
-        if (event.request.method === 'GET' && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
-        }
-        return networkResponse;
-      });
+      return cachedResponse || fetch(event.request);
     })
   );
 });
