@@ -13,7 +13,7 @@ export default function StudentLayout({
   return (
     <SidebarProvider>
       <AppSidebarStudent />
-      <SidebarInset className="parchment-texture min-h-screen">
+      <SidebarInset className="parchment-texture min-h-screen bg-background">
         <header className="flex h-20 shrink-0 items-center justify-between gap-2 border-b border-primary/10 bg-background/95 backdrop-blur-md sticky top-0 z-50 px-8">
           <div className="flex items-center gap-6">
             <SidebarTrigger className="h-10 w-10 text-primary hover:bg-primary/10 transition-colors" />
