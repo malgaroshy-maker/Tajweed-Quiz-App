@@ -1,20 +1,36 @@
 'use client'
 
-import { useTransition } from 'react'
+import { useTransition, useState } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { moveQuiz } from '@/app/teacher/quizzes/move-quiz-action'
 
 export function MoveQuizSelect({ quizId, currentFolderId, folders }: { quizId: string, currentFolderId: string | null, folders: { id: string, name: string }[] }) {
   const [isPending, startTransition] = useTransition()
+  const [value, setValue] = useState(currentFolderId || 'null')
+
+  const handleChange = (val: string) => {
+    setValue(val)
+    startTransition(async () => {
+        await moveQuiz(quizId, val === 'null' ? null : val)
+    })
+  }
+
+  const getFolderName = (id: string | null) => {
+    if (id === 'null' || id === null) return 'بدون مجلد'
+    const folder = folders.find(f => f.id === id)
+    return folder ? folder.name : 'بدون مجلد'
+  }
 
   return (
     <Select 
-      value={currentFolderId || 'null'} 
-      onValueChange={(val) => startTransition(() => moveQuiz(quizId, val === 'null' ? null : val))}
+      value={value}
+      onValueChange={handleChange as any}
       disabled={isPending}
     >
       <SelectTrigger className="w-[160px] h-9 text-xs">
-        <SelectValue placeholder="بدون مجلد" />
+        <SelectValue placeholder="بدون مجلد">
+            {getFolderName(value)}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="null">بدون مجلد</SelectItem>
