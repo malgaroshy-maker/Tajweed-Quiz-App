@@ -10,7 +10,7 @@ export default function AIStandalonePage() {
           <Sparkles className="w-12 h-12 text-primary relative z-10" />
         </div>
         <div className="space-y-2">
-          <h1 className="text-5xl font-black tracking-tight text-slate-900">المساعد الذكي</h1>
+          <h1 className="text-5xl font-black tracking-tight text-foreground">المساعد الذكي</h1>
           <p className="text-xl text-primary font-bold uppercase tracking-[0.3em] opacity-60">Al-Qalam Intelligence</p>
         </div>
         <p className="text-lg text-slate-600 max-w-2xl leading-relaxed font-medium">

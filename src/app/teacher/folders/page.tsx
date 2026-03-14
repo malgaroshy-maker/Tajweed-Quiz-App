@@ -19,7 +19,7 @@ export default async function FoldersPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">مجلداتي</h2>
+        <h2 className="text-2xl font-black text-foreground tracking-tight">مجلداتي</h2>
       </div>
 
       <Card>

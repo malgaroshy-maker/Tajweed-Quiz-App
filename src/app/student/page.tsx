@@ -58,7 +58,7 @@ export default async function StudentDashboard() {
     <div className="space-y-8 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-primary">بوابة الطالب</h1>
+          <h1 className="text-3xl font-black tracking-tight text-foreground">بوابة الطالب</h1>
           <p className="text-muted-foreground mt-1 font-medium">مرحباً بك، {profile?.first_name} {profile?.last_name}</p>
         </div>
       </div>

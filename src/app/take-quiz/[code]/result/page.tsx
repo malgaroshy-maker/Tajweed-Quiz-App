@@ -88,7 +88,7 @@ export default async function QuizResultPage({
       <ConfettiCelebration score={Number(attempt.score)} total={attempt.total_questions} />
       
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-black text-primary tracking-tight">النتيجة: {attempt.quizzes?.title}</h1>
+        <h1 className="text-3xl font-black text-foreground tracking-tight">النتيجة: {attempt.quizzes?.title}</h1>
         
         <Card className={`rounded-3xl border-none shadow-2xl overflow-hidden ${percentage >= 50 ? 'bg-primary text-white' : 'bg-red-600 text-white'}`}>
           <CardContent className="flex flex-col items-center justify-center p-10">

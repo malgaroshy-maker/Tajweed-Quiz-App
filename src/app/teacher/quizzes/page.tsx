@@ -27,7 +27,7 @@ export default async function QuizzesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">الاختبارات</h2>
+        <h2 className="text-2xl font-black text-foreground tracking-tight">الاختبارات</h2>
         <Link href="/teacher/quizzes/new">
           <Button>
             <Plus className="ml-2 h-4 w-4" />

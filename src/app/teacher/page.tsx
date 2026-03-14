@@ -78,7 +78,7 @@ export default async function TeacherDashboard() {
     <div className="space-y-8 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">لوحة المعلمة</h1>
+          <h1 className="text-4xl font-black tracking-tight text-foreground">لوحة المعلمة</h1>
           <p className="text-primary/70 mt-2 text-lg font-medium">مرحباً بكِ مجدداً، الأستاذة {profile?.first_name} {profile?.last_name}</p>
         </div>
         <Button asChild className="h-14 px-8 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all gap-2">
