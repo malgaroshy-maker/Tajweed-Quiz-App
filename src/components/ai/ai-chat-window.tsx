@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Bot, User, Send, Loader2, Sparkles, FileText, X } from 'lucide-react'
+import { Bot, User, Send, Loader2, Sparkles, FileUp, FileText, X } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { createClient } from '@/utils/supabase/client'
 
@@ -12,7 +12,10 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(sessionId)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
@@ -40,7 +43,38 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
     scrollToBottom()
   }, [messages, loading])
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file && file.type === 'application/pdf') {
+      setSelectedFile(file)
+    } else {
+        alert('يرجى اختيار ملف PDF')
+    }
+  }
+
+  const parsePDF = async (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    setUploading(true)
+    try {
+      const res = await fetch('/api/ai/parse-pdf', { method: 'POST', body: formData })
+      const data = await res.json()
+      if (data.text) {
+        setInput(prev => prev + "\n\n[محتوى ملف PDF]:\n" + data.text.slice(0, 10000))
+      }
+    } catch {
+      alert('فشل في قراءة ملف PDF')
+    } finally {
+      setUploading(false)
+      setSelectedFile(null)
+    }
+  }
+
   const handleSendMessage = async () => {
+    if (selectedFile) {
+        await parsePDF(selectedFile)
+        return
+    }
     if (!input.trim()) return
 
     let activeSessionId = currentSessionId
@@ -99,15 +133,25 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
       </div>
 
       <div className="p-4 border-t-2 border-primary/10 bg-white dark:bg-slate-900">
+        {selectedFile && (
+            <div className="flex items-center justify-between p-3 mb-4 bg-primary/10 rounded-xl">
+                <div className='flex items-center gap-2'><FileText /> {selectedFile.name}</div>
+                <Button variant="ghost" size="icon" onClick={() => setSelectedFile(null)}><X className="w-4 h-4" /></Button>
+            </div>
+        )}
         <div className="flex items-end gap-2">
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="application/pdf" className="hidden" />
+            <Button variant="outline" size="icon" className="h-12 w-12 rounded-2xl" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+                <FileUp className="w-5 h-5" />
+            </Button>
             <Textarea 
                 value={input} 
                 onChange={(e) => setInput(e.target.value)} 
-                placeholder="اكتبي سؤالاً..." 
+                placeholder={selectedFile ? "اضغطي على إرسال لتحليل الملف" : "اكتبي سؤالاً..."} 
                 className="flex-1 rounded-2xl resize-none"
             />
-            <Button onClick={handleSendMessage} disabled={loading} className="h-12 w-12 rounded-2xl">
-                <Send className="w-5 h-5" />
+            <Button onClick={handleSendMessage} disabled={loading || uploading} className="h-12 w-12 rounded-2xl">
+                {uploading ? <Loader2 className='animate-spin'/> : <Send className="w-5 h-5" />}
             </Button>
         </div>
       </div>
