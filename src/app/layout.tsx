@@ -19,11 +19,16 @@ const amiriQuran = Amiri_Quran({
   weight: ["400"],
 });
 
+import type { Viewport } from "next";
+
+export const viewport: Viewport = {
+  themeColor: "#202020",
+};
+
 export const metadata: Metadata = {
   title: "معلم التجويد",
   description: "منصة لاختبارات التجويد والقرآن الكريم",
   manifest: "/manifest.json",
-  themeColor: "#202020",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
