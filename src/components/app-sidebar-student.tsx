@@ -7,6 +7,7 @@ import {
   Search,
   History,
   BookOpen,
+  Heart,
   User
 } from "lucide-react"
 
@@ -41,6 +42,11 @@ const items = [
     title: "نتائجي السابقة",
     url: "/student/history",
     icon: History,
+  },
+  {
+    title: "عن التطبيق",
+    url: "/about",
+    icon: Heart,
   },
 ]
 

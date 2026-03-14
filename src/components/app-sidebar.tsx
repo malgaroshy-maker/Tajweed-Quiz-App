@@ -11,6 +11,7 @@ import {
   BarChart2,
   Database,
   BadgeCheck,
+  Heart,
   Library
 } from "lucide-react"
 
@@ -66,6 +67,11 @@ const items = [
     title: "الإعدادات",
     url: "/teacher/settings",
     icon: Settings,
+  },
+  {
+    title: "عن التطبيق",
+    url: "/about",
+    icon: Heart,
   },
 ]
 
@@ -126,10 +132,10 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton 
                       onClick={() => router.push(item.url)}
-                      className={`h-12 px-4 rounded-xl transition-all duration-200 flex items-center gap-4 ${isActive ? 'bg-white/15 text-white shadow-lg shadow-black/10' : 'hover:bg-white/10 text-white/70 hover:text-white'}`}
+                      className={`h-12 px-4 rounded-xl transition-all duration-200 flex items-center gap-4 ${isActive ? "bg-white/15 text-white shadow-lg shadow-black/10" : "hover:bg-white/10 text-white/70 hover:text-white"}`}
                     >
-                      <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-white/70'}`} />
-                      <span className={`text-base ${isActive ? 'font-bold' : 'font-medium'}`}>{item.title}</span>
+                      <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-white/70"}`} />
+                      <span className={`text-base ${isActive ? "font-bold" : "font-medium"}`}>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
