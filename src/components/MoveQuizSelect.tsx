@@ -9,7 +9,7 @@ export function MoveQuizSelect({ quizId, currentFolderId, folders }: { quizId: s
 
   return (
     <Select 
-      defaultValue={currentFolderId || 'null'} 
+      value={currentFolderId || 'null'} 
       onValueChange={(val) => startTransition(() => moveQuiz(quizId, val === 'null' ? null : val))}
       disabled={isPending}
     >
