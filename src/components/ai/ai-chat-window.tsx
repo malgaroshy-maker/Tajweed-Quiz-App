@@ -132,7 +132,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border-t border-primary/10">
+      <div className="p-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border-t border-primary/10 shrink-0">
         {selectedFile && (
             <div className="flex items-center justify-between p-3 mb-4 bg-white rounded-xl border border-primary/20">
                 <div className='flex items-center gap-2 text-sm font-bold'><FileText className="w-4 h-4"/> {selectedFile.name}</div>
@@ -141,7 +141,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
         )}
         <div className="flex items-end gap-2 bg-white dark:bg-slate-800 p-2 rounded-2xl border border-primary/20 shadow-sm">
             <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="application/pdf,image/*" className="hidden" />
-            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl shrink-0" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
                 <FileUp className="w-5 h-5 text-primary" />
             </Button>
             <Textarea 
@@ -156,7 +156,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
                     }
                 }}
             />
-            <Button onClick={handleSendMessage} disabled={loading || uploading} className="h-10 w-10 rounded-xl bg-primary">
+            <Button onClick={handleSendMessage} disabled={loading || uploading} className="h-10 w-10 rounded-xl bg-primary shrink-0">
                 {uploading ? <Loader2 className='animate-spin'/> : <Send className="w-5 h-5" />}
             </Button>
         </div>

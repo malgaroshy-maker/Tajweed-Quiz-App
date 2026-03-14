@@ -4,8 +4,8 @@ import { Suspense } from 'react'
 
 export default function AIStandalonePage() {
   return (
-    <div className="flex flex-col h-[calc(100vh-100px)] space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="flex flex-col h-full space-y-6">
+      <div className="flex items-center gap-4 shrink-0">
         <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
             <Sparkles className="w-6 h-6 text-primary" />
         </div>
@@ -13,7 +13,9 @@ export default function AIStandalonePage() {
       </div>
 
       <Suspense fallback={<div className="flex justify-center items-center h-full"><Loader2 className="animate-spin" /></div>}>
-        <AIChatManager />
+        <div className="flex-1 overflow-hidden">
+          <AIChatManager />
+        </div>
       </Suspense>
     </div>
   )
