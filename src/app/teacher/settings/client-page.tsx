@@ -6,11 +6,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Settings, Save, Moon, Sun, Type } from 'lucide-react'
+import { Settings, Save, Moon, Type } from 'lucide-react'
+import { useTheme } from 'next-themes'
 import { saveSettings } from './actions'
 
 export function SettingsPageClient({ profile, freeModels, paidModels, geminiModels }: { profile: any, freeModels: any[], paidModels: any[], geminiModels: any[] }) {
   const [provider, setProvider] = useState(profile?.ai_provider || 'openrouter')
+  const { theme, setTheme } = useTheme()
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 p-4">
@@ -26,7 +28,7 @@ export function SettingsPageClient({ profile, freeModels, paidModels, geminiMode
 
       <Card className="rounded-3xl border-2 border-primary/10 shadow-xl bg-card">
         <CardHeader>
-          <CardTitle className="text-2xl font-black text-foreground">إعدادات المساعد الذكي (AI)</CardTitle>
+          <CardTitle className="text-2xl font-black text-slate-900 dark:text-slate-100">إعدادات المساعد الذكي (AI)</CardTitle>
           <CardDescription className="text-base text-muted-foreground pt-1">
             اختيار مزود الخدمة والنموذج الأمثل لتوليد أسئلة التجويد.
           </CardDescription>
@@ -146,7 +148,7 @@ export function SettingsPageClient({ profile, freeModels, paidModels, geminiMode
       {/* General Settings */}
       <Card className="rounded-3xl border-2 border-muted shadow-lg bg-card">
         <CardHeader>
-          <CardTitle className="text-2xl font-black text-foreground">إعدادات العرض العامة</CardTitle>
+          <CardTitle className="text-2xl font-black text-slate-900 dark:text-slate-100">إعدادات العرض العامة</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -157,11 +159,16 @@ export function SettingsPageClient({ profile, freeModels, paidModels, geminiMode
                 </div>
                 <div className="space-y-0.5">
                   <Label className="text-base font-bold">الوضع الليلي (Dark Mode)</Label>
-                  <p className="text-sm text-muted-foreground">تبديل الواجهة للوضع المظلم.</p>
+                  <p className="text-sm text-muted-foreground">تبديل الواجهة بين الوضع الفاتح والداكن.</p>
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="rounded-full h-10 px-4 font-bold">
-                تفعيل
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="rounded-full h-10 px-4 font-bold"
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              >
+                {theme === 'dark' ? 'تفعيل الفاتح' : 'تفعيل الليلي'}
               </Button>
             </div>
             
@@ -187,3 +194,4 @@ export function SettingsPageClient({ profile, freeModels, paidModels, geminiMode
     </div>
   )
 }
+
