@@ -1,11 +1,11 @@
 import { createClient } from '@/utils/supabase/server'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { FileQuestion, Plus, Trash2, Folder } from 'lucide-react'
+import { FileQuestion, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { deleteQuiz } from './[id]/delete-quiz-action'
-import { moveQuiz } from './move-quiz-action'
+import { MoveQuizSelect } from '@/components/MoveQuizSelect'
 
 export default async function QuizzesPage() {
   const supabase = await createClient()
@@ -64,24 +64,7 @@ export default async function QuizzesPage() {
                     </Button>
                   </form>
                   
-                    {/* Simple move to folder menu */}
-                  <div className="flex gap-1 border-r pr-2">
-                    <form action={async () => {
-                      'use server'
-                      await moveQuiz(quiz.id, null)
-                    }}>
-                      <Button variant="ghost" size="sm" type="submit" className="text-xs">بدون</Button>
-                    </form>
-                    {folders?.map(f => (
-                      <form key={f.id} action={async () => {
-                        'use server'
-                        await moveQuiz(quiz.id, f.id)
-                      }}>
-                        <Button variant="ghost" size="sm" type="submit" className="text-xs">{f.name}</Button>
-                      </form>
-                    ))}
-                  </div>
-
+                  <MoveQuizSelect quizId={quiz.id} currentFolderId={quiz.folder_id} folders={folders || []} />
                 </div>
               </CardContent>
             </Card>
@@ -91,4 +74,3 @@ export default async function QuizzesPage() {
     </div>
   )
 }
-
