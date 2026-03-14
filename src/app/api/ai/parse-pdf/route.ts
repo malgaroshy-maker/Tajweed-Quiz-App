@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { PDFParse } from 'pdf-parse'
+// @ts-ignore
+import pdf from 'pdf-parse'
 
 export async function POST(req: Request) {
   try {
@@ -11,12 +12,11 @@ export async function POST(req: Request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer())
-    const parser = new PDFParse({ data: buffer })
-    const data = await parser.getText()
+    const data = await pdf(buffer)
 
     return NextResponse.json({ text: data.text })
   } catch (error: any) {
     console.error('PDF parsing error:', error)
-    return NextResponse.json({ error: 'Failed to parse PDF' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to parse PDF', details: error.message }, { status: 500 })
   }
 }
