@@ -109,10 +109,9 @@ export default async function QuizEditorPage({
               </div>
               <p className="font-bold">لا توجد أسئلة بعد</p>
               <Button variant="outline" className="rounded-xl font-bold" asChild>
-                <div onClick={() => {
-                  const tabs = document.querySelector('[data-value="add"]');
-                  if (tabs instanceof HTMLElement) tabs.click();
-                }}>ابدأ بإضافة سؤالك الأول</div>
+                <TabsTrigger value="add" className="h-10 px-4 rounded-xl font-bold bg-white border border-primary/20 text-primary hover:bg-primary/5">
+                ابدأ بإضافة سؤالك الأول
+              </TabsTrigger>
               </Button>
             </div>
           ) : (
