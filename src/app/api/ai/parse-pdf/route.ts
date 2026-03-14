@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+// Import as namespace or check named exports
+import * as PDFParseModule from 'pdf-parse'
 
 export async function POST(req: Request) {
   try {
@@ -9,11 +11,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    const { PDFParse } = await import('pdf-parse')
     const buffer = Buffer.from(await file.arrayBuffer())
     
-    // Instantiate PDFParse
-    const parser = new PDFParse({ data: buffer })
+    // Access the default export or the class from the module
+    // Based on common patterns, it might be PDFParseModule.default or PDFParseModule.PDFParse
+    const pdfParser = (PDFParseModule as any).PDFParse || (PDFParseModule as any).default || PDFParseModule
+    
+    // Assuming PDFParse is a class as in the example I saw earlier
+    const parser = new pdfParser({ data: buffer })
     const data = await parser.getText()
 
     return NextResponse.json({ text: data.text })
