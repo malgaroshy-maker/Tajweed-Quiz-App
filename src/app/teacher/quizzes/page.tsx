@@ -64,17 +64,24 @@ export default async function QuizzesPage() {
                     </Button>
                   </form>
                   
-                  {/* Simple move to folder menu */}
+                    {/* Simple move to folder menu */}
                   <div className="flex gap-1 border-r pr-2">
-                    <form action={moveQuiz.bind(null, quiz.id, null) as any}>
+                    <form action={async () => {
+                      'use server'
+                      await moveQuiz(quiz.id, null)
+                    }}>
                       <Button variant="ghost" size="sm" type="submit" className="text-xs">بدون</Button>
                     </form>
                     {folders?.map(f => (
-                      <form key={f.id} action={moveQuiz.bind(null, quiz.id, f.id) as any}>
+                      <form key={f.id} action={async () => {
+                        'use server'
+                        await moveQuiz(quiz.id, f.id)
+                      }}>
                         <Button variant="ghost" size="sm" type="submit" className="text-xs">{f.name}</Button>
                       </form>
                     ))}
                   </div>
+
                 </div>
               </CardContent>
             </Card>
