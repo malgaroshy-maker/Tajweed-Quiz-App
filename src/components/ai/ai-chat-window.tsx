@@ -192,7 +192,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
                 <div className={`p-5 rounded-2xl shadow-sm text-sm ${m.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-tl-none border border-primary/5'}`}>
                     {m.content}
                 </div>
-                {m.questions && m.questions.map((q: any, qIdx: number) => (
+                {m.questions && m.questions.map((q: Question, qIdx: number) => (
                     <div key={qIdx} className='p-4 bg-white rounded-xl border border-primary/20 shadow-sm flex items-center justify-between gap-4'>
                         <span className='font-bold text-sm'>{q.text}</span>
                         <Button size='sm' variant='outline' onClick={() => saveToBank(q)}><Save className='w-4 h-4 mr-2'/> حفظ</Button>
