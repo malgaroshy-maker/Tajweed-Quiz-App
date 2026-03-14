@@ -45,7 +45,7 @@ export default async function QuizEditorPage({
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-muted/20 p-4 rounded-2xl border-2 border-muted/50">
         <div>
-          <h1 className="text-2xl font-black text-foreground">{quiz.title}</h1>
+          <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100">{quiz.title}</h1>
           {quiz.description && <p className="text-sm text-muted-foreground mt-1 font-medium line-clamp-1">{quiz.description}</p>}
         </div>
         <div className="flex items-center gap-3">

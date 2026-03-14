@@ -18,7 +18,7 @@ export default function StudentLayout({
           <div className="flex items-center gap-6">
             <SidebarTrigger className="h-10 w-10 text-primary hover:bg-primary/10 transition-colors" />
             <div className="h-6 w-[1px] bg-primary/20 hidden md:block"></div>
-            <h1 className="font-black text-xl text-foreground tracking-tight">بوابة الطالب</h1>
+            <h1 className="font-black text-xl text-slate-900 dark:text-slate-100 tracking-tight">بوابة الطالب</h1>
           </div>
         </header>
         <main className="flex-1 overflow-auto p-6 md:p-10">

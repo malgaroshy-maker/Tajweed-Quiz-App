@@ -19,7 +19,7 @@ export function SettingsPageClient({ profile, freeModels, paidModels, geminiMode
           <Settings className="w-7 h-7 text-primary" />
         </div>
         <div>
-          <h2 className="text-3xl font-black tracking-tight text-foreground">الإعدادات</h2>
+          <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">الإعدادات</h2>
           <p className="text-md text-primary/70 font-bold">تخصيص تجربة المعلمة</p>
         </div>
       </div>
