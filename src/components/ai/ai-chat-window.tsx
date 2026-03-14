@@ -6,8 +6,22 @@ import { Bot, User, Send, Loader2, FileUp, FileText, X, Save } from 'lucide-reac
 import { Textarea } from '@/components/ui/textarea'
 import { createClient } from '@/utils/supabase/client'
 
+interface Question {
+    text: string;
+    type: string;
+    options: { text: string; is_correct: boolean }[];
+    explanation: string;
+    topic: string;
+}
+
+interface ChatMessage {
+    role: 'user' | 'assistant';
+    content: string;
+    questions?: Question[];
+}
+
 export function AIChatWindow({ sessionId }: { sessionId?: string }) {
-  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string, questions?: any[] }[]>([
+  const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'assistant', content: 'السلام عليكم! أنا مساعدكِ الذكي لعلوم التجويد والقرآن.' }
   ])
   const [input, setInput] = useState('')
@@ -29,9 +43,9 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
         .order('created_at', { ascending: true })
       
       if (data && data.length > 0) {
-        setMessages(data.map(m => {
+        setMessages(data.map((m: { role: string; content: string }) => {
             let content = m.content
-            let questions = []
+            let questions: Question[] = []
             const qMatch = content.match(/<questions>([\s\S]*?)<\/questions>/)
             if (qMatch) {
                 try {
@@ -46,7 +60,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
       }
     }
     loadMessages()
-  }, [currentSessionId])
+  }, [currentSessionId, supabase])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -83,7 +97,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
     }
   }
 
-  const saveToBank = async (q: any) => {
+  const saveToBank = async (q: Question) => {
     try {
       const res = await fetch('/api/ai/save', {
         method: 'POST',
@@ -119,7 +133,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
         }
     }
     
-    const userMsg = { role: 'user' as const, content: input }
+    const userMsg: ChatMessage = { role: 'user', content: input }
     setMessages(prev => [...prev, userMsg])
     setInput('')
     setLoading(true)
@@ -135,8 +149,20 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
     })
     const data = await res.json()
     
-    // assistantMsg.content is the raw data.message (containing the tag)
-    const assistantMsg = { role: 'assistant' as const, content: data.message }
+    // Parse questions from the XML-like tag
+    let content = data.message
+    let questions: Question[] = []
+    const qMatch = content.match(/<questions>([\s\S]*?)<\/questions>/)
+    if (qMatch) {
+        try {
+            questions = JSON.parse(qMatch[1])
+            content = content.replace(qMatch[0], "").trim()
+        } catch (e) {
+            console.error("Failed to parse questions", e)
+        }
+    }
+    
+    const assistantMsg: ChatMessage = { role: 'assistant', content, questions }
     setMessages(prev => [...prev, assistantMsg])
     
     if (activeSessionId) {
