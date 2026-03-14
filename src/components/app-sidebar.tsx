@@ -12,7 +12,8 @@ import {
   Database,
   BadgeCheck,
   Heart,
-  Library
+  Library,
+  Users
 } from "lucide-react"
 
 import {
@@ -47,6 +48,11 @@ const items = [
     title: "نتائج الطلاب",
     url: "/teacher/results",
     icon: BarChart2,
+  },
+  {
+    title: "طالباتي",
+    url: "/teacher/students",
+    icon: Users,
   },
   {
     title: "مجلداتي",
