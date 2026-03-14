@@ -13,29 +13,7 @@ export async function addQuestion(quizId: string, formData: FormData) {
   const type = formData.get('type') as string
   const topic = formData.get('topic') as string
   const explanation = formData.get('explanation') as string
-  const imageFile = formData.get('image') as File | null
-  
-  let imageUrl = null
-
-  if (imageFile && imageFile.size > 0) {
-    const fileExt = imageFile.name.split('.').pop()
-    const fileName = `${Math.random()}.${fileExt}`
-    const filePath = `${user.id}/${fileName}`
-
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('quiz-images')
-      .upload(filePath, imageFile)
-
-    if (uploadError) {
-      console.error('Image upload error:', uploadError)
-    } else {
-      const { data: { publicUrl } } = supabase.storage
-        .from('quiz-images')
-        .getPublicUrl(filePath)
-      
-      imageUrl = publicUrl
-    }
-  }
+  const imageUrl = formData.get('image_url') as string | null
 
   // Options logic depending on type
   const option1 = formData.get('option_1') as string

@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { addQuestion } from '@/app/teacher/quizzes/[id]/question-actions'
 import { ImageIcon, X, Eye, Edit3, Sparkles, Check, Database } from 'lucide-react'
+import { createClient } from '@/utils/supabase/client'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -41,6 +42,37 @@ export function QuestionEditor({ quizId }: { quizId: string }) {
 
   const handleSubmit = async (formData: FormData) => {
     setLoading(true)
+    
+    // Upload image client-side to avoid 413 error
+    const file = fileInputRef.current?.files?.[0]
+    let imageUrl = null
+    
+    if (file && file.size > 0) {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Math.random()}.${fileExt}`
+        const filePath = `${user.id}/${fileName}`
+        
+        const { error: uploadError } = await supabase.storage
+          .from('quiz-images')
+          .upload(filePath, file)
+          
+        if (!uploadError) {
+          const { data: { publicUrl } } = supabase.storage
+            .from('quiz-images')
+            .getPublicUrl(filePath)
+          imageUrl = publicUrl
+        }
+      }
+    }
+    
+    // Add image URL to formData
+    if (imageUrl) {
+      formData.append('image_url', imageUrl)
+    }
+
     formData.append('type', type)
     const result = await addQuestion(quizId, formData)
     setLoading(false)
@@ -52,6 +84,8 @@ export function QuestionEditor({ quizId }: { quizId: string }) {
       setExplanation('')
       const form = document.getElementById('add-question-form') as HTMLFormElement
       form.reset()
+    } else {
+        alert(result.error || 'حدث خطأ أثناء حفظ السؤال')
     }
   }
 
