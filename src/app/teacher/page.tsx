@@ -31,10 +31,13 @@ export default async function TeacherDashboard() {
   }
 
   const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+  console.log('Teacher Dashboard Debug - Profile:', profile);
 
   // 1. Fetch Stats
-  const { count: foldersCount } = await supabase.from('folders').select('*', { count: 'exact', head: true }).eq('teacher_id', user.id)
-  const { count: quizzesCount } = await supabase.from('quizzes').select('*', { count: 'exact', head: true }).eq('teacher_id', user.id)
+  const { count: foldersCount, error: fError } = await supabase.from('folders').select('*', { count: 'exact', head: true }).eq('teacher_id', user.id)
+  console.log('Teacher Dashboard Debug - Folders Error:', fError);
+  const { count: quizzesCount, error: qError } = await supabase.from('quizzes').select('*', { count: 'exact', head: true }).eq('teacher_id', user.id)
+  console.log('Teacher Dashboard Debug - Quizzes Error:', qError);
   
   // Fetch total unique students who took this teacher's quizzes
   const { data: studentAttempts } = await supabase
