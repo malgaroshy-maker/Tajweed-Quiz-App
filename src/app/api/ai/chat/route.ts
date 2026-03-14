@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
+interface ChatMessage {
+    role: 'user' | 'assistant';
+    content: string;
+}
+
 export async function POST(req: Request) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -17,7 +22,7 @@ export async function POST(req: Request) {
     .single()
 
   const provider = profile?.ai_provider || 'openrouter'
-  const { messages } = await req.json()
+  const { messages }: { messages: ChatMessage[] } = await req.json()
 
   const systemPrompt = `أنت خبير في علم التجويد ومعلم للقرآن الكريم. تجيب على أسئلة المعلمات بأسلوب تربوي، مبسط، وواضح.
   
@@ -44,7 +49,7 @@ export async function POST(req: Request) {
       const model = genAI.getGenerativeModel({ model: profile?.gemini_model || 'gemini-2.0-flash' })
       
       // Formatting messages for Gemini
-      const history = messages.slice(0, -1).map((m: any) => ({
+      const history = messages.slice(0, -1).map((m: ChatMessage) => ({
         role: m.role === 'user' ? 'user' : 'model',
         parts: [{ text: m.content }]
       }))
@@ -85,7 +90,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ message: aiResponse })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }

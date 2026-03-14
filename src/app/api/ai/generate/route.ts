@@ -77,7 +77,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'OpenRouter API Key is missing. Please configure it in Settings.' }, { status: 400 })
       }
 
-      const requestBody: any = {
+      const requestBody: Record<string, unknown> = {
         messages: [{ role: 'user', content: systemPrompt }]
       }
 
@@ -115,7 +115,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ questions: parsedData })
 
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }

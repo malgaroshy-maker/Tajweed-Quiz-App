@@ -45,7 +45,7 @@ export async function POST(req: Request) {
 
       // Insert options
       if (q.options && Array.isArray(q.options)) {
-        const optionsToInsert = q.options.map((opt: any) => ({
+        const optionsToInsert = q.options.map((opt: { text: string; is_correct: boolean }) => ({
           question_id: insertedQuestion.id,
           text: opt.text,
           is_correct: opt.is_correct === true,
@@ -58,7 +58,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }

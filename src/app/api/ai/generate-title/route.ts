@@ -46,7 +46,8 @@ export async function POST(req: Request) {
 
     await supabase.from('ai_chat_sessions').update({ title: title.replace(/['"]/g, '') }).eq('id', sessionId)
     return NextResponse.json({ title })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }
