@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
-// Import as namespace or check named exports
-import * as PDFParseModule from 'pdf-parse'
+// Import as a module and cast to any to call as function
+import * as pdfModule from 'pdf-parse'
 
 export async function POST(req: Request) {
   try {
@@ -13,13 +13,10 @@ export async function POST(req: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer())
     
-    // Access the default export or the class from the module
-    // Based on common patterns, it might be PDFParseModule.default or PDFParseModule.PDFParse
-    const pdfParser = (PDFParseModule as any).PDFParse || (PDFParseModule as any).default || PDFParseModule
+    // cast module to any to bypass TS error for default export
+    const pdf = (pdfModule as any).default || pdfModule
     
-    // Assuming PDFParse is a class as in the example I saw earlier
-    const parser = new pdfParser({ data: buffer })
-    const data = await parser.getText()
+    const data = await pdf(buffer)
 
     return NextResponse.json({ text: data.text })
   } catch (error: unknown) {
