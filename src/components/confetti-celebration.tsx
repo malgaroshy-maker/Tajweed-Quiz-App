@@ -5,7 +5,8 @@ import confetti from 'canvas-confetti'
 
 export function ConfettiCelebration({ score, total }: { score: number, total: number }) {
   useEffect(() => {
-    if (score === total && total > 0) {
+    const percentage = total > 0 ? (score / total) : 0
+    if (percentage >= 0.8) {
       const duration = 5 * 1000
       const animationEnd = Date.now() + duration
       const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 }
