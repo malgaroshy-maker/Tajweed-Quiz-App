@@ -78,8 +78,8 @@ export default async function TeacherDashboard() {
     <div className="space-y-8 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-4xl font-black tracking-tight text-slate-900">لوحة المعلم</h1>
-          <p className="text-primary/70 mt-2 text-lg font-medium">مرحباً بك مجدداً، الأستاذ {profile?.first_name} {profile?.last_name}</p>
+          <h1 className="text-4xl font-black tracking-tight text-slate-900">لوحة المعلمة</h1>
+          <p className="text-primary/70 mt-2 text-lg font-medium">مرحباً بكِ مجدداً، الأستاذة {profile?.first_name} {profile?.last_name}</p>
         </div>
         <Button asChild className="h-14 px-8 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all gap-2">
           <Link href="/teacher/quizzes/new">
@@ -197,28 +197,42 @@ export default async function TeacherDashboard() {
 
         {/* AI Insights & Actions */}
         <div className="lg:col-span-3 space-y-6">
-          <Card className="border-primary/20 bg-primary/5">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-primary">
-                <Sparkles className="w-5 h-5" />
-                توصيات المساعد الذكي
+          <Card className="border-2 border-primary/20 bg-white shadow-xl shadow-primary/5 rounded-[2rem] overflow-hidden relative group transition-all hover:border-primary/40">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[5rem] -mr-10 -mt-10 transition-transform group-hover:scale-110" />
+            <CardHeader className="relative">
+              <CardTitle className="flex items-center gap-3 text-primary text-xl font-black">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Sparkles className="w-6 h-6 animate-pulse" />
+                </div>
+                توصيات الذكاء الاصطناعي
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6 relative">
               {insights && insights.length > 0 ? (
                 <>
-                  <p className="text-sm leading-relaxed">
-                    يواجه الطلاب صعوبة في السؤال: <span className="font-bold">"{insights[0].question_text}"</span>.
-                    تمت الإجابة عليه بشكل خاطئ {insights[0].wrong_count} مرات.
-                  </p>
-                  <Button variant="default" className="w-full gap-2 bg-primary text-primary-foreground">
-                    إنشاء اختبار مخصص للمراجعة
+                  <div className="p-5 bg-primary/5 rounded-2xl border border-primary/10">
+                    <p className="text-slate-700 leading-relaxed font-medium">
+                      يواجه الطلاب صعوبة ملحوظة في السؤال: 
+                      <span className="block mt-2 font-black text-slate-900 font-quran text-lg">"{insights[0].question_text}"</span>
+                      تم رصد <span className="text-red-600 font-black">{insights[0].wrong_count} إجابات خاطئة</span>.
+                    </p>
+                  </div>
+                  <Button variant="default" className="w-full h-14 gap-3 bg-primary text-white font-black rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all" asChild>
+                    <Link href={`/teacher/ai?suggest_quiz_for=${insights[0].question_id}`}>
+                      <Plus className="w-5 h-5" />
+                      إنشاء مراجعة مخصصة لهذا الحكم
+                    </Link>
                   </Button>
                 </>
               ) : (
-                <p className="text-sm text-muted-foreground italic">
-                  سأقوم بتحليل نتائج طلابك قريباً لتقديم توصيات ذكية لتحسين الأداء.
-                </p>
+                <div className="py-6 text-center space-y-4">
+                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto opacity-20">
+                    <Sparkles className="w-8 h-8" />
+                  </div>
+                  <p className="text-sm text-slate-500 font-bold italic leading-relaxed px-4">
+                    سأقوم بتحليل نتائج طلابكِ وتقديم توصيات ذكية لتحسين الأداء فور توفر بيانات كافية.
+                  </p>
+                </div>
               )}
             </CardContent>
           </Card>

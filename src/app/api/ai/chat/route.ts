@@ -19,7 +19,13 @@ export async function POST(req: Request) {
   const provider = profile?.ai_provider || 'openrouter'
   const { messages } = await req.json()
 
-  const systemPrompt = "أنت خبير في علم التجويد ومعلم للقرآن الكريم. تجيب على أسئلة الطلاب بأسلوب تربوي، مبسط، وواضح. إذا سُئلت عن حكم تجويدي، اذكر القاعدة مع مثال."
+  const systemPrompt = `أنت خبير في علم التجويد ومعلم للقرآن الكريم. تجيب على أسئلة المعلمات بأسلوب تربوي، مبسط، وواضح.
+  
+  إذا تم تزويدك بنص من كتاب أو ملف، قم بتحليله واستخراج أحكام التجويد منه.
+  يمكنك أيضاً اقتراح أسئلة اختبار (Multiple Choice, True/False, Fill in Blank).
+  
+  عندما تقترح أسئلة، يرجى الرد بصيغة JSON في نهاية رسالتك إذا كان ذلك مناسباً، بتنسيق:
+  { "questions": [{ "text": "...", "type": "multiple_choice", "options": [{"text": "...", "is_correct": true}, ...], "explanation": "...", "topic": "..." }] }`
 
   try {
     let aiResponse = "";
