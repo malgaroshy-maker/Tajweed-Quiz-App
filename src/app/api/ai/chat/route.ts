@@ -24,8 +24,12 @@ export async function POST(req: Request) {
   إذا تم تزويدك بنص من كتاب أو ملف، قم بتحليله واستخراج أحكام التجويد منه.
   يمكنك أيضاً اقتراح أسئلة اختبار (Multiple Choice, True/False, Fill in Blank).
   
-  عندما تقترح أسئلة، يرجى الرد بصيغة JSON في نهاية رسالتك إذا كان ذلك مناسباً، بتنسيق:
-  { "questions": [{ "text": "...", "type": "multiple_choice", "options": [{"text": "...", "is_correct": true}, ...], "explanation": "...", "topic": "..." }] }`
+  اجعل ردودك واضحة ومباشرة للمعلمة. لا تستخدم تنسيق JSON في صلب رسالتك.
+  إذا اقترحت أسئلة، ضعها في نهاية رسالتك داخل وسم خاص هكذا:
+  <questions>
+  [{"text": "...", "type": "multiple_choice", "options": [{"text": "...", "is_correct": true}, ...], "explanation": "...", "topic": "..."}]
+  </questions>
+  هذا الوسم لن يظهر للمعلمة بشكل سيء، وسأقوم أنا بمعالجته لحفظ الأسئلة.`
 
   try {
     let aiResponse = "";
