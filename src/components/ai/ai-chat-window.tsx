@@ -135,23 +135,21 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
     })
     const data = await res.json()
     
-    // Parse questions from the XML-like tag
-    let content = data.message
-    let questions = []
-    const qMatch = content.match(/<questions>([\s\S]*?)<\/questions>/)
-    if (qMatch) {
-        try {
-            questions = JSON.parse(qMatch[1])
-        } catch (e) {
-            console.error("Failed to parse questions", e)
-        }
-    }
-    
-    const assistantMsg = { role: 'assistant' as const, content: data.message, questions }
+    // assistantMsg.content is the raw data.message (containing the tag)
+    const assistantMsg = { role: 'assistant' as const, content: data.message }
     setMessages(prev => [...prev, assistantMsg])
     
     if (activeSessionId) {
       await supabase.from('ai_chat_messages').insert({ session_id: activeSessionId, role: 'assistant', content: data.message })
+      
+      // Auto-generate title after first exchange
+      if (messages.length === 1) { // 1 user + 1 assistant interaction completed
+          await fetch('/api/ai/generate-title', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ sessionId: activeSessionId, firstMessage: userMsg.content }),
+          })
+      }
     }
     setLoading(false)
   }
