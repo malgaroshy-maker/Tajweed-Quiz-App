@@ -29,7 +29,20 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
         .order('created_at', { ascending: true })
       
       if (data && data.length > 0) {
-        setMessages(data.map(m => ({ role: m.role as 'user' | 'assistant', content: m.content })))
+        setMessages(data.map(m => {
+            let content = m.content
+            let questions = []
+            const qMatch = content.match(/<questions>([\s\S]*?)<\/questions>/)
+            if (qMatch) {
+                try {
+                    questions = JSON.parse(qMatch[1])
+                    content = content.replace(qMatch[0], "").trim()
+                } catch (e) {
+                    console.error("Failed to parse questions", e)
+                }
+            }
+            return { role: m.role as 'user' | 'assistant', content, questions }
+        }))
       }
     }
     loadMessages()
@@ -122,20 +135,8 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
     })
     const data = await res.json()
     
-    // Parse questions from the XML-like tag
-    let content = data.message
-    let questions = []
-    const qMatch = content.match(/<questions>([\s\S]*?)<\/questions>/)
-    if (qMatch) {
-        try {
-            questions = JSON.parse(qMatch[1])
-            content = content.replace(qMatch[0], "").trim()
-        } catch (e) {
-            console.error("Failed to parse questions", e)
-        }
-    }
-    
-    const assistantMsg = { role: 'assistant' as const, content, questions }
+    // assistantMsg.content is the raw data.message (containing the tag)
+    const assistantMsg = { role: 'assistant' as const, content: data.message }
     setMessages(prev => [...prev, assistantMsg])
     
     if (activeSessionId) {
@@ -147,16 +148,28 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
   return (
     <div className="flex flex-col h-full bg-[#f8f8f5] dark:bg-slate-950 rounded-3xl overflow-hidden shadow-inner border border-primary/10">
       <div className="flex-1 overflow-y-auto p-6 space-y-8 parchment-texture">
-        {messages.map((m, i) => (
+        {messages.map((m, i) => {
+            let renderedContent = m.content
+            let questions: any[] = []
+            const qMatch = renderedContent.match(/<questions>([\s\S]*?)<\/questions>/)
+            if (qMatch) {
+                try {
+                    questions = JSON.parse(qMatch[1])
+                    renderedContent = renderedContent.replace(qMatch[0], "").trim()
+                } catch (e) {
+                    console.error("Failed to parse questions", e)
+                }
+            }
+            return (
           <div key={i} className={`flex gap-4 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-md ${m.role === 'assistant' ? 'bg-primary text-white' : 'bg-white border border-primary/20 text-primary'}`}>
-              {m.role === 'assistant' ? <Bot className="w-5 h-5" /> : <User className="w-5 h-5" />}
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-md ${m.role === 'assistant' ? 'bg-primary text-white' : 'bg-white border border-primary/20 text-primary'}`}>
+              {m.role === 'assistant' ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
             </div>
             <div className="flex flex-col gap-2 max-w-[85%]">
-                <div className={`p-5 rounded-2xl shadow-sm ${m.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-tl-none border border-primary/5'}`}>
-                    {m.content}
+                <div className={`p-5 rounded-2xl shadow-sm text-sm ${m.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-tl-none border border-primary/5'}`}>
+                    {renderedContent}
                 </div>
-                {m.questions && m.questions.map((q: any, qIdx: number) => (
+                {questions && questions.map((q: any, qIdx: number) => (
                     <div key={qIdx} className='p-4 bg-white rounded-xl border border-primary/20 shadow-sm flex items-center justify-between gap-4'>
                         <span className='font-bold text-sm'>{q.text}</span>
                         <Button size='sm' variant='outline' onClick={() => saveToBank(q)}><Save className='w-4 h-4 mr-2'/> حفظ</Button>
@@ -164,7 +177,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
                 ))}
             </div>
           </div>
-        ))}
+        )})}
         {loading && <div className="flex justify-start pl-12"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>}
         <div ref={messagesEndRef} />
       </div>
