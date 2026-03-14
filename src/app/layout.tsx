@@ -43,6 +43,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning className={cn("font-sans", inter.variable)}>
+      <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+              });
+            }
+          `
+        }} />
+      </head>
       <body
         className={`${tajawal.variable} ${inter.variable} ${amiriQuran.variable} font-sans antialiased bg-background text-slate-900 dark:text-slate-100`}
       >
