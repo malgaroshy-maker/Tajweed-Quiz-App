@@ -43,7 +43,21 @@ export async function signup(formData: FormData) {
   const password = formData.get('password') as string
   const first_name = formData.get('first_name') as string
   const last_name = formData.get('last_name') as string
-  const role = formData.get('role') as string
+  const invitation_code = formData.get('invitation_code') as string
+
+  let role = 'student'
+  if (invitation_code) {
+    const { data: codeData } = await supabase
+        .from('invitation_codes')
+        .select('used')
+        .eq('code', invitation_code)
+        .single()
+    
+    if (codeData && !codeData.used) {
+        role = 'teacher'
+        await supabase.from('invitation_codes').update({ used: true }).eq('code', invitation_code)
+    }
+  }
 
   const { data, error } = await supabase.auth.signUp({
     email,

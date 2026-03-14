@@ -74,16 +74,8 @@ export default async function LoginPage({
                   <Input id="password-signup" name="password" type="password" required />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="role">نوع الحساب</Label>
-                  <select
-                    id="role"
-                    name="role"
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                    required
-                  >
-                    <option value="student" className="text-foreground bg-background">طالب</option>
-                    <option value="teacher" className="text-foreground bg-background">معلم</option>
-                  </select>
+                  <Label htmlFor="invitation_code">كود دعوة المعلم (اختياري)</Label>
+                  <Input id="invitation_code" name="invitation_code" placeholder="أدخل الكود إذا كنتِ معلمة" />
                 </div>
                 <Button type="submit" className="w-full">إنشاء الحساب</Button>
               </form>
