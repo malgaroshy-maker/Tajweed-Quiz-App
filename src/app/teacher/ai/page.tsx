@@ -1,5 +1,6 @@
 import { AIChatManager } from '@/components/ai/ai-chat-manager'
-import { Sparkles } from 'lucide-react'
+import { Sparkles, Loader2 } from 'lucide-react'
+import { Suspense } from 'react'
 
 export default function AIStandalonePage() {
   return (
@@ -11,7 +12,9 @@ export default function AIStandalonePage() {
         <h1 className="text-3xl font-black text-slate-900 dark:text-slate-100">المساعد الذكي</h1>
       </div>
 
-      <AIChatManager />
+      <Suspense fallback={<div className="flex justify-center items-center h-full"><Loader2 className="animate-spin" /></div>}>
+        <AIChatManager />
+      </Suspense>
     </div>
   )
 }
