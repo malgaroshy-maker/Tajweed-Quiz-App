@@ -7,8 +7,10 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { addQuestion } from '@/app/teacher/quizzes/[id]/question-actions'
-import { ImageIcon, X, Eye, Edit3, Sparkles, Check, Database } from 'lucide-react'
+import { ImageIcon, X, Eye, Edit3, Sparkles, Check, Database, Library } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
+import { ImportFromBankDialog } from '@/app/teacher/quizzes/[id]/import-bank-dialog'
+import imageCompression from 'browser-image-compression'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -51,13 +53,21 @@ export function QuestionEditor({ quizId }: { quizId: string }) {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
+        // Compress image before upload
+        const options = {
+          maxSizeMB: 0.5,
+          maxWidthOrHeight: 800,
+          useWebWorker: true,
+        }
+        const compressedFile = await imageCompression(file, options)
+
         const fileExt = file.name.split('.').pop()
         const fileName = `${Math.random()}.${fileExt}`
         const filePath = `${user.id}/${fileName}`
         
         const { error: uploadError } = await supabase.storage
           .from('quiz-images')
-          .upload(filePath, file)
+          .upload(filePath, compressedFile)
           
         if (!uploadError) {
           const { data: { publicUrl } } = supabase.storage
@@ -72,6 +82,8 @@ export function QuestionEditor({ quizId }: { quizId: string }) {
     if (imageUrl) {
       formData.append('image_url', imageUrl)
     }
+    // Remove the file from form data to prevent 413 error
+    formData.delete('image')
 
     formData.append('type', type)
     const result = await addQuestion(quizId, formData)
