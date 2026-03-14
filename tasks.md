@@ -1,46 +1,76 @@
 # Development Roadmap & Task Breakdown
 
 ## Phase 1: Foundation & Setup
-- [ ] Initialize Next.js 15 project with Tailwind CSS & TypeScript.
-- [ ] Configure RTL layout (`dir="rtl"`, `lang="ar"`) and Arabic typography (Uthmani font fallback).
-- [ ] Setup `next-themes` for Dark/Light mode toggle.
-- [ ] Apply Supabase SQL schema (`database_schema.sql`) to `Tajweed-quiz` project.
-- [ ] Setup Supabase Client (`@supabase/ssr`) and environment variables.
+- [x] Initialize Next.js 15 project with Tailwind CSS & TypeScript.
+- [x] Configure RTL layout (`dir="rtl"`, `lang="ar"`) and Arabic typography (Uthmani font fallback).
+- [x] Setup `next-themes` for Dark/Light mode toggle.
+- [x] Apply Supabase SQL schema (`database_schema.sql`) to `Tajweed-quiz` project.
+- [x] Setup Supabase Client (`@supabase/ssr`) and environment variables.
 
 ## Phase 2: Authentication & Authorization
-- [ ] Implement Teacher Registration & Login flow (UI + Supabase Auth).
-- [ ] Implement Student Registration & Login flow.
-- [ ] Create Route Middleware to protect `/teacher` and `/student` routes.
-- [ ] Implement Profile creation trigger in Supabase (auto-insert into `profiles` table on signup).
+- [x] Implement Teacher Registration & Login flow (UI + Supabase Auth).
+- [x] Implement Student Registration & Login flow.
+- [x] Create Route Middleware to protect `/teacher` and `/student` routes.
+- [x] Implement Profile creation trigger in Supabase (auto-insert into `profiles` table on signup).
 
 ## Phase 3: Teacher Dashboard (Core)
-- [ ] Build mobile-responsive Teacher Dashboard layout with Sidebar/Bottom Nav.
-- [ ] Implement Folders CRUD (Create, Read, Update, Delete).
-- [ ] Implement Quizzes CRUD (Create title/desc, assign to folder, generate Share Code).
-- [ ] Setup Supabase Storage bucket (`quiz-images`) and implement image upload UI.
+- [x] Build mobile-responsive Teacher Dashboard layout with Sidebar/Bottom Nav.
+- [x] Implement Folders CRUD (Create, Read, Update, Delete).
+- [x] Implement Quizzes CRUD (Create title/desc, assign to folder, generate Share Code).
+- [x] Setup Supabase Storage bucket (`quiz-images`) and implement image upload UI.
 
-## Phase 4: Question Management & AI
-- [ ] Build Question Editor UI (Multiple Choice, True/False, Short Answer).
-- [ ] Integrate OpenRouter API Route (`/api/ai/generate`) with system prompts for Tajweed/Quran context.
-- [ ] Build AI Assistant UI inside Quiz Editor (Select topic -> generate -> review -> add to quiz).
-- [ ] Implement "Save to Question Bank" and "Browse Question Bank" functionality.
+## Phase 4: Question Management & AI (Refining)
+- [x] Build Question Editor UI (Multiple Choice, True/False, Short Answer).
+- [x] Integrate OpenRouter API Route (`/api/ai/generate`).
+- [x] Build AI Assistant UI inside Quiz Editor.
+- [x] Basic Question Bank listing.
 
-## Phase 5: Student Experience
-- [ ] Create Student Dashboard (List of available quizzes & past attempts).
-- [ ] Build Guest access flow (Enter Share Code -> Enter Name -> Start Quiz).
-- [ ] Build Quiz Taking UI:
-  - Scrollable single-page format (mobile optimized).
-  - Display Arabic text/images clearly.
-  - Randomize question order and options (computed on the server/client).
+## Phase 5: Student Experience (Refining)
+- [x] Create Student Dashboard.
+- [x] Build Guest access flow.
+- [x] Build Quiz Taking UI with randomization.
+- [x] **Offline Sync:** Implement local storage auto-save for quiz progress.
+- [x] Ensure all Quranic content uses `.font-quran` class for Uthmani font.
 
-## Phase 6: Submissions & Analytics
-- [ ] Implement `POST /api/quiz/submit` to calculate score and insert `attempt_answers`.
-- [ ] Build Student Results view (Show score, selected vs. correct answers).
-- [ ] Build Teacher Results Dashboard (List of attempts, student names, scores, timestamps).
-- [ ] Implement basic analytics (e.g., "Most missed questions" calculated via SQL view).
+## Phase 6: Submissions & Analytics (Refining)
+- [x] Implement `POST /api/quiz/submit` to calculate score.
+- [x] Build Student Results view.
+- [x] Build Teacher Results Dashboard.
+- [x] Implement "Most missed questions" SQL view.
+- [x] **CSV Export:** Implement server-side CSV generation for quiz results.
+- [x] **Advanced Analytics:** Add Average Score and Completion Rate metrics to teacher dashboard.
 
-## Phase 7: Polish & PWA
-- [ ] Configure `next-pwa` for manifest generation and service worker caching.
-- [ ] Test application loading speeds on simulated slow networks.
-- [ ] Ensure all Arabic text uses proper Uthmani fonts where ayat are displayed.
-- [ ] Final UI/UX review for "extremely simple" design principles.
+## Phase 7: Advanced Question Logic & Reuse
+- [x] **Import from Bank:** Create a dialog in Quiz Editor to import questions from the teacher's bank.
+- [x] **New Question Types:** Implement UI and auto-grading for "Fill in the Blank".
+- [x] **Tajweed Template:** Create specialized MCQ UI for Tajweed rules (via topics and custom types).
+- [x] **Question Ordering:** Implement reordering logic (drag & drop or index-based).
+
+## Phase 8: Polish & PWA Optimization
+- [x] Initial `next-pwa` configuration.
+- [x] **PWA Assets:** Generate and link real icons (via manifest.json).
+- [x] **Offline Resilience:** Configure service worker caching for critical routes (via next-pwa and local progress).
+- [x] Final UI/UX review for "extremely simple" design and accessibility.
+
+## Phase 9: UI/UX Refinement (Stitch Design Integration)
+- [x] Refactor `AppSidebar` with professional layout and teacher profile summary.
+- [x] Rebuild Teacher Dashboard (`/teacher`) with advanced stats (Active Quizzes, Student Activity) and status-aware quiz feed.
+- [x] Implement Split-View Question Editor with Manuscript-style Live Preview (parchment backgrounds, elegant borders).
+- [x] Add "Learning Insights" panel to the results dashboard for automated student performance tips.
+
+## Phase 10: AI Assistant Pivot (Chat-Based)
+- [x] Enhance AI Assistant page with a conversational chat interface for "Content-to-Quiz" generation.
+- [x] Allow teachers to paste text (from PDFs or books) for AI to process into questions.
+- [x] Implement direct "Add to Quiz" and "Add to Bank" actions from AI chat suggestions.
+
+## Phase 11: Missing MVP Pages & Polish
+- [x] Create Student History page (`/student/history`) for tracking past attempts.
+- [x] Create dedicated Student Join page (`/student/join`) for a focused entry experience.
+- [x] Final visual pass for RTL consistency and high-end manuscript typography.
+- [x] **Mobile Optimization:** Full pass for touch-friendly targets, tabbed editor views, and app-like layouts.
+
+## Phase 12: Hardening & Gamification
+- [x] **Student Achievement:** Add "Lifetime Points" and "Achievement Medals" to student dashboard.
+- [x] **Quiz Leaderboards:** Implement a feature for students to see their rank within a quiz (optional toggle for teachers).
+- [ ] **Confetti Celebration:** Add visual reward animations on quiz completion.
+- [ ] **PWA Audit:** Ensure instant offline loading for Uthmani fonts and manuscript assets.

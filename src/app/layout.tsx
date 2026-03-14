@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Tajawal, Amiri_Quran, Geist } from "next/font/google";
+import { Tajawal, Amiri_Quran, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 const tajawal = Tajawal({
   variable: "--font-tajawal",
@@ -21,6 +22,13 @@ const amiriQuran = Amiri_Quran({
 export const metadata: Metadata = {
   title: "معلم التجويد",
   description: "منصة لاختبارات التجويد والقرآن الكريم",
+  manifest: "/manifest.json",
+  themeColor: "#202020",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "معلم التجويد",
+  },
 };
 
 export default function RootLayout({
@@ -29,9 +37,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+    <html lang="ar" dir="rtl" suppressHydrationWarning className={cn("font-sans", inter.variable)}>
       <body
-        className={`${tajawal.variable} ${amiriQuran.variable} font-sans antialiased bg-background text-foreground`}
+        className={`${tajawal.variable} ${inter.variable} ${amiriQuran.variable} font-sans antialiased bg-background text-slate-900 dark:text-slate-100`}
       >
         <ThemeProvider
           attribute="class"
@@ -39,7 +47,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

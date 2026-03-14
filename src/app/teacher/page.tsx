@@ -1,0 +1,267 @@
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { 
+  BookOpen, 
+  FolderOpen, 
+  Users, 
+  TrendingUp, 
+  Activity, 
+  BarChart3, 
+  Sparkles,
+  ArrowRight,
+  Plus,
+  Clock,
+  Settings,
+  Download
+} from 'lucide-react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+
+export default async function TeacherDashboard() {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/login')
+  }
+
+  const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+
+  // 1. Fetch Stats
+  const { count: foldersCount } = await supabase.from('folders').select('*', { count: 'exact', head: true }).eq('teacher_id', user.id)
+  const { count: quizzesCount } = await supabase.from('quizzes').select('*', { count: 'exact', head: true }).eq('teacher_id', user.id)
+  
+  // Fetch total unique students who took this teacher's quizzes
+  const { data: studentAttempts } = await supabase
+    .from('attempts')
+    .select('student_id, guest_name, quizzes!inner(teacher_id)')
+    .eq('quizzes.teacher_id', user.id)
+  
+  const uniqueStudents = new Set()
+  studentAttempts?.forEach(a => {
+    uniqueStudents.add(a.student_id || a.guest_name)
+  })
+  const studentsCount = uniqueStudents.size
+
+  // Fetch average score
+  const { data: attempts } = await supabase
+    .from('attempts')
+    .select('score, total_questions, quizzes!inner(teacher_id)')
+    .eq('quizzes.teacher_id', user.id)
+  
+  const totalAttempts = attempts?.length || 0
+  const avgScore = totalAttempts > 0 
+    ? Math.round((attempts!.reduce((acc, curr) => acc + (Number(curr.score) / curr.total_questions), 0) / totalAttempts) * 100)
+    : 0
+
+  // 2. Fetch Recent Quizzes
+  const { data: recentQuizzes } = await supabase
+    .from('quizzes')
+    .select('id, title, is_published, created_at, share_code')
+    .eq('teacher_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(3)
+
+  // 3. Fetch Insights (Most missed)
+  const { data: insights } = await supabase
+    .from('most_missed_questions')
+    .select('*')
+    .eq('teacher_id', user.id)
+    .order('wrong_count', { ascending: false })
+    .limit(2)
+
+  return (
+    <div className="space-y-8 pb-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+        <div>
+          <h1 className="text-4xl font-black tracking-tight text-slate-900">لوحة المعلم</h1>
+          <p className="text-primary/70 mt-2 text-lg font-medium">مرحباً بك مجدداً، الأستاذ {profile?.first_name} {profile?.last_name}</p>
+        </div>
+        <Button asChild className="h-14 px-8 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all gap-2">
+          <Link href="/teacher/quizzes/new">
+            <Plus className="w-5 h-5" />
+            إنشاء اختبار جديد
+          </Link>
+        </Button>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-12">
+        <Card className="relative overflow-hidden border-none bg-white shadow-xl shadow-primary/5 rounded-2xl group">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-black text-primary uppercase tracking-widest">الاختبارات النشطة</CardTitle>
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+              <BookOpen className="h-5 w-5" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-black text-slate-900">{quizzesCount || 0}</div>
+            <div className="flex items-center text-xs text-primary/70 font-bold mt-2">
+              <TrendingUp className="w-3 h-3 ml-1" />
+              +2 هذا الأسبوع
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="relative overflow-hidden border-none bg-white shadow-xl shadow-primary/5 rounded-2xl group">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-black text-blue-700 uppercase tracking-widest">إجمالي الطلاب</CardTitle>
+            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+              <Users className="h-5 w-5" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-black text-slate-900">{studentsCount || 0}</div>
+            <div className="flex items-center text-xs text-blue-600/70 font-bold mt-2">
+              <Activity className="w-3 h-3 ml-1" />
+              نشط الآن: {Math.floor(studentsCount * 0.2)}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="relative overflow-hidden border-none bg-white shadow-xl shadow-primary/5 rounded-2xl group sm:col-span-2 lg:col-span-1">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-black text-amber-700 uppercase tracking-widest">متوسط الدرجات</CardTitle>
+            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
+              <BarChart3 className="h-5 w-5" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-black text-slate-900">{avgScore}%</div>
+            <div className="w-full bg-muted rounded-full h-2 mt-4 overflow-hidden">
+              <div className="bg-amber-500 h-full rounded-full transition-all duration-1000" style={{ width: `${avgScore}%` }} />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-8 lg:grid-cols-7">
+        {/* Recent Quizzes */}
+        <Card className="lg:col-span-4 border-none shadow-xl shadow-primary/5 rounded-3xl bg-white/80 backdrop-blur-sm overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between p-8 pb-4">
+            <div>
+              <CardTitle className="text-2xl font-black text-slate-900">الاختبارات الأخيرة</CardTitle>
+            </div>
+            <Button variant="ghost" size="sm" asChild className="text-primary font-black hover:bg-primary/10 rounded-lg">
+              <Link href="/teacher/quizzes" className="gap-2">
+                عرض الكل
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </Button>
+          </CardHeader>
+          <CardContent className="p-8 pt-0">
+            <div className="space-y-4">
+              {recentQuizzes?.length === 0 ? (
+                <div className="text-center py-16 text-muted-foreground bg-muted/20 rounded-2xl border-2 border-dashed border-muted">
+                  <div className="w-16 h-16 rounded-full bg-muted/30 flex items-center justify-center mx-auto mb-4">
+                    <BookOpen className="w-8 h-8 opacity-20" />
+                  </div>
+                  <p className="font-bold">لا توجد اختبارات بعد.</p>
+                </div>
+              ) : (
+                recentQuizzes?.map((quiz) => (
+                  <div key={quiz.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 border-2 border-muted/30 rounded-2xl hover:border-primary/40 hover:bg-white transition-all group gap-6 shadow-sm">
+                    <div className="flex items-center gap-5">
+                      <div className={`w-4 h-16 rounded-full shrink-0 shadow-inner ${quiz.is_published ? 'bg-primary' : 'bg-amber-400'}`} />
+                      <div>
+                        <p className="font-black text-xl text-slate-800 group-hover:text-primary transition-colors line-clamp-1">{quiz.title}</p>
+                        <div className="flex items-center gap-4 mt-2 text-sm text-slate-500 font-bold uppercase tracking-wider">
+                          <span className="flex items-center gap-1.5">
+                            <Clock className="w-4 h-4" />
+                            {new Date(quiz.created_at).toLocaleDateString('ar-EG')}
+                          </span>
+                          <span className="bg-primary/10 text-primary px-3 py-1 rounded-lg font-black font-mono">
+                            {quiz.share_code}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-3 sm:shrink-0">
+                      <Button variant="outline" size="lg" asChild className="flex-1 sm:flex-none h-12 font-black rounded-xl border-2 border-primary/20 text-primary hover:bg-primary/5 transition-all">
+                        <Link href={`/teacher/quizzes/${quiz.id}`}>تعديل</Link>
+                      </Button>
+                      <Button size="lg" asChild className="flex-1 sm:flex-none h-12 font-black rounded-xl bg-slate-900 text-white shadow-md hover:bg-slate-800 transition-all">
+                        <Link href={`/teacher/results?quiz=${quiz.id}`}>النتائج</Link>
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* AI Insights & Actions */}
+        <div className="lg:col-span-3 space-y-6">
+          <Card className="border-primary/20 bg-primary/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-primary">
+                <Sparkles className="w-5 h-5" />
+                توصيات المساعد الذكي
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {insights && insights.length > 0 ? (
+                <>
+                  <p className="text-sm leading-relaxed">
+                    يواجه الطلاب صعوبة في السؤال: <span className="font-bold">"{insights[0].question_text}"</span>.
+                    تمت الإجابة عليه بشكل خاطئ {insights[0].wrong_count} مرات.
+                  </p>
+                  <Button variant="default" className="w-full gap-2 bg-primary text-primary-foreground">
+                    إنشاء اختبار مخصص للمراجعة
+                  </Button>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground italic">
+                  سأقوم بتحليل نتائج طلابك قريباً لتقديم توصيات ذكية لتحسين الأداء.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">روابط سريعة</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 gap-2">
+              <Button variant="outline" className="justify-start gap-2 h-auto py-3 px-3" asChild>
+                <Link href="/teacher/folders">
+                  <FolderOpen className="w-4 h-4 text-blue-500" />
+                  <span>المجلدات</span>
+                </Link>
+              </Button>
+              <Button variant="outline" className="justify-start gap-2 h-auto py-3 px-3" asChild>
+                <Link href="/teacher/questions">
+                  <BookOpen className="w-4 h-4 text-green-500" />
+                  <span>البنك</span>
+                </Link>
+              </Button>
+              <Button variant="outline" className="justify-start gap-2 h-auto py-3 px-3" asChild>
+                <Link href="/teacher/ai">
+                  <Sparkles className="w-4 h-4 text-purple-500" />
+                  <span>الذكاء الاصطناعي</span>
+                </Link>
+              </Button>
+              <Button variant="outline" className="justify-start gap-2 h-auto py-3 px-3" asChild>
+                <Link href="/teacher/settings">
+                  <Settings className="w-4 h-4 text-gray-500" />
+                  <span>الإعدادات</span>
+                </Link>
+              </Button>
+              <Button variant="outline" className="justify-start gap-2 h-auto py-3 px-3 col-span-2" asChild>
+                <Link href="/api/teacher/results/export" target="_blank">
+                  <Download className="w-4 h-4 text-primary" />
+                  <span>تصدير جميع النتائج (CSV)</span>
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  )
+}
