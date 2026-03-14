@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { GenerateCodeButton } from '@/components/GenerateCodeButton'
+import { GenerateCodeButton } from '../../components/GenerateCodeButton'
 
 export default async function TeacherDashboard() {
   const supabase = await createClient()
