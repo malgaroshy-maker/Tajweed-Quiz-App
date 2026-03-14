@@ -93,13 +93,13 @@ export default async function TeacherDashboard() {
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-12">
         <Card className="relative overflow-hidden border-none bg-white dark:bg-slate-900 shadow-xl shadow-primary/5 rounded-2xl group transition-all hover:shadow-primary/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-black text-primary uppercase tracking-widest">الاختبارات النشطة</CardTitle>
+            <CardTitle className="text-sm font-black text-foreground uppercase tracking-widest">الاختبارات النشطة</CardTitle>
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
               <BookOpen className="h-5 w-5" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-black text-slate-900 dark:text-white">{quizzesCount || 0}</div>
+            <div className="text-4xl font-black text-foreground">{quizzesCount || 0}</div>
             <div className="flex items-center text-xs text-primary/70 font-bold mt-2">
               <TrendingUp className="w-3 h-3 ml-1" />
               +2 هذا الأسبوع
@@ -115,7 +115,7 @@ export default async function TeacherDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-black text-slate-900 dark:text-white">{studentsCount || 0}</div>
+            <div className="text-4xl font-black text-foreground">{studentsCount || 0}</div>
             <div className="flex items-center text-xs text-blue-600/70 font-bold mt-2">
               <Activity className="w-3 h-3 ml-1" />
               نشط الآن: {Math.floor(studentsCount * 0.2)}
