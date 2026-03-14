@@ -116,29 +116,41 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#f8f8f5] dark:bg-slate-950 parchment-texture rounded-3xl overflow-hidden shadow-inner border border-primary/10">
-      <div className="flex-1 overflow-y-auto p-6 space-y-8">
+    <div className="flex flex-col h-full bg-[#f8f8f5] dark:bg-slate-950 rounded-3xl overflow-hidden shadow-inner border border-primary/10">
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-8 parchment-texture">
         {messages.map((m, i) => (
-          <div key={i} className={`flex gap-4 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-md ${m.role === 'assistant' ? 'bg-primary text-white' : 'bg-white border border-primary/20 text-primary'}`}>
-              {m.role === 'assistant' ? <Bot className="w-5 h-5" /> : <User className="w-5 h-5" />}
+          <div key={i} className={`flex gap-4 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm ${m.role === 'assistant' ? 'bg-primary text-white' : 'bg-white border border-primary/20 text-primary'}`}>
+              {m.role === 'assistant' ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
             </div>
-            <div className={`max-w-[80%] p-5 rounded-2xl shadow-sm ${m.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-tl-none'}`}>
+            <div className={`max-w-[85%] px-5 py-3 rounded-2xl shadow-sm text-sm ${m.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-tl-none border border-primary/5'}`}>
                 {m.content}
             </div>
           </div>
         ))}
-        {loading && <div className="flex justify-start"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}
+        {loading && <div className="flex justify-start pl-12"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>}
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border-t border-primary/10 shrink-0">
+      {/* Input Area */}
+      <div className="p-4 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border-t border-primary/10 shrink-0">
         {selectedFile && (
-            <div className="flex items-center justify-between p-3 mb-4 bg-white rounded-xl border border-primary/20">
-                <div className='flex items-center gap-2 text-sm font-bold'><FileText className="w-4 h-4"/> {selectedFile.name}</div>
-                <Button variant="ghost" size="icon" onClick={() => setSelectedFile(null)}><X className="w-4 h-4" /></Button>
+            <div className="flex items-center justify-between p-2 mb-3 bg-white rounded-lg border border-primary/20 text-xs">
+                <div className='flex items-center gap-2 font-bold'><FileText className="w-3 h-3"/> {selectedFile.name}</div>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setSelectedFile(null)}><X className="w-3 h-3" /></Button>
             </div>
         )}
+        
+        {/* Quick Actions */}
+        <div className="flex gap-2 mb-3 overflow-x-auto no-scrollbar pb-1">
+            {['أحكام النون الساكنة', 'قواعد المد', 'مثال على الإدغام', 'أحكام القلقلة'].map(action => (
+                <button key={action} onClick={() => setInput(action)} className="whitespace-nowrap px-3 py-1 rounded-full border border-primary/20 text-[10px] font-bold text-primary bg-white/50 hover:bg-primary/10 transition-colors">
+                    {action}
+                </button>
+            ))}
+        </div>
+
         <div className="flex items-end gap-2 bg-white dark:bg-slate-800 p-2 rounded-2xl border border-primary/20 shadow-sm">
             <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="application/pdf,image/*" className="hidden" />
             <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl shrink-0" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
@@ -147,8 +159,8 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
             <Textarea 
                 value={input} 
                 onChange={(e) => setInput(e.target.value)} 
-                placeholder="اكتبي سؤالاً أو ارفعي ملفاً..." 
-                className="flex-1 bg-transparent border-none focus-visible:ring-0 resize-none min-h-[40px] max-h-[120px]"
+                placeholder="اكتبي سؤالاً..." 
+                className="flex-1 bg-transparent border-none focus-visible:ring-0 resize-none min-h-[40px] max-h-[120px] text-sm"
                 onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault()
