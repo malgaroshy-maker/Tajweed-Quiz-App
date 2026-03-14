@@ -78,7 +78,7 @@ export default async function TeacherDashboard() {
     <div className="space-y-8 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-4xl font-black tracking-tight text-slate-900">لوحة المعلمة</h1>
+          <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">لوحة المعلمة</h1>
           <p className="text-primary/70 mt-2 text-lg font-medium">مرحباً بكِ مجدداً، الأستاذة {profile?.first_name} {profile?.last_name}</p>
         </div>
         <Button asChild className="h-14 px-8 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all gap-2">
@@ -91,7 +91,7 @@ export default async function TeacherDashboard() {
 
       {/* Stats Grid */}
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-12">
-        <Card className="relative overflow-hidden border-none bg-white shadow-xl shadow-primary/5 rounded-2xl group">
+        <Card className="relative overflow-hidden border-none bg-white dark:bg-slate-900 shadow-xl shadow-primary/5 rounded-2xl group transition-all hover:shadow-primary/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-black text-primary uppercase tracking-widest">الاختبارات النشطة</CardTitle>
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
@@ -99,7 +99,7 @@ export default async function TeacherDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-black text-slate-900">{quizzesCount || 0}</div>
+            <div className="text-4xl font-black text-slate-900 dark:text-white">{quizzesCount || 0}</div>
             <div className="flex items-center text-xs text-primary/70 font-bold mt-2">
               <TrendingUp className="w-3 h-3 ml-1" />
               +2 هذا الأسبوع
@@ -107,15 +107,15 @@ export default async function TeacherDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-none bg-white shadow-xl shadow-primary/5 rounded-2xl group">
+        <Card className="relative overflow-hidden border-none bg-white dark:bg-slate-900 shadow-xl shadow-primary/5 rounded-2xl group transition-all hover:shadow-primary/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-black text-blue-700 uppercase tracking-widest">إجمالي الطلاب</CardTitle>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+            <CardTitle className="text-sm font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest">إجمالي الطلاب</CardTitle>
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
               <Users className="h-5 w-5" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-black text-slate-900">{studentsCount || 0}</div>
+            <div className="text-4xl font-black text-slate-900 dark:text-white">{studentsCount || 0}</div>
             <div className="flex items-center text-xs text-blue-600/70 font-bold mt-2">
               <Activity className="w-3 h-3 ml-1" />
               نشط الآن: {Math.floor(studentsCount * 0.2)}
@@ -123,16 +123,16 @@ export default async function TeacherDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-none bg-white shadow-xl shadow-primary/5 rounded-2xl group sm:col-span-2 lg:col-span-1">
+        <Card className="relative overflow-hidden border-none bg-white dark:bg-slate-900 shadow-xl shadow-primary/5 rounded-2xl group sm:col-span-2 lg:col-span-1 transition-all hover:shadow-primary/10">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-black text-amber-700 uppercase tracking-widest">متوسط الدرجات</CardTitle>
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
+            <CardTitle className="text-sm font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest">متوسط الدرجات</CardTitle>
+            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center text-amber-600 group-hover:scale-110 transition-transform">
               <BarChart3 className="h-5 w-5" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-black text-slate-900">{avgScore}%</div>
-            <div className="w-full bg-muted rounded-full h-2 mt-4 overflow-hidden">
+            <div className="text-4xl font-black text-slate-900 dark:text-white">{avgScore}%</div>
+            <div className="w-full bg-muted dark:bg-slate-800 rounded-full h-2 mt-4 overflow-hidden">
               <div className="bg-amber-500 h-full rounded-full transition-all duration-1000" style={{ width: `${avgScore}%` }} />
             </div>
           </CardContent>
@@ -141,10 +141,10 @@ export default async function TeacherDashboard() {
 
       <div className="grid gap-8 lg:grid-cols-7">
         {/* Recent Quizzes */}
-        <Card className="lg:col-span-4 border-none shadow-xl shadow-primary/5 rounded-3xl bg-white/80 backdrop-blur-sm overflow-hidden">
+        <Card className="lg:col-span-4 border-none shadow-xl shadow-primary/5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm overflow-hidden">
           <CardHeader className="flex flex-row items-center justify-between p-8 pb-4">
             <div>
-              <CardTitle className="text-2xl font-black text-slate-900">الاختبارات الأخيرة</CardTitle>
+              <CardTitle className="text-2xl font-black text-slate-900 dark:text-white">الاختبارات الأخيرة</CardTitle>
             </div>
             <Button variant="ghost" size="sm" asChild className="text-primary font-black hover:bg-primary/10 rounded-lg">
               <Link href="/teacher/quizzes" className="gap-2">
@@ -156,7 +156,7 @@ export default async function TeacherDashboard() {
           <CardContent className="p-8 pt-0">
             <div className="space-y-4">
               {recentQuizzes?.length === 0 ? (
-                <div className="text-center py-16 text-muted-foreground bg-muted/20 rounded-2xl border-2 border-dashed border-muted">
+                <div className="text-center py-16 text-muted-foreground bg-muted/20 dark:bg-slate-800/20 rounded-2xl border-2 border-dashed border-muted">
                   <div className="w-16 h-16 rounded-full bg-muted/30 flex items-center justify-center mx-auto mb-4">
                     <BookOpen className="w-8 h-8 opacity-20" />
                   </div>
@@ -164,12 +164,12 @@ export default async function TeacherDashboard() {
                 </div>
               ) : (
                 recentQuizzes?.map((quiz) => (
-                  <div key={quiz.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 border-2 border-muted/30 rounded-2xl hover:border-primary/40 hover:bg-white transition-all group gap-6 shadow-sm">
+                  <div key={quiz.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 border-2 border-muted/30 dark:border-slate-800 rounded-2xl hover:border-primary/40 hover:bg-white dark:hover:bg-slate-800 transition-all group gap-6 shadow-sm">
                     <div className="flex items-center gap-5">
                       <div className={`w-4 h-16 rounded-full shrink-0 shadow-inner ${quiz.is_published ? 'bg-primary' : 'bg-amber-400'}`} />
                       <div>
-                        <p className="font-black text-xl text-slate-800 group-hover:text-primary transition-colors line-clamp-1">{quiz.title}</p>
-                        <div className="flex items-center gap-4 mt-2 text-sm text-slate-500 font-bold uppercase tracking-wider">
+                        <p className="font-black text-xl text-slate-800 dark:text-slate-100 group-hover:text-primary transition-colors line-clamp-1">{quiz.title}</p>
+                        <div className="flex items-center gap-4 mt-2 text-sm text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
                           <span className="flex items-center gap-1.5">
                             <Clock className="w-4 h-4" />
                             {new Date(quiz.created_at).toLocaleDateString('ar-EG')}
@@ -184,7 +184,7 @@ export default async function TeacherDashboard() {
                       <Button variant="outline" size="lg" asChild className="flex-1 sm:flex-none h-12 font-black rounded-xl border-2 border-primary/20 text-primary hover:bg-primary/5 transition-all">
                         <Link href={`/teacher/quizzes/${quiz.id}`}>تعديل</Link>
                       </Button>
-                      <Button size="lg" asChild className="flex-1 sm:flex-none h-12 font-black rounded-xl bg-slate-900 text-white shadow-md hover:bg-slate-800 transition-all">
+                      <Button size="lg" asChild className="flex-1 sm:flex-none h-12 font-black rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-md hover:bg-slate-800 dark:hover:bg-white transition-all">
                         <Link href={`/teacher/results?quiz=${quiz.id}`}>النتائج</Link>
                       </Button>
                     </div>
@@ -197,7 +197,7 @@ export default async function TeacherDashboard() {
 
         {/* AI Insights & Actions */}
         <div className="lg:col-span-3 space-y-6">
-          <Card className="border-2 border-primary/20 bg-white shadow-xl shadow-primary/5 rounded-[2rem] overflow-hidden relative group transition-all hover:border-primary/40">
+          <Card className="border-2 border-primary/20 bg-white dark:bg-slate-900 shadow-xl shadow-primary/5 rounded-[2rem] overflow-hidden relative group transition-all hover:border-primary/40">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[5rem] -mr-10 -mt-10 transition-transform group-hover:scale-110" />
             <CardHeader className="relative">
               <CardTitle className="flex items-center gap-3 text-primary text-xl font-black">
@@ -210,11 +210,11 @@ export default async function TeacherDashboard() {
             <CardContent className="space-y-6 relative">
               {insights && insights.length > 0 ? (
                 <>
-                  <div className="p-5 bg-primary/5 rounded-2xl border border-primary/10">
-                    <p className="text-slate-700 leading-relaxed font-medium">
+                  <div className="p-5 bg-primary/5 dark:bg-primary/10 rounded-2xl border border-primary/10">
+                    <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
                       يواجه الطلاب صعوبة ملحوظة في السؤال: 
-                      <span className="block mt-2 font-black text-slate-900 font-quran text-lg">"{insights[0].question_text}"</span>
-                      تم رصد <span className="text-red-600 font-black">{insights[0].wrong_count} إجابات خاطئة</span>.
+                      <span className="block mt-2 font-black text-slate-900 dark:text-white font-quran text-lg">"{insights[0].question_text}"</span>
+                      تم رصد <span className="text-red-600 dark:text-red-400 font-black">{insights[0].wrong_count} إجابات خاطئة</span>.
                     </p>
                   </div>
                   <Button variant="default" className="w-full h-14 gap-3 bg-primary text-white font-black rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all" asChild>
@@ -226,10 +226,10 @@ export default async function TeacherDashboard() {
                 </>
               ) : (
                 <div className="py-6 text-center space-y-4">
-                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto opacity-20">
+                  <div className="w-16 h-16 bg-muted dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto opacity-20">
                     <Sparkles className="w-8 h-8" />
                   </div>
-                  <p className="text-sm text-slate-500 font-bold italic leading-relaxed px-4">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 font-bold italic leading-relaxed px-4">
                     سأقوم بتحليل نتائج طلابكِ وتقديم توصيات ذكية لتحسين الأداء فور توفر بيانات كافية.
                   </p>
                 </div>

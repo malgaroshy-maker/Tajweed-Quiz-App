@@ -12,7 +12,7 @@ function AIChatContent() {
   const searchParams = useSearchParams()
   const suggestFor = searchParams.get('suggest_quiz_for')
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string, questions?: any[] }[]>([
-    { role: 'assistant', content: 'السلام عليكم! أنا مساعدك الذكي لعلوم التجويد والقرآن. يمكنك طرح أي سؤال، أو رفع ملف PDF، أو لصق نص من كتاب وسأساعدك في استخراج أسئلة اختبار منه مباشرة.' }
+    { role: 'assistant', content: 'السلام عليكم! أنا مساعدكِ الذكي لعلوم التجويد والقرآن. يمكنكِ طرح أي سؤال، أو رفع ملف PDF، أو لصق نص من كتاب وسأساعدكِ في استخراج أسئلة اختبار منه مباشرة.' }
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -73,7 +73,8 @@ function AIChatContent() {
       })
       const data = await res.json()
       if (data.text) {
-        const textPreview = data.text.slice(0, 2000) + (data.text.length > 2000 ? "..." : "")
+        // AI models have context limits, we take a large chunk but not infinite
+        const textPreview = data.text.slice(0, 15000) 
         setInput(prev => prev + "\n\n[محتوى ملف PDF]:\n" + textPreview)
       }
     } catch (e) {
@@ -109,7 +110,8 @@ function AIChatContent() {
       let content = data.message
       let questions = data.questions || []
       
-      if (!questions.length) {
+      // Heuristic to find JSON questions if not in dedicated field
+      if (!questions.length && content) {
         const jsonMatch = content.match(/\{[\s\S]*"questions"[\s\S]*\}/)
         if (jsonMatch) {
           try {
@@ -122,7 +124,7 @@ function AIChatContent() {
       
       setMessages([...newMessages, { 
         role: 'assistant', 
-        content: content || "إليك الأسئلة المقترحة:",
+        content: content || "إليكِ الأسئلة المقترحة:",
         questions: questions
       }])
     } catch (e) {
@@ -148,7 +150,7 @@ function AIChatContent() {
   }
 
   return (
-    <div className="flex flex-col h-[750px] border-2 border-primary/20 rounded-[2.5rem] overflow-hidden bg-white shadow-2xl relative">
+    <div className="flex flex-col h-[750px] border-2 border-primary/20 rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-900 shadow-2xl relative">
       <div className="bg-primary p-6 text-primary-foreground flex items-center justify-between shadow-lg z-10">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur-md shadow-inner">
@@ -165,13 +167,13 @@ function AIChatContent() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-10 bg-[#f8f8f5] parchment-texture scroll-smooth">
+      <div className="flex-1 overflow-y-auto p-6 space-y-10 bg-[#f8f8f5] dark:bg-slate-950 parchment-texture scroll-smooth">
         {messages.map((m, i) => (
           <div key={i} className={`flex gap-5 ${m.role === 'user' ? 'flex-row-reverse' : 'animate-in fade-in slide-in-from-right-4 duration-500'}`}>
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg transition-transform hover:scale-110 ${
               m.role === 'assistant' 
                 ? 'bg-primary text-white border-2 border-white/20' 
-                : 'bg-white border-2 border-primary/20 text-primary'
+                : 'bg-white dark:bg-slate-800 border-2 border-primary/20 text-primary'
             }`}>
               {m.role === 'assistant' ? <Bot className="w-7 h-7" /> : <User className="w-7 h-7" />}
             </div>
@@ -179,7 +181,7 @@ function AIChatContent() {
               <div className={`p-6 rounded-[2rem] leading-relaxed shadow-xl text-lg font-medium transition-all ${
                 m.role === 'user' 
                   ? 'bg-primary text-white rounded-tr-none border-b-4 border-primary/20' 
-                  : 'bg-white border-2 border-primary/10 text-slate-900 rounded-tl-none ring-1 ring-primary/5'
+                  : 'bg-white dark:bg-slate-800 border-2 border-primary/10 text-slate-900 dark:text-slate-100 rounded-tl-none ring-1 ring-primary/5'
               }`}>
                 {m.content}
               </div>
@@ -187,18 +189,18 @@ function AIChatContent() {
               {m.questions && m.questions.length > 0 && (
                 <div className="grid gap-5 mt-2 w-full animate-in zoom-in-95 duration-500 delay-200">
                   {m.questions.map((q: any, idx: number) => (
-                    <Card key={idx} className="bg-white/90 backdrop-blur-md border-2 border-primary/10 hover:border-primary/40 transition-all rounded-[2rem] overflow-hidden shadow-2xl group">
+                    <Card key={idx} className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-2 border-primary/10 hover:border-primary/40 transition-all rounded-[2rem] overflow-hidden shadow-2xl group">
                       <CardContent className="p-6 space-y-5">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3 text-primary font-black text-xs uppercase tracking-widest">
                             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                               <Sparkles className="w-4 h-4" />
                             </div>
-                            سؤال مقترح الذكي
+                            سؤال مقترح
                           </div>
                           <span className="text-[10px] bg-muted px-2 py-1 rounded font-bold text-muted-foreground uppercase">{q.type}</span>
                         </div>
-                        <p className="font-black text-xl text-slate-900 leading-relaxed font-quran bg-primary/5 p-4 rounded-2xl border border-primary/5">{q.text}</p>
+                        <p className="font-black text-xl text-slate-900 dark:text-slate-100 leading-relaxed font-quran bg-primary/5 p-4 rounded-2xl border border-primary/5">{q.text}</p>
                         <Button 
                           size="lg" 
                           variant="default" 
@@ -221,7 +223,7 @@ function AIChatContent() {
             <div className="w-12 h-12 rounded-2xl bg-primary text-white flex items-center justify-center animate-pulse shadow-lg">
               <Bot className="w-7 h-7" />
             </div>
-            <div className="bg-white border-2 border-primary/10 p-6 rounded-[2rem] rounded-tl-none shadow-xl flex items-center gap-4">
+            <div className="bg-white dark:bg-slate-800 border-2 border-primary/10 p-6 rounded-[2rem] rounded-tl-none shadow-xl flex items-center gap-4">
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
               <span className="text-base font-black text-slate-500 animate-pulse uppercase tracking-[0.2em]">جاري التحليل...</span>
             </div>
@@ -230,7 +232,7 @@ function AIChatContent() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-8 border-t-2 border-primary/10 bg-white space-y-5 shadow-[0_-20px_60px_rgba(0,0,0,0.08)] z-10">
+      <div className="p-8 border-t-2 border-primary/10 bg-white dark:bg-slate-900 space-y-5 shadow-[0_-20px_60px_rgba(0,0,0,0.08)] z-10">
         {selectedFile && (
           <div className="flex items-center justify-between p-4 bg-primary/5 border-2 border-primary/20 rounded-3xl animate-in slide-in-from-bottom-2">
             <div className="flex items-center gap-4">
@@ -238,11 +240,11 @@ function AIChatContent() {
                 <FileText className="w-7 h-7" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-black text-slate-900 truncate max-w-[250px]">{selectedFile.name}</span>
+                <span className="text-sm font-black text-slate-900 dark:text-slate-100 truncate max-w-[250px]">{selectedFile.name}</span>
                 <span className="text-[10px] text-primary font-black uppercase tracking-widest mt-1">جاهز لاستخراج البيانات</span>
               </div>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => setSelectedFile(null)} className="h-10 w-10 rounded-full hover:bg-red-50 hover:text-red-500 transition-colors">
+            <Button variant="ghost" size="icon" onClick={() => setSelectedFile(null)} className="h-10 w-10 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500 transition-colors">
               <X className="w-5 h-5" />
             </Button>
           </div>
@@ -254,7 +256,7 @@ function AIChatContent() {
               value={input} 
               onChange={(e) => setInput(e.target.value)} 
               placeholder="اكتبي سؤالاً، أو ارفعي ملف PDF للتحليل..." 
-              className="min-h-[140px] p-6 pb-16 resize-none border-2 border-muted hover:border-primary/40 focus-visible:border-primary rounded-[2.5rem] text-slate-900 font-bold text-lg bg-[#fcfcfc] shadow-inner transition-all placeholder:text-slate-300"
+              className="min-h-[140px] p-6 pb-16 resize-none border-2 border-muted hover:border-primary/40 focus-visible:border-primary rounded-[2.5rem] text-slate-900 dark:text-slate-100 font-bold text-lg bg-[#fcfcfc] dark:bg-slate-800 shadow-inner transition-all placeholder:text-slate-300 dark:placeholder:text-slate-500"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault()
