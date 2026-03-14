@@ -1,6 +1,4 @@
 import { NextResponse } from 'next/server'
-// @ts-ignore
-import pdf from 'pdf-parse'
 
 export async function POST(req: Request) {
   try {
@@ -11,8 +9,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
+    const { PDFParse } = await import('pdf-parse')
     const buffer = Buffer.from(await file.arrayBuffer())
-    const data = await pdf(buffer)
+    
+    // Instantiate PDFParse
+    const parser = new PDFParse({ data: buffer })
+    const data = await parser.getText()
 
     return NextResponse.json({ text: data.text })
   } catch (error: any) {
