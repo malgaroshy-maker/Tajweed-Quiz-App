@@ -13,11 +13,11 @@ import {
   Plus,
   Clock,
   Settings,
-  Download,
-  Key
+  Download
 } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { GenerateCodeButton } from '@/components/GenerateCodeButton'
 
 export default async function TeacherDashboard() {
   const supabase = await createClient()
@@ -267,15 +267,7 @@ export default async function TeacherDashboard() {
                   <span>الإعدادات</span>
                 </Link>
               </Button>
-              <Button variant="outline" className="justify-start gap-2 h-auto py-3 px-3 col-span-2" onClick={async () => {
-                const res = await fetch('/api/teacher/generate-code', { method: 'POST' });
-                const data = await res.json();
-                if (data.code) alert('كود المعلم الجديد: ' + data.code);
-                else alert('خطأ: ' + data.error);
-              }}>
-                <Key className="w-4 h-4 text-amber-500" />
-                <span>توليد كود دعوة معلم جديد</span>
-              </Button>
+              <GenerateCodeButton />
               <Button variant="outline" className="justify-start gap-2 h-auto py-3 px-3 col-span-2" asChild>
                 <Link href="/api/teacher/results/export" target="_blank">
                   <Download className="w-4 h-4 text-primary" />
