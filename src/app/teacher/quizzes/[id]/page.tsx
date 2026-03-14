@@ -1,18 +1,17 @@
-import { createClient } from '@/utils/supabase/server'
-import { notFound, redirect } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { publishQuiz, unpublishQuiz } from '../actions'
+import { QuizTabs } from './quiz-tabs'
 import { QuestionEditor } from '@/components/question-editor'
 import { AIAssistantWrapper } from '@/components/ai-assistant-wrapper'
-import { Trash2, ArrowUp, ArrowDown } from 'lucide-react'
-import { deleteQuestion } from './delete-question-action'
-import { deleteQuiz } from './delete-quiz-action'
+import { Trash2, ArrowUp, ArrowDown, Edit3, ImageIcon, X, Sparkles, PlusCircle, ListTodo } from 'lucide-react'
 import { EditQuestionDialog } from './edit-question-dialog'
 import { ImportFromBankDialog } from './import-bank-dialog'
+import { deleteQuestion } from './delete-question-action'
 import { reorderQuestion } from './question-actions'
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Sparkles, Library, PlusCircle, ListTodo } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { publishQuiz, unpublishQuiz } from '../actions'
+import { deleteQuiz } from './delete-quiz-action'
+import { notFound, redirect } from 'next/navigation'
+import { createClient } from '@/utils/supabase/server'
+import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default async function QuizEditorPage({
   params,
@@ -80,118 +79,73 @@ export default async function QuizEditorPage({
         </div>
       </div>
 
-      <Tabs defaultValue="questions" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 h-14 p-1 bg-muted/50 rounded-2xl mb-8">
-          <TabsTrigger value="questions" className="rounded-xl font-bold gap-2 text-xs sm:text-sm">
-            <ListTodo className="w-4 h-4" />
-            <span className="hidden sm:inline">الأسئلة</span> ({questions?.length || 0})
-          </TabsTrigger>
-          <TabsTrigger value="add" className="rounded-xl font-bold gap-2 text-xs sm:text-sm">
-            <PlusCircle className="w-4 h-4" />
-            إضافة
-          </TabsTrigger>
-          <TabsTrigger value="ai" className="rounded-xl font-bold gap-2 text-xs sm:text-sm">
-            <Sparkles className="w-4 h-4" />
-            المساعد
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="questions" className="space-y-4 outline-none">
-          <div className="flex items-center justify-between px-2">
-            <h2 className="text-xl font-black">الأسئلة الحالية</h2>
-            <ImportFromBankDialog quizId={quiz.id} />
-          </div>
-          
-          {questions?.length === 0 ? (
-            <div className="p-12 text-center text-muted-foreground bg-muted/10 rounded-3xl border-2 border-dashed border-muted flex flex-col items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-muted/20 flex items-center justify-center">
-                <ListTodo className="w-8 h-8 opacity-20" />
-              </div>
-              <p className="font-bold">لا توجد أسئلة بعد</p>
-              <Button variant="outline" className="rounded-xl font-bold" asChild>
-                <TabsTrigger value="add" className="h-10 px-4 rounded-xl font-bold bg-white border border-primary/20 text-primary hover:bg-primary/5">
-                ابدأ بإضافة سؤالك الأول
-              </TabsTrigger>
-              </Button>
-            </div>
-          ) : (
-            <div className="grid gap-4">
-              {questions?.map((q, idx) => (
-                <div key={q.id} className="p-5 border-2 border-muted/50 rounded-2xl bg-card shadow-sm hover:border-primary/20 transition-all group">
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex flex-wrap items-center gap-2 mb-3">
-                        <span className="w-6 h-6 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-xs font-black">{idx + 1}</span>
-                        <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full font-bold">
-                          {q.type === 'multiple_choice' ? 'خيارات' : q.type === 'true_false' ? 'صح/خطأ' : q.type === 'fill_in_blank' ? 'إكمال' : 'نص'}
-                        </span>
-                      </div>
-                      <p className="font-bold text-lg leading-relaxed font-quran">{q.text}</p>
-                      
-                      {q.image_url && (
-                        <div className="mt-4 w-full max-w-sm aspect-video rounded-xl overflow-hidden border-2 border-muted bg-muted/30">
-                          <img src={q.image_url} alt="Question" className="w-full h-full object-contain" />
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex flex-col gap-2 shrink-0">
-                      <div className="flex gap-1 bg-muted/50 p-1 rounded-lg">
-                        <form action={reorderQuestion.bind(null, q.id, 'up') as any}>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" disabled={idx === 0}>
-                            <ArrowUp className="w-4 h-4" />
-                          </Button>
-                        </form>
-                        <form action={reorderQuestion.bind(null, q.id, 'down') as any}>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" disabled={idx === (questions?.length || 0) - 1}>
-                            <ArrowDown className="w-4 h-4" />
-                          </Button>
-                        </form>
-                      </div>
-                      <div className="flex gap-1">
-                        <EditQuestionDialog question={q} />
-                        <form action={deleteQuestion.bind(null, q.id, quiz.id) as any}>
-                          <Button variant="ghost" size="icon" type="submit" className="h-9 w-9 text-destructive hover:bg-destructive/10 rounded-xl">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </form>
-                      </div>
-                    </div>
+      <QuizTabs quizId={quiz.id} questions={questions || []}>
+        {/* Questions List (This is passed as children to QuizTabs) */}
+        <div className="grid gap-4">
+          {questions?.map((q, idx) => (
+            <div key={q.id} className="p-5 border-2 border-muted/50 rounded-2xl bg-card shadow-sm hover:border-primary/20 transition-all group">
+              <div className="flex justify-between items-start gap-4">
+                <div className="flex-1">
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    <span className="w-6 h-6 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-xs font-black">{idx + 1}</span>
+                    <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full font-bold">
+                      {q.type === 'multiple_choice' ? 'خيارات' : q.type === 'true_false' ? 'صح/خطأ' : q.type === 'fill_in_blank' ? 'إكمال' : 'نص'}
+                    </span>
                   </div>
-
-                  {q.options && q.options.length > 0 && (
-                    <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {q.options.map((opt: any) => (
-                        <div key={opt.id} className={`p-3 rounded-xl border-2 text-sm font-bold flex items-center gap-2 ${opt.is_correct ? 'bg-primary/5 border-primary/20 text-primary' : 'bg-muted/20 border-transparent text-muted-foreground'}`}>
-                          <div className={`w-2 h-2 rounded-full ${opt.is_correct ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
-                          {opt.text}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <p className="font-bold text-lg leading-relaxed font-quran">{q.text}</p>
                   
-                  {q.explanation && (
-                    <div className="mt-4 p-3 bg-blue-50/50 border-2 border-blue-100/50 rounded-xl text-xs text-blue-700 font-medium italic">
-                      <span className="font-black block mb-1 non-italic">الشرح:</span>
-                      {q.explanation}
+                  {q.image_url && (
+                    <div className="mt-4 w-full max-w-sm aspect-video rounded-xl overflow-hidden border-2 border-muted bg-muted/30">
+                      <img src={q.image_url} alt="Question" className="w-full h-full object-contain" />
                     </div>
                   )}
                 </div>
-              ))}
+                
+                <div className="flex flex-col gap-2 shrink-0">
+                  <div className="flex gap-1 bg-muted/50 p-1 rounded-lg">
+                    <form action={reorderQuestion.bind(null, q.id, 'up') as any}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" disabled={idx === 0}>
+                        <ArrowUp className="w-4 h-4" />
+                      </Button>
+                    </form>
+                    <form action={reorderQuestion.bind(null, q.id, 'down') as any}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" disabled={idx === (questions?.length || 0) - 1}>
+                        <ArrowDown className="w-4 h-4" />
+                      </Button>
+                    </form>
+                  </div>
+                  <div className="flex gap-1">
+                    <EditQuestionDialog question={q} />
+                    <form action={deleteQuestion.bind(null, q.id, quiz.id) as any}>
+                      <Button variant="ghost" size="icon" type="submit" className="h-9 w-9 text-destructive hover:bg-destructive/10 rounded-xl">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              {q.options && q.options.length > 0 && (
+                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {q.options.map((opt: any) => (
+                    <div key={opt.id} className={`p-3 rounded-xl border-2 text-sm font-bold flex items-center gap-2 ${opt.is_correct ? 'bg-primary/5 border-primary/20 text-primary' : 'bg-muted/20 border-transparent text-muted-foreground'}`}>
+                      <div className={`w-2 h-2 rounded-full ${opt.is_correct ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
+                      {opt.text}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {q.explanation && (
+                <div className="mt-4 p-3 bg-blue-50/50 border-2 border-blue-100/50 rounded-xl text-xs text-blue-700 font-medium italic">
+                  <span className="font-black block mb-1 non-italic">الشرح:</span>
+                  {q.explanation}
+                </div>
+              )}
             </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="add" className="outline-none">
-          <QuestionEditor quizId={quiz.id} />
-        </TabsContent>
-
-        <TabsContent value="ai" className="outline-none">
-          <div className="max-w-2xl mx-auto">
-            <AIAssistantWrapper quizId={quiz.id} />
-          </div>
-        </TabsContent>
-      </Tabs>
+          ))}
+        </div>
+      </QuizTabs>
     </div>
   )
 }
