@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server'
-// Import as a module and cast to any to call as function
 import * as pdfModule from 'pdf-parse'
+
+// Polyfill browser globals for pdf.js (used by pdf-parse) in Node serverless
+if (typeof global.DOMMatrix === 'undefined') (global as any).DOMMatrix = class DOMMatrix {};
+if (typeof global.ImageData === 'undefined') (global as any).ImageData = class ImageData {};
+if (typeof global.Path2D === 'undefined') (global as any).Path2D = class Path2D {};
 
 export async function POST(req: Request) {
   try {
