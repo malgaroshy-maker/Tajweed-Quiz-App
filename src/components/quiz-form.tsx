@@ -7,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Send } from 'lucide-react'
 import Image from 'next/image'
 
 interface QuizFormProps {
@@ -72,28 +72,35 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
   if (!isLoaded) return <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      <Card className="bg-muted/50 border-none shadow-none">
-        <CardContent className="pt-6">
-          <Label htmlFor="guest_name">اسمك (إذا كنت غير مسجل الدخول)</Label>
+    <form onSubmit={handleSubmit} className="space-y-12">
+      <Card className="parchment-card rounded-[2rem] shadow-xl">
+        <CardContent className="pt-8 p-8">
+          <Label htmlFor="guest_name" className="text-primary font-black uppercase tracking-widest text-xs mb-3 block">اسم الطالب</Label>
           <Input 
             id="guest_name" 
             name="guest_name" 
-            placeholder="الاسم الكريم..." 
-            className="bg-background mt-2" 
+            placeholder="ادخلي اسمكِ الكريم هنا..." 
+            className="bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] h-14 rounded-2xl text-lg font-bold focus-visible:ring-primary" 
             defaultValue={answers['guest_name'] || guestName}
             onChange={(e) => handleValueChange('guest_name', e.target.value)}
           />
+          <p className="text-[10px] text-muted-foreground mt-3 font-bold opacity-60">* سيتم تسجيل النتيجة بهذا الاسم في لوحة صدارة المعلمة</p>
         </CardContent>
       </Card>
 
       {questions.map((q, index) => (
-        <Card key={q.id} className="border-t-4 border-t-primary shadow-md">
-          <CardHeader>
-            <CardTitle className="text-xl leading-relaxed font-quran">
-              <span className="text-primary ml-2 font-sans">{index + 1}.</span> 
+        <Card key={q.id} className="parchment-card rounded-[2.5rem] shadow-2xl border-b-8 border-[#d4c3a3]/50 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-[4rem] pointer-events-none" />
+          <CardHeader className="p-8 pb-4">
+            <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground font-black text-xl shadow-lg">
+                    {index + 1}
+                </div>
+                <div className="h-0.5 flex-1 bg-[#d4c3a3]/30 rounded-full" />
+            </div>
+            <CardTitle className="text-2xl leading-relaxed font-black font-quran text-slate-900 dark:text-slate-100">
               {q.type === 'fill_in_blank' && q.text.includes('[...]') ? (
-                <span>
+                <span className="inline-block leading-[3rem]">
                   {q.text.split('[...]').map((part: string, i: number) => (
                     <span key={i}>
                       {part}
@@ -101,8 +108,8 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
                         <input 
                           type="text"
                           name={`question_${q.id}`}
-                          placeholder="..."
-                          className="inline-block w-32 border-b-2 border-primary mx-1 h-8 px-2 bg-primary/5 outline-none text-foreground text-center"
+                          placeholder=".........."
+                          className="inline-block w-40 border-b-4 border-primary/40 mx-2 h-10 px-4 bg-primary/5 outline-none text-primary text-center font-bold transition-all focus:border-primary focus:bg-primary/10 rounded-t-lg"
                           value={answers[q.id] || ''}
                           onChange={(e) => handleValueChange(q.id, e.target.value)}
                           required
@@ -116,26 +123,26 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
               )}
             </CardTitle>
             {q.image_url && (
-              <div className="mt-4 w-full max-w-2xl mx-auto overflow-hidden rounded-md border bg-muted/30 relative h-[300px]">
+              <div className="mt-8 w-full max-w-2xl mx-auto overflow-hidden rounded-3xl border-4 border-[#d4c3a3]/30 bg-white/50 shadow-inner relative h-[350px]">
                 <Image 
                   src={q.image_url} 
                   alt="Question content" 
                   fill
-                  className="object-contain" 
+                  className="object-contain p-4" 
                 />
               </div>
             )}
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-8 pt-4">
             {q.type === 'short_answer' || (q.type === 'fill_in_blank' && !q.text.includes('[...]')) ? (
-              <div className="space-y-2">
-                <Label htmlFor={`q_${q.id}`} className="text-muted-foreground">الإجابة:</Label>
+              <div className="space-y-4">
+                <Label htmlFor={`q_${q.id}`} className="text-primary font-black uppercase tracking-widest text-xs">إجابتكِ المكتوبة:</Label>
                 {q.type === 'short_answer' ? (
                   <Textarea 
                     name={`question_${q.id}`} 
                     id={`q_${q.id}`} 
-                    placeholder="اكتب إجابتك هنا..." 
-                    className="min-h-[100px] text-lg font-quran" 
+                    placeholder="اكتبي إجابتكِ بالتفصيل هنا..." 
+                    className="min-h-[150px] text-xl font-bold font-quran bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] rounded-3xl p-6 focus-visible:ring-primary shadow-inner" 
                     value={answers[q.id] || ''}
                     onChange={(e) => handleValueChange(q.id, e.target.value)}
                   />
@@ -143,26 +150,29 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
                   <Input 
                     name={`question_${q.id}`} 
                     id={`q_${q.id}`} 
-                    placeholder="اكتب الكلمة الناقصة..." 
-                    className="text-lg py-6 font-quran" 
+                    placeholder="اكتبي الكلمة الصحيحة..." 
+                    className="h-16 text-xl font-bold font-quran bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] rounded-2xl px-6 focus-visible:ring-primary shadow-inner" 
                     value={answers[q.id] || ''}
                     onChange={(e) => handleValueChange(q.id, e.target.value)}
                   />
                 )}
               </div>
             ) : q.type === 'fill_in_blank' && q.text.includes('[...]') ? (
-              <p className="text-xs text-muted-foreground italic">املأ الفراغ أعلاه في نص السؤال.</p>
+              <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <p className="text-sm text-primary font-bold">يرجى كتابة الإجابة في الفراغ الموجود داخل نص السؤال أعلاه.</p>
+              </div>
             ) : (
               <RadioGroup 
                 name={`question_${q.id}`} 
-                className="space-y-3"
+                className="grid grid-cols-1 gap-4"
                 value={answers[q.id] || ''}
                 onValueChange={(val) => handleValueChange(q.id, val)}
               >
                 {q.options?.map((opt: { id: string; text: string }) => (
-                  <div key={opt.id} className="flex items-center space-x-3 space-x-reverse rounded-lg border p-4 hover:bg-muted/50 transition-colors cursor-pointer">
-                    <RadioGroupItem value={opt.id} id={`opt_${opt.id}`} />
-                    <Label htmlFor={`opt_${opt.id}`} className="flex-1 cursor-pointer text-lg font-medium pr-2 font-quran">
+                  <div key={opt.id} className={`flex items-center space-x-4 space-x-reverse rounded-[1.5rem] border-2 p-6 transition-all cursor-pointer group/opt ${answers[q.id] === opt.id ? 'bg-primary text-primary-foreground border-primary shadow-lg scale-[1.02]' : 'bg-white/50 dark:bg-black/20 border-[#d4c3a3] hover:border-primary/50 hover:bg-white dark:hover:bg-black/40'}`}>
+                    <RadioGroupItem value={opt.id} id={`opt_${opt.id}`} className={answers[q.id] === opt.id ? 'border-white text-white' : 'border-primary'} />
+                    <Label htmlFor={`opt_${opt.id}`} className="flex-1 cursor-pointer text-xl font-bold pr-3 font-quran leading-relaxed">
                       {opt.text}
                     </Label>
                   </div>
@@ -173,11 +183,16 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
         </Card>
       ))}
 
-      <div className="sticky bottom-4 z-10 p-4 bg-background/80 backdrop-blur-md border rounded-xl shadow-lg flex justify-between items-center">
-        <span className="font-semibold text-muted-foreground font-sans">عدد الأسئلة: {questions.length}</span>
-        <Button type="submit" size="lg" className="px-8 text-lg font-bold" disabled={isPending}>
-          {isPending && <Loader2 className="w-4 h-4 animate-spin ml-2" />}
-          {isPending ? 'جاري التسليم...' : 'تسليم الإجابات'}
+      <div className="sticky bottom-6 z-20 p-6 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-2 border-[#d4c3a3] rounded-[2.5rem] shadow-2xl flex flex-col sm:flex-row justify-between items-center gap-6 max-w-4xl mx-auto">
+        <div className="flex flex-col items-center sm:items-start">
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1">التقدم المحرز</span>
+            <span className="font-black text-slate-900 dark:text-white text-xl">
+                {Object.keys(answers).filter(k => k !== 'guest_name').length} من {questions.length} أسئلة
+            </span>
+        </div>
+        <Button type="submit" size="lg" className="w-full sm:w-auto h-16 px-12 text-xl font-black rounded-2xl shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all gap-3" disabled={isPending}>
+          {isPending ? <Loader2 className="w-6 h-6 animate-spin" /> : <Send className="w-6 h-6 -rotate-90" />}
+          {isPending ? 'جاري الحفظ...' : 'تسليم الاختبار النهائي'}
         </Button>
       </div>
     </form>
