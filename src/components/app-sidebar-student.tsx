@@ -50,10 +50,15 @@ const items = [
   },
 ]
 
+interface Profile {
+  first_name: string;
+  last_name: string;
+}
+
 export function AppSidebarStudent() {
   const router = useRouter()
   const pathname = usePathname()
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -65,11 +70,11 @@ export function AppSidebarStudent() {
           .select('*')
           .eq('id', user.id)
           .single()
-        setProfile(data)
+        setProfile(data as Profile)
       }
     }
     getProfile()
-  }, [])
+  }, [supabase])
 
   return (
     <Sidebar side="right" className="border-l">

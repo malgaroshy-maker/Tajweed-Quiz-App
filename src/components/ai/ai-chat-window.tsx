@@ -26,7 +26,6 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [uploading, setUploading] = useState(false)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(sessionId)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -89,7 +88,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
       if (res.ok) {
         alert('تم حفظ السؤال بنجاح في بنك الأسئلة')
       }
-    } catch (e) {
+    } catch {
       alert('فشل حفظ السؤال')
     }
   }
@@ -188,8 +187,9 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
               })
           }
         }
-    } catch (err: any) {
-        alert(err.message)
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'حدث خطأ غير متوقع'
+        alert(errorMessage)
     } finally {
         setLoading(false)
         setSelectedFile(null)
@@ -230,7 +230,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
         )}
         <div className="flex items-end gap-2 bg-white dark:bg-slate-800 p-2 rounded-2xl border border-primary/20 shadow-sm">
             <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="application/pdf,image/*" className="hidden" />
-            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl shrink-0" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl shrink-0" onClick={() => fileInputRef.current?.click()} disabled={loading}>
                 <FileUp className="w-5 h-5 text-primary" />
             </Button>
             <Textarea 
@@ -245,8 +245,8 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
                     }
                 }}
             />
-            <Button onClick={handleSendMessage} disabled={loading || uploading} className="h-10 w-10 rounded-xl bg-primary shrink-0">
-                {uploading ? <Loader2 className='animate-spin'/> : <Send className="w-5 h-5" /> }
+            <Button onClick={handleSendMessage} disabled={loading} className="h-10 w-10 rounded-xl bg-primary shrink-0">
+                {loading ? <Loader2 className='animate-spin'/> : <Send className="w-5 h-5" /> }
             </Button>
         </div>
       </div>

@@ -21,8 +21,8 @@ async function getGeminiModels(apiKey: string | null) {
     const data = await res.json()
     // Filter to only text generation models
     return (data.models || [])
-      .filter((m: any) => m.supportedGenerationMethods?.includes('generateContent'))
-      .map((m: any) => ({
+      .filter((m: { supportedGenerationMethods?: string[] }) => m.supportedGenerationMethods?.includes('generateContent'))
+      .map((m: { name: string; displayName: string; description: string }) => ({
         id: m.name.replace('models/', ''),
         name: m.displayName,
         description: m.description
@@ -46,14 +46,24 @@ export default async function SettingsPage() {
   const allModels = await getOpenRouterModels()
   const geminiModels = await getGeminiModels(profile?.gemini_api_key)
   
+  interface ModelPricing {
+    prompt: string;
+    completion: string;
+  }
+
+  interface Model {
+    name: string;
+    pricing: ModelPricing;
+  }
+
   // Filter and sort models
   const freeModels = allModels
-    .filter((m: any) => parseFloat(m.pricing?.prompt || '1') === 0 && parseFloat(m.pricing?.completion || '1') === 0)
-    .sort((a: any, b: any) => a.name.localeCompare(b.name))
+    .filter((m: Model) => parseFloat(m.pricing?.prompt || '1') === 0 && parseFloat(m.pricing?.completion || '1') === 0)
+    .sort((a: Model, b: Model) => a.name.localeCompare(b.name))
 
   const paidModels = allModels
-    .filter((m: any) => parseFloat(m.pricing?.prompt || '1') > 0 || parseFloat(m.pricing?.completion || '1') > 0)
-    .sort((a: any, b: any) => a.name.localeCompare(b.name))
+    .filter((m: Model) => parseFloat(m.pricing?.prompt || '1') > 0 || parseFloat(m.pricing?.completion || '1') > 0)
+    .sort((a: Model, b: Model) => a.name.localeCompare(b.name))
 
   return (
     <SettingsPageClient 

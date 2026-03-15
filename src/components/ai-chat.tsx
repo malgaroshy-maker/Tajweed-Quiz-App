@@ -1,17 +1,31 @@
 'use client'
 
-import { useState, useRef, useEffect, Suspense } from 'react'
+import { useState, useRef, useEffect, Suspense, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Bot, User, Send, Loader2, Sparkles, Plus, Copy, Check, Save, FileUp, FileText, X } from 'lucide-react'
+import { Bot, User, Send, Loader2, Sparkles, Save, FileUp, FileText, X } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 
+interface Question {
+  text: string;
+  type: string;
+  options?: { text: string; is_correct: boolean }[];
+  explanation?: string;
+  topic?: string;
+}
+
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  questions?: Question[];
+}
+
 function AIChatContent() {
   const searchParams = useSearchParams()
   const suggestFor = searchParams.get('suggest_quiz_for')
-  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string, questions?: any[] }[]>([
+  const [messages, setMessages] = useState<ChatMessage[]>([
     { role: 'assistant', content: 'السلام عليكم! أنا مساعدكِ الذكي لعلوم التجويد والقرآن. يمكنكِ طرح أي سؤال، أو رفع ملف PDF، أو لصق نص من كتاب وسأساعدكِ في استخراج أسئلة اختبار منه مباشرة.' }
   ])
   const [input, setInput] = useState('')
@@ -23,45 +37,7 @@ function AIChatContent() {
   const supabase = createClient()
   const initialTriggerRef = useRef(false)
 
-  useEffect(() => {
-    async function triggerInitialSuggestion() {
-      if (suggestFor && !initialTriggerRef.current) {
-        initialTriggerRef.current = true
-        setLoading(true)
-        
-        const { data: q } = await supabase.from('questions').select('text').eq('id', suggestFor).single()
-        if (q) {
-          const userMsg = `أريد إنشاء 3 أسئلة مراجعة جديدة تركز على نفس الحكم التجويدي لهذا السؤال: "${q.text}"`
-          setInput(userMsg)
-          handleSendMessage(userMsg)
-        } else {
-          setLoading(false)
-        }
-      }
-    }
-    triggerInitialSuggestion()
-  }, [suggestFor])
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
-
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages, loading])
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      if (file.type !== 'application/pdf') {
-        alert('يرجى رفع ملف PDF فقط')
-        return
-      }
-      setSelectedFile(file)
-    }
-  }
-
-  const parsePDF = async (file: File) => {
+  const parsePDF = useCallback(async (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
     
@@ -77,15 +53,16 @@ function AIChatContent() {
         const textPreview = data.text.slice(0, 15000) 
         setInput(prev => prev + "\n\n[محتوى ملف PDF]:\n" + textPreview)
       }
-    } catch (e) {
+    } catch (err: unknown) {
+      console.error(err)
       alert('فشل في قراءة ملف PDF')
     } finally {
       setUploading(false)
       setSelectedFile(null)
     }
-  }
+  }, [])
 
-  const handleSendMessage = async (msgOverride?: string) => {
+  const handleSendMessage = useCallback(async (msgOverride?: string) => {
     const textToSend = msgOverride || input
     if (!textToSend.trim() && !selectedFile) return
 
@@ -94,7 +71,8 @@ function AIChatContent() {
       return 
     }
 
-    const newMessages = [...messages, { role: 'user' as const, content: textToSend }]
+    const userMsg: ChatMessage = { role: 'user', content: textToSend }
+    const newMessages: ChatMessage[] = [...messages, userMsg]
     setMessages(newMessages)
     setInput('')
     setLoading(true)
@@ -118,7 +96,9 @@ function AIChatContent() {
             const parsed = JSON.parse(jsonMatch[0])
             questions = parsed.questions || []
             content = content.replace(jsonMatch[0], "").trim()
-          } catch (e) {}
+          } catch (e) {
+            console.error("JSON parse error in chat:", e)
+          }
         }
       }
       
@@ -127,14 +107,53 @@ function AIChatContent() {
         content: content || "إليكِ الأسئلة المقترحة:",
         questions: questions
       }])
-    } catch (e) {
+    } catch (err: unknown) {
+      console.error(err)
       setMessages([...newMessages, { role: 'assistant', content: 'عذراً، حدث خطأ أثناء التواصل مع الذكاء الاصطناعي.' }])
     } finally {
       setLoading(false)
     }
+  }, [input, messages, selectedFile, parsePDF])
+
+  useEffect(() => {
+    async function triggerInitialSuggestion() {
+      if (suggestFor && !initialTriggerRef.current) {
+        initialTriggerRef.current = true
+        setLoading(true)
+        
+        const { data: q } = await supabase.from('questions').select('text').eq('id', suggestFor).single()
+        if (q) {
+          const userMsg = `أريد إنشاء 3 أسئلة مراجعة جديدة تركز على نفس الحكم التجويدي لهذا السؤال: "${q.text}"`
+          setInput(userMsg)
+          handleSendMessage(userMsg)
+        } else {
+          setLoading(false)
+        }
+      }
+    }
+    triggerInitialSuggestion()
+  }, [suggestFor, supabase, handleSendMessage])
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [])
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages, loading, scrollToBottom])
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        alert('يرجى رفع ملف PDF فقط')
+        return
+      }
+      setSelectedFile(file)
+    }
   }
 
-  const saveToBank = async (q: any) => {
+  const saveToBank = async (q: Question) => {
     try {
       const res = await fetch('/api/ai/save', {
         method: 'POST',
@@ -144,7 +163,8 @@ function AIChatContent() {
       if (res.ok) {
         alert('تم حفظ السؤال بنجاح في بنك الأسئلة')
       }
-    } catch (e) {
+    } catch (err: unknown) {
+      console.error(err)
       alert('فشل حفظ السؤال')
     }
   }
@@ -188,7 +208,7 @@ function AIChatContent() {
               
               {m.questions && m.questions.length > 0 && (
                 <div className="grid gap-5 mt-2 w-full animate-in zoom-in-95 duration-500 delay-200">
-                  {m.questions.map((q: any, idx: number) => (
+                  {m.questions.map((q, idx) => (
                     <Card key={idx} className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-2 border-primary/10 hover:border-primary/40 transition-all rounded-[2rem] overflow-hidden shadow-2xl group">
                       <CardContent className="p-6 space-y-5">
                         <div className="flex items-center justify-between">
@@ -288,7 +308,7 @@ function AIChatContent() {
           <Button 
             onClick={() => handleSendMessage()} 
             disabled={loading || uploading || (!input.trim() && !selectedFile)}
-            className="w-full h-16 rounded-[2rem] font-black text-xl gap-4 shadow-2xl shadow-primary/30 hover:scale-[1.01] active:scale-[0.99] transition-all"
+            className="w-full h-16 rounded-[2rem] font-black text-xl gap-4 shadow-2xl shadow-primary/30 hover:scale-[1.01] active:scale-0.99 transition-all"
           >
             {selectedFile ? (
               <><Sparkles className="w-7 h-7 animate-pulse" /> استخراج النصوص وتحليلها</>

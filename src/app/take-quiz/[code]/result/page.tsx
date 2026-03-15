@@ -4,7 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CheckCircle2, XCircle, ArrowRight, Trophy, Medal, ListTodo, Sparkles } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ConfettiCelebration } from '@/components/confetti-celebration'
+
+interface DedupedLeaderboardEntry {
+  name: string;
+  score: number;
+  total: number;
+}
 
 export default async function QuizResultPage({
   params,
@@ -16,6 +23,8 @@ export default async function QuizResultPage({
   const resolvedParams = await params
   const resolvedSearch = await searchParams
   const attemptId = resolvedSearch.attempt
+
+  if (!resolvedParams.code) notFound()
 
   if (!attemptId) notFound()
 
@@ -43,10 +52,13 @@ export default async function QuizResultPage({
     .limit(50)
   
   // Dedup leaderboard by student
-  const dedupedLeaderboard: any[] = []
+  const dedupedLeaderboard: DedupedLeaderboardEntry[] = []
   const seenNames = new Set()
-  leaderboard?.forEach(entry => {
-    const profile = Array.isArray(entry.profiles) ? entry.profiles[0] : entry.profiles
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  leaderboard?.forEach((entry: any) => {
+    // ESLint disable since Supabase returns dynamic generic types that are hard to cleanly map without extensive auto-gen types
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const profile: any = Array.isArray(entry.profiles) ? entry.profiles[0] : entry.profiles
     const name = entry.guest_name || (profile ? `${profile.first_name} ${profile.last_name}`.trim() : 'طالب')
     if (!seenNames.has(name)) {
       dedupedLeaderboard.push({ name, score: entry.score, total: entry.total_questions })
@@ -122,11 +134,12 @@ export default async function QuizResultPage({
              </CardContent>
            </Card>
          ) : (
+           // eslint-disable-next-line @typescript-eslint/no-explicit-any
            answers.map((ans: any, idx: number) => {
              const q = ans.questions
-             const options = q?.options as any[] || []
-             const correctOpt = options.find(o => o.is_correct)
-             const selectedOption = options.find(o => o.id === ans.selected_option_id)
+             const options = q?.options as { id: string, text: string, is_correct: boolean }[] || []
+             const correctOpt = options.find((o: { is_correct: boolean }) => o.is_correct)
+             const selectedOption = options.find((o: { id: string }) => o.id === ans.selected_option_id)
 
            return (
              <Card key={ans.id} className={`rounded-2xl border-2 shadow-sm transition-all ${ans.is_correct ? 'border-green-100 bg-white' : 'border-red-100 bg-white'}`}>
@@ -144,8 +157,8 @@ export default async function QuizResultPage({
                       {q.text}
                     </CardTitle>
                     {q.image_url && (
-                      <div className="mt-4 w-full max-w-sm overflow-hidden rounded-xl border-2 border-muted bg-muted/10">
-                        <img src={q.image_url} alt="Question context" className="w-full h-auto max-h-[300px] object-contain" />
+                      <div className="mt-4 w-full max-w-sm overflow-hidden rounded-xl border-2 border-muted bg-muted/10 relative h-[200px]">
+                        <Image src={q.image_url} alt="Question context" fill className="object-contain" />
                       </div>
                     )}
                   </div>

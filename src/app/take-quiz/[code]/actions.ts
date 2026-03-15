@@ -28,7 +28,7 @@ export async function submitQuizAction(quizId: string, shareCode: string, formDa
 
   // 2. Evaluate Score
   let score = 0
-  let evaluatedAnswers = []
+  const evaluatedAnswers = []
 
   for (const q of questions) {
     const submittedValue = formData.get(`question_${q.id}`) as string

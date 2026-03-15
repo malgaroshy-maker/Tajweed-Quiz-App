@@ -1,16 +1,15 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { addQuestion } from '@/app/teacher/quizzes/[id]/question-actions'
-import { ImageIcon, X, Eye, Edit3, Sparkles, Check, Database, Library } from 'lucide-react'
+import { ImageIcon, X, Eye, Edit3, Sparkles, Check, Database } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
-import { ImportFromBankDialog } from '@/app/teacher/quizzes/[id]/import-bank-dialog'
 import imageCompression from 'browser-image-compression'
+import Image from 'next/image'
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
@@ -118,12 +117,12 @@ export function QuestionEditor({ quizId }: { quizId: string }) {
         >
           {imagePreview ? (
             <div className="relative w-full aspect-video rounded-lg overflow-hidden border shadow-inner">
-              <img src={imagePreview} alt="Preview" className="w-full h-full object-contain" />
+              <Image src={imagePreview} alt="Preview" fill className="object-contain" />
               <Button 
                 type="button" 
                 variant="destructive" 
                 size="icon" 
-                className="absolute top-2 right-2 h-8 w-8 rounded-full shadow-lg"
+                className="absolute top-2 right-2 h-8 w-8 rounded-full shadow-lg z-10"
                 onClick={(e) => { e.stopPropagation(); clearImage(); }}
               >
                 <X className="w-4 h-4" />
@@ -342,8 +341,8 @@ export function QuestionEditor({ quizId }: { quizId: string }) {
         <div className="relative space-y-8">
           <div className="flex flex-col items-center text-center space-y-6">
             {imagePreview && (
-              <div className="w-full max-w-sm rounded-md border-2 border-[#d4c3a3]/50 p-1 bg-white shadow-sm overflow-hidden">
-                <img src={imagePreview} alt="Queston Image" className="w-full h-auto object-contain" />
+              <div className="w-full max-w-sm rounded-md border-2 border-[#d4c3a3]/50 p-1 bg-white shadow-sm overflow-hidden relative h-[200px]">
+                <Image src={imagePreview} alt="Queston Image" fill className="object-contain" />
               </div>
             )}
             

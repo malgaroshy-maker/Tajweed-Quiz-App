@@ -8,10 +8,17 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Loader2 } from 'lucide-react'
+import Image from 'next/image'
 
 interface QuizFormProps {
-  quiz: any
-  questions: any[]
+  quiz: { id: string }
+  questions: {
+    id: string;
+    text: string;
+    type: string;
+    image_url?: string;
+    options?: { id: string; text: string }[];
+  }[]
   guestName: string
   submitAction: (formData: FormData) => Promise<void>
 }
@@ -27,7 +34,7 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
     if (saved) {
       try {
         setAnswers(JSON.parse(saved))
-      } catch (e) {
+      } catch {
         console.error('Failed to parse saved progress')
       }
     }
@@ -109,21 +116,13 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
               )}
             </CardTitle>
             {q.image_url && (
-              <div className="mt-4 w-full max-w-2xl mx-auto overflow-hidden rounded-md border bg-muted/30">
-                <img 
+              <div className="mt-4 w-full max-w-2xl mx-auto overflow-hidden rounded-md border bg-muted/30 relative h-[300px]">
+                <Image 
                   src={q.image_url} 
                   alt="Question content" 
-                  className="w-full h-auto max-h-[400px] object-contain cursor-zoom-in" 
-                  onClick={(e) => {
-                    const target = e.currentTarget as HTMLImageElement;
-                    if (target.style.maxHeight === 'none') {
-                      target.style.maxHeight = '400px';
-                    } else {
-                      target.style.maxHeight = 'none';
-                    }
-                  }}
+                  fill
+                  className="object-contain" 
                 />
-                <p className="text-[10px] text-muted-foreground text-center py-1 font-sans">اضغط للتكبير</p>
               </div>
             )}
           </CardHeader>
@@ -160,7 +159,7 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
                 value={answers[q.id] || ''}
                 onValueChange={(val) => handleValueChange(q.id, val)}
               >
-                {q.options?.map((opt: any) => (
+                {q.options?.map((opt: { id: string; text: string }) => (
                   <div key={opt.id} className="flex items-center space-x-3 space-x-reverse rounded-lg border p-4 hover:bg-muted/50 transition-colors cursor-pointer">
                     <RadioGroupItem value={opt.id} id={`opt_${opt.id}`} />
                     <Label htmlFor={`opt_${opt.id}`} className="flex-1 cursor-pointer text-lg font-medium pr-2 font-quran">

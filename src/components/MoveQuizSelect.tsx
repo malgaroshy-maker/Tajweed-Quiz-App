@@ -8,7 +8,8 @@ export function MoveQuizSelect({ quizId, currentFolderId, folders }: { quizId: s
   const [isPending, startTransition] = useTransition()
   const [value, setValue] = useState(currentFolderId || 'null')
 
-  const handleChange = (val: string) => {
+  const handleChange = (val: string | null) => {
+    if (!val) return
     setValue(val)
     startTransition(async () => {
         await moveQuiz(quizId, val === 'null' ? null : val)
@@ -24,7 +25,7 @@ export function MoveQuizSelect({ quizId, currentFolderId, folders }: { quizId: s
   return (
     <Select 
       value={value}
-      onValueChange={handleChange as any}
+      onValueChange={handleChange}
       disabled={isPending}
     >
       <SelectTrigger className="w-[160px] h-9 text-xs">

@@ -10,7 +10,29 @@ import { Settings, Save, Moon, Type } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { saveSettings } from './actions'
 
-export function SettingsPageClient({ profile, freeModels, paidModels, geminiModels }: { profile: any, freeModels: any[], paidModels: any[], geminiModels: any[] }) {
+interface Model {
+  id: string;
+  name: string;
+}
+
+interface Profile {
+  ai_provider?: string;
+  openrouter_api_key?: string;
+  openrouter_model?: string;
+  gemini_api_key?: string;
+  gemini_model?: string;
+}
+
+export function SettingsPageClient({ 
+  profile, 
+  freeModels, 
+  geminiModels 
+}: { 
+  profile: Profile | null, 
+  freeModels: Model[], 
+  paidModels: Model[], 
+  geminiModels: Model[] 
+}) {
   const [provider, setProvider] = useState(profile?.ai_provider || 'openrouter')
   const { theme, setTheme } = useTheme()
 
@@ -84,7 +106,7 @@ export function SettingsPageClient({ profile, freeModels, paidModels, geminiMode
                     </optgroup>
                     {freeModels.length > 0 && (
                       <optgroup label="تحديد نموذج مجاني يدوياً" className="font-bold text-green-600 dark:text-green-400">
-                        {freeModels.map((m: any) => (
+                        {freeModels.map((m) => (
                           m.id !== 'openrouter/free' && (
                             <option key={m.id} value={m.id} className="text-foreground font-normal">
                               {m.name}
@@ -124,7 +146,7 @@ export function SettingsPageClient({ profile, freeModels, paidModels, geminiMode
                     className="flex h-14 w-full rounded-xl border-2 border-muted bg-background px-4 text-lg shadow-sm focus-visible:ring-primary focus-visible:border-primary font-bold"
                   >
                     {geminiModels.length > 0 ? (
-                      geminiModels.map((m: any) => (
+                      geminiModels.map((m) => (
                         <option key={m.id} value={m.id} className="text-foreground">
                           {m.name} ({m.id})
                         </option>

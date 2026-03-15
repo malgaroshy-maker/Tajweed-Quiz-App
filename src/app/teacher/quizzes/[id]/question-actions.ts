@@ -38,7 +38,7 @@ export async function addQuestion(quizId: string, formData: FormData) {
       teacher_id: user.id,
       quiz_id: quizId,
       text,
-      type: type as any,
+      type: type as "multiple_choice" | "true_false" | "short_answer" | "fill_in_blank",
       explanation,
       image_url: imageUrl,
       order_index: nextOrder,
@@ -115,7 +115,7 @@ export async function importQuestionsFromBank(quizId: string, questionIds: strin
 
   for (const q of sourceQuestions) {
     // Insert new question
-    const { data: newQuestion, error: qError } = await supabase
+    const { data: newQuestion } = await supabase
       .from('questions')
       .insert({
         teacher_id: user.id,
@@ -132,7 +132,7 @@ export async function importQuestionsFromBank(quizId: string, questionIds: strin
       .single()
 
     if (newQuestion && q.options) {
-      const optionsToInsert = q.options.map((opt: any) => ({
+      const optionsToInsert = q.options.map((opt: { text: string; is_correct: boolean }) => ({
         question_id: newQuestion.id,
         text: opt.text,
         is_correct: opt.is_correct
@@ -145,7 +145,7 @@ export async function importQuestionsFromBank(quizId: string, questionIds: strin
   return { success: true }
 }
 
-export async function reorderQuestion(questionId: string, direction: 'up' | 'down', formData?: FormData) {
+export async function reorderQuestion(questionId: string, direction: 'up' | 'down') {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 

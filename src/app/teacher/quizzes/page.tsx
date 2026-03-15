@@ -48,7 +48,7 @@ export default async function QuizzesPage() {
                   <div>
                     <div className="font-semibold">{quiz.title}</div>
                     <div className="text-xs text-muted-foreground">
-                      المجلد: {(quiz.folders as any)?.name || 'بدون مجلد'}
+                      المجلد: {(quiz.folders as unknown as { name: string })?.name || 'بدون مجلد'}
                     </div>
                   </div>
                 </Link>
@@ -58,7 +58,7 @@ export default async function QuizzesPage() {
                     {quiz.is_published ? 'منشور' : 'مسودة'}
                   </span>
                   
-                  <form action={deleteQuiz.bind(null, quiz.id, quiz.folder_id) as any}>
+                  <form action={deleteQuiz.bind(null, quiz.id, quiz.folder_id) as unknown as string}>
                     <Button variant="ghost" size="icon" type="submit" className="text-destructive">
                       <Trash2 className="h-4 w-4" />
                     </Button>

@@ -22,10 +22,10 @@ async function parsePdfBase64(base64Data: string): Promise<string> {
     const pdfParser = new PDFParser();
 
     return new Promise((resolve, reject) => {
-        pdfParser.on('pdfParser_dataError', (errData: any) => reject(new Error(String(errData))));
-        pdfParser.on('pdfParser_dataReady', (pdfData: any) => {
-            const extractedText = pdfData.Pages.map((page: any) => 
-                page.Texts.map((textItem: any) => {
+        pdfParser.on('pdfParser_dataError', (errData: Error | { parserError: Error }) => reject(new Error(String(errData))));
+        pdfParser.on('pdfParser_dataReady', (pdfData: { Pages: { Texts: { R: { T: string }[] }[] }[] }) => {
+            const extractedText = pdfData.Pages.map(page => 
+                page.Texts.map(textItem => {
                     let text = decodeURIComponent(textItem.R[0].T);
                     // Basic heuristic to reverse RTL strings (like Arabic) that pdf2json extracts backwards
                     if (/[\u0600-\u06FF]/.test(text)) {
@@ -119,7 +119,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'OpenRouter API Key is missing.' }, { status: 400 })
       }
       
-      let finalMessages = [...messages];
+      const finalMessages = [...messages];
       
       // If there's a file, we must extract text manually because OpenRouter doesn't natively support files (mostly)
       if (file) {

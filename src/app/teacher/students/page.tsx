@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, BookOpen, TrendingUp } from 'lucide-react'
+import { Users } from 'lucide-react'
 
 export default async function StudentsPage() {
   const supabase = await createClient()
@@ -27,11 +27,20 @@ export default async function StudentsPage() {
     .eq('quizzes.teacher_id', user.id)
     .not('student_id', 'is', null)
 
+  interface StudentStat {
+    name: string;
+    totalAttempts: number;
+    totalScore: number;
+    totalQuestions: number;
+  }
+
   // Aggregate student stats
-  const studentStats: Record<string, any> = {}
+  const studentStats: Record<string, StudentStat> = {}
   
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   attempts?.forEach((attempt: any) => {
-    const student = Array.isArray(attempt.profiles) ? attempt.profiles[0] : attempt.profiles
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const student: any = Array.isArray(attempt.profiles) ? attempt.profiles[0] : attempt.profiles
     if (!student) return
     const id = student.id
     if (!studentStats[id]) {

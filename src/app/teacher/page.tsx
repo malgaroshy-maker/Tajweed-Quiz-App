@@ -4,10 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { 
   BookOpen, 
   FolderOpen, 
-  Users, 
-  TrendingUp, 
-  Activity, 
-  BarChart3, 
   Sparkles,
   ArrowRight,
   Plus,

@@ -1,8 +1,8 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { History, Eye, ChevronRight } from 'lucide-react'
+import { Eye, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function StudentHistoryPage() {

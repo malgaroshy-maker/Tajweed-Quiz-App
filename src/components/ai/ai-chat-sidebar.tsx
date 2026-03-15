@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Plus, MessageSquare, Loader2, Trash2, Edit2, Check, X } from 'lucide-react'
+import { useEffect, useState, useCallback } from 'react'
+import { Plus, MessageSquare, Loader2, Trash2, Edit2, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -15,19 +15,26 @@ export function AIChatSidebar({ currentSessionId, onNewChat }: { currentSessionI
   const supabase = createClient()
   const router = useRouter()
 
-  const fetchSessions = async () => {
-    setLoading(true)
-    const { data } = await supabase
+  const fetchSessions = useCallback(async () => {
+    const supabaseClient = createClient()
+    const { data } = await supabaseClient
       .from('ai_chat_sessions')
       .select('id, title, updated_at')
       .order('updated_at', { ascending: false })
     if (data) setSessions(data)
     setLoading(false)
-  }
+  }, [])
 
   useEffect(() => {
-    fetchSessions()
-  }, [supabase])
+    let isMounted = true;
+    const load = async () => {
+      if (isMounted) {
+        await fetchSessions();
+      }
+    }
+    load();
+    return () => { isMounted = false }
+  }, [fetchSessions])
 
   const deleteSession = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation()

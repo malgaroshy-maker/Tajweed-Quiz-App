@@ -17,15 +17,15 @@ export async function POST(req: Request) {
 
     // Promisify the parsing process
     const text: string = await new Promise((resolve, reject) => {
-      pdfParser.on('pdfParser_dataError', (errData: any) => {
+      pdfParser.on('pdfParser_dataError', (errData: Error | { parserError: Error }) => {
         console.error('PDF Parser error:', errData)
         reject(new Error(String(errData)));
       });
 
-      pdfParser.on('pdfParser_dataReady', (pdfData: any) => {
+      pdfParser.on('pdfParser_dataReady', (pdfData: { Pages: { Texts: { R: { T: string }[] }[] }[] }) => {
         // Extract text from the parsed JSON structure
-        const extractedText = pdfData.Pages.map((page: any) => 
-          page.Texts.map((textItem: any) => decodeURIComponent(textItem.R[0].T)).join(' ')
+        const extractedText = pdfData.Pages.map(page => 
+          page.Texts.map(textItem => decodeURIComponent(textItem.R[0].T)).join(' ')
         ).join('\n');
         
         resolve(extractedText);

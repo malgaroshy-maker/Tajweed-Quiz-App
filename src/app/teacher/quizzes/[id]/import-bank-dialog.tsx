@@ -15,11 +15,18 @@ import { Library, Search, Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { getBankQuestions, importQuestionsFromBank } from './question-actions'
 
+interface BankQuestion {
+  id: string;
+  text: string;
+  type: string;
+  image_url?: string;
+}
+
 export function ImportFromBankDialog({ quizId }: { quizId: string }) {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [importing, setImporting] = useState(false)
-  const [questions, setQuestions] = useState<any[]>([])
+  const [questions, setQuestions] = useState<BankQuestion[]>([])
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<string[]>([])
 

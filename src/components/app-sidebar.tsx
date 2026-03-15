@@ -10,7 +10,6 @@ import {
   Settings,
   BarChart2,
   Database,
-  BadgeCheck,
   Heart,
   Library,
   Users
@@ -22,7 +21,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -81,10 +79,15 @@ const items = [
   },
 ]
 
+interface Profile {
+  first_name: string;
+  last_name: string;
+}
+
 export function AppSidebar() {
   const router = useRouter()
   const pathname = usePathname()
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -96,11 +99,11 @@ export function AppSidebar() {
           .select('*')
           .eq('id', user.id)
           .single()
-        setProfile(data)
+        setProfile(data as Profile)
       }
     }
     getProfile()
-  }, [])
+  }, [supabase])
 
   return (
     <Sidebar side="right" className="border-l bg-primary text-white shadow-2xl z-20">

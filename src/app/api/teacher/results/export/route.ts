@@ -42,7 +42,8 @@ export async function GET() {
 
     // Handle commas in names or titles
     const safeName = `"${studentName.replace(/"/g, '""')}"`
-    const safeTitle = `"${(attempt.quizzes as any)?.title.replace(/"/g, '""') || 'غير معروف'}"`
+    const quizTitle = (attempt.quizzes as unknown as { title: string })?.title || 'غير معروف'
+    const safeTitle = `"${quizTitle.replace(/"/g, '""')}"`
 
     return [
       safeName,

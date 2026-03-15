@@ -13,11 +13,12 @@ export function ConfettiCelebration({ score, total }: { score: number, total: nu
 
       const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min
 
-      const interval: any = setInterval(function() {
+      const interval = setInterval(function() {
         const timeLeft = animationEnd - Date.now()
 
         if (timeLeft <= 0) {
-          return clearInterval(interval)
+          clearInterval(interval)
+          return
         }
 
         const particleCount = 50 * (timeLeft / duration)

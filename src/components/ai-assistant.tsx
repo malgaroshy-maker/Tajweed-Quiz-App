@@ -59,8 +59,9 @@ export function AIAssistant({ quizId }: { quizId: string }) {
       setSuccess(true)
       router.refresh()
       setTopic('')
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'حدث خطأ غير متوقع'
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }

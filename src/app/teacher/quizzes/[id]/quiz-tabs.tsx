@@ -8,7 +8,7 @@ import { ImportFromBankDialog } from './import-bank-dialog'
 import { QuestionEditor } from '@/components/question-editor'
 import { AIAssistantWrapper } from '@/components/ai-assistant-wrapper'
 
-export function QuizTabs({ quizId, questions, children }: { quizId: string, questions: any[], children: React.ReactNode }) {
+export function QuizTabs({ quizId, questions, children }: { quizId: string, questions: unknown[], children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState('questions')
 
   return (

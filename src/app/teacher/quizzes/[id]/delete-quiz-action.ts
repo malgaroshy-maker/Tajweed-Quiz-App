@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-export async function deleteQuiz(quizId: string, folderId: string | null, formData?: FormData) {
+export async function deleteQuiz(quizId: string, folderId: string | null) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 

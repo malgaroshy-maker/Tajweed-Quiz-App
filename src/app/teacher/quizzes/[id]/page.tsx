@@ -1,17 +1,14 @@
 import { QuizTabs } from './quiz-tabs'
-import { QuestionEditor } from '@/components/question-editor'
-import { AIAssistantWrapper } from '@/components/ai-assistant-wrapper'
-import { Trash2, ArrowUp, ArrowDown, Edit3, ImageIcon, X, Sparkles, PlusCircle, ListTodo } from 'lucide-react'
+import { Trash2, ArrowUp, ArrowDown } from 'lucide-react'
 import { EditQuestionDialog } from './edit-question-dialog'
-import { ImportFromBankDialog } from './import-bank-dialog'
 import { deleteQuestion } from './delete-question-action'
 import { reorderQuestion } from './question-actions'
 import { Button } from '@/components/ui/button'
 import { publishQuiz, unpublishQuiz } from '../actions'
 import { deleteQuiz } from './delete-quiz-action'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
-import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Image from 'next/image'
 
 export default async function QuizEditorPage({
   params,
@@ -49,14 +46,14 @@ export default async function QuizEditorPage({
           {quiz.description && <p className="text-sm text-muted-foreground mt-1 font-medium line-clamp-1">{quiz.description}</p>}
         </div>
         <div className="flex items-center gap-3">
-          {quiz.is_published ? (
+                  {quiz.is_published ? (
             <div className="flex flex-col items-end">
               <span className="text-[10px] font-black uppercase tracking-widest text-green-600 mb-1">منشور الآن</span>
               <div className="flex gap-2">
                 <span className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-xs font-bold border border-green-200">
                   {quiz.share_code}
                 </span>
-                <form action={unpublishQuiz.bind(null, quiz.id) as any}>
+                <form action={unpublishQuiz.bind(null, quiz.id) as unknown as string}>
                   <Button variant="outline" size="sm" type="submit" className="h-8 rounded-lg font-bold">إيقاف</Button>
                 </form>
               </div>
@@ -65,10 +62,10 @@ export default async function QuizEditorPage({
             <div className="flex flex-col items-end w-full sm:w-auto">
               <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">مسودة غير منشورة</span>
               <div className="flex gap-2 w-full">
-                <form action={publishQuiz.bind(null, quiz.id) as any} className="flex-1 sm:flex-none">
+                <form action={publishQuiz.bind(null, quiz.id) as unknown as string} className="flex-1 sm:flex-none">
                   <Button type="submit" size="sm" className="h-9 w-full rounded-xl font-bold shadow-md">نشر الاختبار</Button>
                 </form>
-                <form action={deleteQuiz.bind(null, quiz.id, quiz.folder_id) as any}>
+                <form action={deleteQuiz.bind(null, quiz.id, quiz.folder_id) as unknown as string}>
                   <Button variant="destructive" size="icon" type="submit" className="h-9 w-9 rounded-xl shadow-md">
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -95,20 +92,20 @@ export default async function QuizEditorPage({
                   <p className="font-bold text-lg leading-relaxed font-quran">{q.text}</p>
                   
                   {q.image_url && (
-                    <div className="mt-4 w-full max-w-sm aspect-video rounded-xl overflow-hidden border-2 border-muted bg-muted/30">
-                      <img src={q.image_url} alt="Question" className="w-full h-full object-contain" />
+                    <div className="mt-4 w-full max-w-sm aspect-video rounded-xl overflow-hidden border-2 border-muted bg-muted/30 relative">
+                      <Image src={q.image_url} alt="Question" fill className="object-contain" />
                     </div>
                   )}
                 </div>
                 
                 <div className="flex flex-col gap-2 shrink-0">
                   <div className="flex gap-1 bg-muted/50 p-1 rounded-lg">
-                    <form action={reorderQuestion.bind(null, q.id, 'up') as any}>
+                    <form action={reorderQuestion.bind(null, q.id, 'up') as unknown as string}>
                       <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" disabled={idx === 0}>
                         <ArrowUp className="w-4 h-4" />
                       </Button>
                     </form>
-                    <form action={reorderQuestion.bind(null, q.id, 'down') as any}>
+                    <form action={reorderQuestion.bind(null, q.id, 'down') as unknown as string}>
                       <Button variant="ghost" size="icon" className="h-8 w-8 rounded-md" disabled={idx === (questions?.length || 0) - 1}>
                         <ArrowDown className="w-4 h-4" />
                       </Button>
@@ -116,7 +113,7 @@ export default async function QuizEditorPage({
                   </div>
                   <div className="flex gap-1">
                     <EditQuestionDialog question={q} />
-                    <form action={deleteQuestion.bind(null, q.id, quiz.id) as any}>
+                    <form action={deleteQuestion.bind(null, q.id, quiz.id) as unknown as string}>
                       <Button variant="ghost" size="icon" type="submit" className="h-9 w-9 text-destructive hover:bg-destructive/10 rounded-xl">
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -127,7 +124,7 @@ export default async function QuizEditorPage({
 
               {q.options && q.options.length > 0 && (
                 <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {q.options.map((opt: any) => (
+                  {q.options.map((opt: { id: string; is_correct: boolean; text: string }) => (
                     <div key={opt.id} className={`p-3 rounded-xl border-2 text-sm font-bold flex items-center gap-2 ${opt.is_correct ? 'bg-primary/5 border-primary/20 text-primary' : 'bg-muted/20 border-transparent text-muted-foreground'}`}>
                       <div className={`w-2 h-2 rounded-full ${opt.is_correct ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
                       {opt.text}

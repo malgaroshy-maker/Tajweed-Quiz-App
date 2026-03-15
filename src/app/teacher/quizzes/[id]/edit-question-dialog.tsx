@@ -10,7 +10,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Edit2, Plus, Trash2 } from 'lucide-react'
 import { updateQuestion } from '@/app/teacher/quizzes/[id]/update-question-action'
 
-export function EditQuestionDialog({ question }: { question: any }) {
+interface Option {
+  id: string | number;
+  text: string;
+  is_correct: boolean;
+}
+
+interface Question {
+  id: string;
+  quiz_id: string;
+  type: string;
+  text: string;
+  topic?: string;
+  explanation?: string;
+  options?: Option[];
+}
+
+export function EditQuestionDialog({ question }: { question: Question }) {
   const [open, setOpen] = useState(false)
   const [type, setType] = useState(question.type)
   const [options, setOptions] = useState(question.options || [])
@@ -29,12 +45,12 @@ export function EditQuestionDialog({ question }: { question: any }) {
     setOptions([...options, { id: Math.random(), text: '', is_correct: false }])
   }
 
-  const removeOption = (id: any) => {
-    setOptions(options.filter((o: any) => o.id !== id))
+  const removeOption = (id: string | number) => {
+    setOptions(options.filter((o: Option) => o.id !== id))
   }
 
-  const updateOption = (id: any, field: string, value: any) => {
-    setOptions(options.map((o: any) => o.id === id ? { ...o, [field]: value } : o))
+  const updateOption = (id: string | number, field: string, value: string | boolean) => {
+    setOptions(options.map((o: Option) => o.id === id ? { ...o, [field]: value } : o))
   }
 
   return (
@@ -75,10 +91,10 @@ export function EditQuestionDialog({ question }: { question: any }) {
           {type === 'multiple_choice' && (
             <div className="space-y-4 border-t pt-4">
               <Label>الخيارات</Label>
-              {options.map((opt: any, i: number) => (
+              {options.map((opt: Option, i: number) => (
                 <div key={opt.id} className="flex items-center gap-2">
                   <input type="radio" name="correct_option" checked={opt.is_correct} onChange={() => {
-                    setOptions(options.map((o: any, idx: number) => ({ ...o, is_correct: idx === i })))
+                    setOptions(options.map((o: Option, idx: number) => ({ ...o, is_correct: idx === i })))
                   }} className="w-4 h-4" />
                   <Input value={opt.text} onChange={(e) => updateOption(opt.id, 'text', e.target.value)} required />
                   <Button variant="ghost" size="icon" onClick={() => removeOption(opt.id)} type="button"><Trash2 className="h-4 w-4 text-destructive" /></Button>
@@ -93,10 +109,10 @@ export function EditQuestionDialog({ question }: { question: any }) {
               <Label>الإجابة الصحيحة</Label>
               <div className="flex items-center gap-4">
                 <label className="flex items-center gap-2">
-                  <input type="radio" name="correct_option" value="true" defaultChecked={options.find((o:any) => o.text === 'صح')?.is_correct} className="w-4 h-4" /> صح
+                  <input type="radio" name="correct_option" value="true" defaultChecked={options.find((o: Option) => o.text === 'صح')?.is_correct} className="w-4 h-4" /> صح
                 </label>
                 <label className="flex items-center gap-2">
-                  <input type="radio" name="correct_option" value="false" defaultChecked={options.find((o:any) => o.text === 'خطأ')?.is_correct} className="w-4 h-4" /> خطأ
+                  <input type="radio" name="correct_option" value="false" defaultChecked={options.find((o: Option) => o.text === 'خطأ')?.is_correct} className="w-4 h-4" /> خطأ
                 </label>
               </div>
             </div>
@@ -108,7 +124,7 @@ export function EditQuestionDialog({ question }: { question: any }) {
               <Input 
                 id="fill_answer" 
                 name="fill_answer" 
-                defaultValue={options.find((o: any) => o.is_correct)?.text || ''} 
+                defaultValue={options.find((o: Option) => o.is_correct)?.text || ''} 
                 required 
               />
             </div>

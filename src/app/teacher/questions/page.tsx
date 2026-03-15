@@ -55,7 +55,7 @@ export default async function QuestionBankPage({ searchParams }: { searchParams:
         {questions?.length === 0 ? (
           <p className="text-muted-foreground">لا توجد أسئلة تطابق المعايير.</p>
         ) : (
-          questions?.map((q: any) => (
+          questions?.map((q) => (
             <Card key={q.id}>
               <CardContent className="p-4 flex flex-col gap-2">
                 <div className="flex justify-between items-start">
@@ -66,8 +66,9 @@ export default async function QuestionBankPage({ searchParams }: { searchParams:
                     </span>
                   </div>
                   <div className="flex gap-2 shrink-0">
-                    <EditQuestionDialog question={q} />
-                    <form action={deleteQuestion.bind(null, q.id, q.quiz_id || 'bank')}>
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                    <EditQuestionDialog question={q as any} />
+                    <form action={deleteQuestion.bind(null, q.id, q.quiz_id || 'bank') as unknown as string}>
                       <button type="submit" className="text-destructive hover:bg-destructive/10 p-2 rounded-md transition-colors w-8 h-8 flex items-center justify-center">
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -77,7 +78,7 @@ export default async function QuestionBankPage({ searchParams }: { searchParams:
                 {q.options && q.options.length > 0 && (
                   <div className="text-sm mt-2 p-2 bg-muted rounded">
                     <span className="font-semibold text-green-700">الإجابة الصحيحة: </span>
-                    {q.options.find((o: any) => o.is_correct)?.text || 'غير محددة'}
+                    {q.options.find((o: { is_correct: boolean; text: string }) => o.is_correct)?.text || 'غير محددة'}
                   </div>
                 )}
               </CardContent>

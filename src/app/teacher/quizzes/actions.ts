@@ -12,7 +12,7 @@ function generateShortCode() {
   return code
 }
 
-export async function publishQuiz(quizId: string, formData?: FormData) {
+export async function publishQuiz(quizId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -21,23 +21,22 @@ export async function publishQuiz(quizId: string, formData?: FormData) {
   const shortCode = generateShortCode()
 
   // Attempt to publish. Unique constraint on share_code is active, if it fails, regenerate (simplistic handling for MVP)
-  const { data, error } = await supabase
+  await supabase
     .from('quizzes')
     .update({ is_published: true, share_code: shortCode })
     .eq('id', quizId)
     .eq('teacher_id', user.id)
-    .select()
 
   revalidatePath(`/teacher/quizzes/${quizId}`)
 }
 
-export async function unpublishQuiz(quizId: string, formData?: FormData) {
+export async function unpublishQuiz(quizId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) return
 
-  const { error } = await supabase
+  await supabase
     .from('quizzes')
     .update({ is_published: false, share_code: null })
     .eq('id', quizId)

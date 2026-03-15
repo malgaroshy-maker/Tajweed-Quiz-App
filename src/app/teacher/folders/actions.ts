@@ -12,7 +12,7 @@ export async function createFolder(formData: FormData) {
   const name = formData.get('name') as string
   const parent_id = formData.get('parent_id') as string | null
 
-  const { error } = await supabase
+  await supabase
     .from('folders')
     .insert({ teacher_id: user.id, name, parent_id })
 
@@ -21,7 +21,7 @@ export async function createFolder(formData: FormData) {
 
 export async function deleteFolder(id: string) {
   const supabase = await createClient()
-  const { error } = await supabase.from('folders').delete().eq('id', id)
+  await supabase.from('folders').delete().eq('id', id)
   
   revalidatePath('/teacher/folders')
 }

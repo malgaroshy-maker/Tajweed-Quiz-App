@@ -3,7 +3,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function deleteQuestion(questionId: string, quizId: string, formData?: FormData) {
+export async function deleteQuestion(questionId: string, quizId: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
