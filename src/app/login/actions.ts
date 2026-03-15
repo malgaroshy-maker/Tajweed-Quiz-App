@@ -37,7 +37,6 @@ export async function login(formData: FormData) {
 
 export async function signup(formData: FormData) {
   const supabase = await createClient()
-  const adminSupabase = await createAdminClient()
 
   const email = formData.get('email') as string
   const password = formData.get('password') as string
@@ -47,6 +46,7 @@ export async function signup(formData: FormData) {
 
   let role = 'student'
   if (invitation_code) {
+    const adminSupabase = await createAdminClient()
     const { data: codeData } = await adminSupabase
         .from('invitation_codes')
         .select('used')
@@ -56,13 +56,7 @@ export async function signup(formData: FormData) {
     if (codeData && !codeData.used) {
         role = 'teacher'
     } else {
-        // If code is provided but invalid/used, we should probably stop here
-        // but to maintain original flow we'll just continue as student.
-        // Actually, if a user puts a code and it fails, it's confusing if they just become a student.
-        // Let's add a small error redirect.
-        if (invitation_code) {
-            return redirect('/login?error=كود الدعوة غير صالح أو مستخدم مسبقاً')
-        }
+        return redirect('/login?error=كود الدعوة غير صالح أو مستخدم مسبقاً')
     }
   }
 
@@ -83,6 +77,7 @@ export async function signup(formData: FormData) {
   }
 
   if (data.user && role === 'teacher' && invitation_code) {
+    const adminSupabase = await createAdminClient()
     await adminSupabase.from('invitation_codes').update({ used: true }).eq('code', invitation_code)
   }
 
