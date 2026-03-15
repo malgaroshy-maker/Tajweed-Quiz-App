@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-const PDFParser = require('pdf2json')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const PDFParser = require('pdf2json');
 
 export async function POST(req: Request) {
   try {
@@ -12,18 +13,19 @@ export async function POST(req: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer())
     
+    // Create an instance
     const pdfParser = new PDFParser();
 
     return new Promise((resolve) => {
-      pdfParser.on('pdfParser_dataError', (errData) => {
+      pdfParser.on('pdfParser_dataError', (errData: any) => {
         console.error('PDF Parser error:', errData)
         resolve(NextResponse.json({ error: 'Failed to parse PDF', details: String(errData) }, { status: 500 }));
       });
 
-      pdfParser.on('pdfParser_dataReady', (pdfData) => {
+      pdfParser.on('pdfParser_dataReady', (pdfData: any) => {
         // Extract text from the parsed JSON structure
         const text = pdfData.Pages.map((page: any) => 
-          page.Texts.map((text: any) => decodeURIComponent(text.R[0].T)).join(' ')
+          page.Texts.map((textItem: any) => decodeURIComponent(textItem.R[0].T)).join(' ')
         ).join('\n');
         
         resolve(NextResponse.json({ text }));
