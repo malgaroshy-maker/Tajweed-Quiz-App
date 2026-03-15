@@ -29,7 +29,6 @@
 - [x] Create Student Dashboard.
 - [x] Build Guest access flow.
 - [x] Build Quiz Taking UI with randomization.
-- [x] **Offline Sync:** Implement local storage auto-save for quiz progress.
 - [x] Ensure all Quranic content uses `.font-quran` class for Uthmani font.
 
 ## Phase 6: Submissions & Analytics (Refining)
@@ -46,10 +45,9 @@
 - [x] **Tajweed Template:** Create specialized MCQ UI for Tajweed rules (via topics and custom types).
 - [x] **Question Ordering:** Implement reordering logic (drag & drop or index-based).
 
-## Phase 8: Polish & PWA Optimization
-- [x] Initial `next-pwa` configuration.
-- [x] **PWA Assets:** Generate and link real icons (via manifest.json).
-- [x] **Offline Resilience:** Configure service worker caching for critical routes (via next-pwa and local progress).
+## Phase 8: Polish & Production Build Stabilization
+- [-] **PWA Assets:** Skipped due to Turbopack / Vercel navigation instability.
+- [-] **Offline Resilience:** Removed service worker caching. Focusing purely on standard online Next.js delivery.
 - [x] Final UI/UX review for "extremely simple" design and accessibility.
 
 ## Phase 9: UI/UX Refinement (Stitch Design Integration)
@@ -72,5 +70,10 @@
 ## Phase 12: Hardening & Gamification
 - [x] **Student Achievement:** Add "Lifetime Points" and "Achievement Medals" to student dashboard.
 - [x] **Quiz Leaderboards:** Implement a feature for students to see their rank within a quiz (optional toggle for teachers).
-- [ ] **Confetti Celebration:** Add visual reward animations on quiz completion.
-- [ ] **PWA Audit:** Ensure instant offline loading for Uthmani fonts and manuscript assets.
+- [x] **Confetti Celebration:** Add visual reward animations on quiz completion.
+- [-] **PWA Audit:** Skipped.
+
+## Phase 13: QA & Hardening (Current Focus)
+- [ ] Systematically resolve all ESLint warnings (specifically `any` types and unused variables).
+- [ ] Monitor Vercel build logs for PDF parser dynamic import stability.
+- [ ] Perform a visual QA pass on 'Question Bank' and 'Teacher Dashboard' padding and mobile responsiveness.

@@ -31,6 +31,7 @@ Students (ages 10–25+) who benefit from a beautiful, clear, and gamified learn
 
 ### 2. AI Chat Assistant
 - **Content-to-Quiz:** Conversational interface where teachers can paste content and chat with the AI to extract Tajweed questions.
+- **File Parsing:** Native PDF/Image parsing support with Arabic RTL extraction for seamless document analysis.
 - **Smart Saving:** Direct buttons to save AI suggestions to the Question Bank.
 
 ### 3. Quiz Creation & Question Bank
@@ -41,19 +42,16 @@ Students (ages 10–25+) who benefit from a beautiful, clear, and gamified learn
 ### 4. Student Experience
 - **Gamified Portal:** Achievement summary (Lifetime points) and quiz leaderboards.
 - **Manuscript Style:** Beautiful, authentic presentation of Quranic content.
-- **Offline Resilience:** Resilient PWA support for reliable loading of fonts and assets.
 
 ---
 
 ## Technical Stack
 - **Frontend:** Next.js 15, Tailwind CSS (Inter + Tajawal fonts).
 - **Backend:** Supabase (Auth, DB, Storage).
-- **AI:** OpenRouter (Gemma/Llama/Gemini).
-- **PWA:** `next-pwa` for mobile-native behavior.
+- **AI:** OpenRouter (Gemma/Llama) & Google Gemini (Native API).
 
 ---
 
 ## Success Metrics
 - Teacher productivity (AI-assisted question generation speed).
 - Student engagement (Quiz completion and leaderboard participation).
-- PWA reliability (Offline load time).
