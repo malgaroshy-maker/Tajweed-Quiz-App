@@ -56,121 +56,122 @@ export default async function TeacherResultsPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="border-none shadow-xl shadow-primary/5 rounded-[2rem] bg-white dark:bg-slate-900 overflow-hidden relative group transition-all hover:scale-[1.02]">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-bl-[3rem]" />
-            <CardContent className="p-8 flex items-center gap-6">
-                <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-sm border border-blue-100">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <Card className="parchment-card border-none shadow-xl rounded-[2.5rem] overflow-hidden relative group transition-premium hover:scale-[1.05]">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-bl-[4rem] pointer-events-none" />
+            <CardContent className="p-10 flex items-center gap-8">
+                <div className="w-16 h-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg transition-premium group-hover:rotate-12">
                     <Users className="w-8 h-8" />
                 </div>
                 <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">إجمالي المحاولات</p>
-                    <p className="text-4xl font-black text-slate-900 dark:text-white">{totalAttempts}</p>
+                    <p className="text-[10px] font-black text-blue-600/60 uppercase tracking-[0.2em] mb-2">إجمالي المحاولات</p>
+                    <p className="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{totalAttempts}</p>
                 </div>
             </CardContent>
         </Card>
 
-        <Card className="border-none shadow-xl shadow-primary/5 rounded-[2rem] bg-white dark:bg-slate-900 overflow-hidden relative group transition-all hover:scale-[1.02]">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-green-500/5 rounded-bl-[3rem]" />
-            <CardContent className="p-8 flex items-center gap-6">
-                <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shadow-sm border border-green-100">
+        <Card className="parchment-card border-none shadow-xl rounded-[2.5rem] overflow-hidden relative group transition-premium hover:scale-[1.05]">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-bl-[4rem] pointer-events-none" />
+            <CardContent className="p-10 flex items-center gap-8">
+                <div className="w-16 h-16 rounded-2xl bg-green-600 text-white flex items-center justify-center shadow-lg transition-premium group-hover:rotate-12">
                     <BarChart3 className="w-8 h-8" />
                 </div>
                 <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">متوسط الدرجات</p>
-                    <p className="text-4xl font-black text-slate-900 dark:text-white">{averageScore}%</p>
+                    <p className="text-[10px] font-black text-green-600/60 uppercase tracking-[0.2em] mb-2">متوسط الدرجات</p>
+                    <p className="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{averageScore}%</p>
                 </div>
             </CardContent>
         </Card>
 
-        <Card className="border-none shadow-xl shadow-primary/5 rounded-[2rem] bg-white dark:bg-slate-900 overflow-hidden relative group transition-all hover:scale-[1.02]">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-bl-[3rem]" />
-            <CardContent className="p-8 flex items-center gap-6">
-                <div className="w-16 h-16 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 shadow-sm border border-purple-100">
+        <Card className="parchment-card border-none shadow-xl rounded-[2.5rem] overflow-hidden relative group transition-premium hover:scale-[1.05]">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-bl-[4rem] pointer-events-none" />
+            <CardContent className="p-10 flex items-center gap-8">
+                <div className="w-16 h-16 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-lg transition-premium group-hover:rotate-12">
                     <CheckCircle className="w-8 h-8" />
                 </div>
                 <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">نسبة النجاح</p>
-                    <p className="text-4xl font-black text-slate-900 dark:text-white">{passingRate}%</p>
+                    <p className="text-[10px] font-black text-purple-600/60 uppercase tracking-[0.2em] mb-2">نسبة النجاح</p>
+                    <p className="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{passingRate}%</p>
                 </div>
             </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
-            <Card className="border-none shadow-xl shadow-primary/5 rounded-[2.5rem] bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm overflow-hidden">
-                <CardHeader className="p-8 pb-4">
-                    <CardTitle className="text-2xl font-black text-slate-900 dark:text-white">سجل المحاولات</CardTitle>
+      <div className="grid gap-10 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-8">
+            <Card className="parchment-card border-none shadow-2xl rounded-[3rem] overflow-hidden">
+                <CardHeader className="p-10 pb-4">
+                    <CardTitle className="text-3xl font-black text-slate-900 dark:text-white">سجل المحاولات التفصيلي</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                     {attemptsError ? (
-                        <div className="p-12 text-center text-red-500 font-bold">حدث خطأ أثناء تحميل البيانات.</div>
+                        <div className="p-20 text-center text-red-500 font-black text-xl italic">حدث خطأ أثناء تحميل البيانات.</div>
                     ) : !attempts || attempts.length === 0 ? (
-                        <div className="p-12 text-center text-muted-foreground font-bold">لا توجد محاولات مسجلة بعد.</div>
+                        <div className="p-20 text-center text-muted-foreground font-black text-xl italic">لا توجد محاولات مسجلة بعد.</div>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="w-full text-right">
+                            <table className="w-full text-right border-collapse">
                                 <thead>
-                                    <tr className="bg-muted/30 border-y border-muted/50">
-                                        <th className="py-5 px-8 text-[10px] font-black uppercase tracking-widest text-slate-400">الطالب</th>
-                                        <th className="py-5 px-4 text-[10px] font-black uppercase tracking-widest text-slate-400">الاختبار</th>
-                                        <th className="py-5 px-4 text-[10px] font-black uppercase tracking-widest text-slate-400">النتيجة</th>
-                                        <th className="py-5 px-4 text-[10px] font-black uppercase tracking-widest text-slate-400">التاريخ</th>
-                                        <th className="py-5 px-8 text-center text-[10px] font-black uppercase tracking-widest text-slate-400">إجراء</th>
+                                    <tr className="bg-primary/5 border-y border-primary/10">
+                                        <th className="py-6 px-10 text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">الطالبة</th>
+                                        <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">الاختبار</th>
+                                        <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">النتيجة</th>
+                                        <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">التاريخ والوقت</th>
+                                        <th className="py-6 px-10 text-center text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">إجراء</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-muted/50">
+                                <tbody className="divide-y divide-[#d4c3a3]/20">
                                     {attempts.map((attempt) => {
                                         const studentName = attempt.guest_name 
                                             ? attempt.guest_name
                                             : attempt.profiles 
                                                 ? `${attempt.profiles.first_name} ${attempt.profiles.last_name}`.trim()
-                                                : 'طالب غير معروف'
+                                                : 'طالبة غير معروفة'
 
                                         const percentage = Math.round((Number(attempt.score) / attempt.total_questions) * 100)
                                         const isPassing = percentage >= 50
 
                                         return (
-                                            <tr key={attempt.id} className="hover:bg-primary/5 transition-colors group">
-                                                <td className="py-5 px-8">
+                                            <tr key={attempt.id} className="hover:bg-primary/[0.03] transition-premium group">
+                                                <td className="py-6 px-10">
                                                     <div className="flex flex-col">
-                                                        <span className="font-black text-slate-800 dark:text-slate-200">{studentName}</span>
+                                                        <span className="font-black text-lg text-slate-800 dark:text-slate-200 group-hover:text-primary transition-colors">{studentName}</span>
                                                         {attempt.guest_name ? (
-                                                            <span className="text-[9px] font-black text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full w-fit mt-1 border border-amber-100">زائر</span>
+                                                            <span className="text-[9px] font-black text-amber-600 bg-amber-50 px-3 py-1 rounded-full w-fit mt-2 border border-amber-100 shadow-sm">زائرة</span>
                                                         ) : (
-                                                            <span className="text-[9px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full w-fit mt-1 border border-blue-100">مسجل</span>
+                                                            <span className="text-[9px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full w-fit mt-2 border border-blue-100 shadow-sm">مسجلة</span>
                                                         )}
                                                     </div>
                                                 </td>
-                                                <td className="py-5 px-4">
-                                                    <span className="font-bold text-slate-600 dark:text-slate-400">{attempt.quizzes?.title}</span>
+                                                <td className="py-6 px-6">
+                                                    <span className="font-bold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 transition-colors">{attempt.quizzes?.title}</span>
                                                 </td>
-                                                <td className="py-5 px-4">
-                                                    <div className="flex items-center gap-2">
-                                                        <div className={`w-2 h-2 rounded-full ${isPassing ? 'bg-green-500' : 'bg-red-500'}`} />
-                                                        <span className={`font-black ${isPassing ? 'text-green-600' : 'text-red-600'}`}>
-                                                            {attempt.score} / {attempt.total_questions} ({percentage}%)
+                                                <td className="py-6 px-6">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`w-3 h-3 rounded-full shadow-inner ${isPassing ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+                                                        <span className={`font-black text-lg ${isPassing ? 'text-green-600' : 'text-red-600'}`}>
+                                                            {attempt.score} <span className="text-slate-300 text-sm">/ {attempt.total_questions}</span>
+                                                            <span className="mr-2 opacity-50 text-xs">({percentage}%)</span>
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td className="py-5 px-4 text-sm text-slate-500 font-medium">
+                                                <td className="py-6 px-6 text-sm text-slate-500 font-bold">
                                                     {new Date(attempt.completed_at!).toLocaleDateString('ar-EG', {
                                                         day: 'numeric',
-                                                        month: 'short',
+                                                        month: 'long',
                                                         hour: '2-digit',
                                                         minute: '2-digit'
                                                     })}
                                                 </td>
-                                                <td className="py-5 px-8 text-center">
+                                                <td className="py-6 px-10 text-center">
                                                     {attempt.quizzes?.share_code ? (
-                                                        <Button asChild size="sm" variant="ghost" className="h-9 rounded-xl font-bold hover:bg-primary hover:text-white transition-all px-4">
+                                                        <Button asChild size="sm" variant="ghost" className="h-10 rounded-2xl font-black hover:bg-primary hover:text-white transition-premium px-6 shadow-sm border border-primary/10">
                                                             <Link href={`/take-quiz/${attempt.quizzes.share_code}/result?attempt=${attempt.id}`}>
-                                                                عرض التفاصيل
+                                                                عرض المراجعة
                                                             </Link>
                                                         </Button>
                                                     ) : (
-                                                        <span className="text-xs text-muted-foreground opacity-50 italic">غير متاح</span>
+                                                        <span className="text-xs text-muted-foreground opacity-30 italic font-bold">غير متاح</span>
                                                     )}
                                                 </td>
                                             </tr>
@@ -184,61 +185,73 @@ export default async function TeacherResultsPage() {
             </Card>
         </div>
 
-        <div className="space-y-6">
-            <Card className="border-2 border-primary/20 bg-white dark:bg-slate-900 shadow-xl shadow-primary/5 rounded-[2.5rem] overflow-hidden">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-3 text-red-600 text-xl font-black">
-                        <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center border border-red-100 shadow-sm">
-                            <Sparkles className="w-6 h-6 animate-pulse" />
+        <div className="space-y-8">
+            <Card className="parchment-card border-none shadow-2xl rounded-[3rem] overflow-hidden group transition-premium hover:scale-[1.01]">
+                <CardHeader className="p-8">
+                    <CardTitle className="flex items-center gap-4 text-red-600 text-2xl font-black">
+                        <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center border-2 border-red-100 shadow-xl transition-premium group-hover:rotate-6">
+                            <Sparkles className="w-7 h-7 animate-pulse text-red-600" />
                         </div>
-                        نقاط الضعف العامة
+                        تحديات طالباتكِ
                     </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-8 pt-0">
                     {missedQuestions && missedQuestions.length > 0 ? (
-                        <div className="space-y-5">
+                        <div className="space-y-6">
                             {missedQuestions.map((item) => (
-                                <div key={item.question_id} className="p-4 bg-red-50/30 rounded-2xl border border-red-100/50 group hover:border-red-300 transition-all">
-                                    <p className="font-quran font-black text-lg leading-relaxed text-slate-800 line-clamp-2 mb-3 group-hover:text-red-700 transition-colors">&ldquo;{item.question_text}&rdquo;</p>
+                                <div key={item.question_id} className="p-6 bg-red-50/50 rounded-[2rem] border-2 border-red-100 transition-premium hover:border-red-300 shadow-sm relative overflow-hidden group/item">
+                                    <div className="absolute top-2 left-2 opacity-5 font-quran text-4xl pointer-events-none group-hover/item:scale-125 transition-premium">خطأ</div>
+                                    <p className="font-quran font-black text-xl leading-relaxed text-slate-800 line-clamp-2 mb-4 group-hover/item:text-red-700 transition-colors pr-2">&ldquo;{item.question_text}&rdquo;</p>
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                                            <span className="text-xs font-black text-red-600 uppercase tracking-widest">خطأ متكرر</span>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
+                                            <span className="text-xs font-black text-red-600 uppercase tracking-widest">تحتاج مراجعة مكثفة</span>
                                         </div>
-                                        <span className="text-sm font-black text-slate-900">{item.wrong_count} إجابة خاطئة</span>
+                                        <div className="bg-white/80 px-4 py-1.5 rounded-xl border border-red-100 shadow-inner">
+                                            <span className="text-sm font-black text-slate-900">{item.wrong_count} إخفاقات</span>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
-                            <Button asChild variant="outline" className="w-full h-14 rounded-2xl border-2 font-black gap-2 mt-4 hover:bg-red-50 hover:text-red-600 transition-all border-red-100 text-red-600">
+                            <Button asChild variant="default" className="w-full h-16 rounded-[1.5rem] bg-red-600 text-white font-black text-lg gap-4 mt-6 shadow-xl shadow-red-200 transition-premium hover:bg-red-700 hover:scale-[1.02]">
                                 <Link href="/teacher/ai">
-                                    <Plus className="w-5 h-5" />
-                                    توليد مراجعة ذكية لهذه النقاط
+                                    <Sparkles className="w-6 h-6" />
+                                    توليد تدريب ذكي لهذا النقص
                                 </Link>
                             </Button>
                         </div>
                     ) : (
-                        <div className="py-12 text-center space-y-4">
-                            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto opacity-20">
-                                <Activity className="w-8 h-8" />
+                        <div className="py-20 text-center space-y-8">
+                            <div className="w-20 h-20 bg-muted/20 rounded-full flex items-center justify-center mx-auto opacity-20">
+                                <Activity className="w-10 h-10" />
                             </div>
-                            <p className="text-sm text-slate-400 font-bold italic leading-relaxed px-6">
-                                سأقوم بتحليل أخطاء الطلاب وتقديم تقارير دورية فور توفر بيانات كافية.
+                            <p className="text-lg text-slate-400 font-bold italic leading-relaxed px-10">
+                                سأقوم بتحليل أخطاء الطالبات وتقديم تقارير دورية فور توفر بيانات كافية بإذن الله.
                             </p>
                         </div>
                     )}
                 </CardContent>
             </Card>
 
-            <Card className="border-none shadow-xl shadow-primary/5 rounded-[2rem] bg-gradient-to-br from-primary to-primary/80 text-white overflow-hidden relative">
-                <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
-                <CardHeader>
-                    <CardTitle className="text-xl font-black">نصيحة المعلمة الذكية</CardTitle>
+            <Card className="parchment-card border-none shadow-2xl rounded-[3rem] bg-primary text-white overflow-hidden relative transition-premium hover:shadow-primary/20">
+                <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full blur-2xl pointer-events-none" />
+                <CardHeader className="p-8">
+                    <CardTitle className="text-2xl font-black flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                            <Activity className="w-6 h-6" />
+                        </div>
+                        توجيه شيختي
+                    </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4 relative">
-                    <p className="text-white/90 leading-relaxed font-medium">
-                        بناءً على النتائج الأخيرة، ننصح بالتركيز على مخارج الحروف الشجرية في الدروس القادمة، حيث لوحظ تكرار الأخطاء فيها.
+                <CardContent className="p-8 pt-0 space-y-6 relative">
+                    <p className="text-white/90 leading-relaxed font-bold text-lg italic">
+                        بناءً على النتائج الأخيرة، ننصح بالتركيز على مخارج الحروف الشجرية في الدروس القادمة، حيث لوحظ تكرار الأخطاء فيها لدى معظم الطالبات.
                     </p>
-                    <div className="h-1 w-20 bg-white/30 rounded-full" />
+                    <div className="flex items-center gap-2">
+                        <div className="h-1.5 w-12 bg-white/40 rounded-full" />
+                        <div className="h-1.5 w-4 bg-white/20 rounded-full" />
+                    </div>
                 </CardContent>
             </Card>
         </div>

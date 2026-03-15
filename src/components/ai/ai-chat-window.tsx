@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
-import { Bot, User, Send, Loader2, FileUp, FileText, X, Save } from 'lucide-react'
+import { Bot, User, Send, Loader2, FileUp, FileText, X, Save, Plus } from 'lucide-react'
 import { Textarea } from '@/components/ui/textarea'
 import { createClient } from '@/utils/supabase/client'
 
@@ -31,6 +31,10 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
+
+  useEffect(() => {
+    setCurrentSessionId(sessionId);
+  }, [sessionId]);
 
   useEffect(() => {
     async function loadMessages() {
@@ -197,57 +201,171 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#f8f8f5] dark:bg-slate-950 rounded-3xl overflow-hidden shadow-inner border border-primary/10">
-      <div className="flex-1 overflow-y-auto p-6 space-y-8 parchment-texture">
-        {messages.map((m, i) => (
-          <div key={i} className={`flex gap-4 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-md ${m.role === 'assistant' ? 'bg-primary text-white' : 'bg-white border border-primary/20 text-primary'}`}>
-              {m.role === 'assistant' ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
-            </div>
-            <div className="flex flex-col gap-2 max-w-[85%]">
-                <div className={`p-5 rounded-2xl shadow-sm text-sm ${m.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-tl-none border border-primary/5'}`}>
-                    {m.content}
-                </div>
-                {m.questions && m.questions.map((q: Question, qIdx: number) => (
-                    <div key={qIdx} className='p-4 bg-white rounded-xl border border-primary/20 shadow-sm flex items-center justify-between gap-4'>
-                        <span className='font-bold text-sm'>{q.text}</span>
-                        <Button size='sm' variant='outline' onClick={() => saveToBank(q)}><Save className='w-4 h-4 mr-2'/> حفظ</Button>
-                    </div>
-                ))}
-            </div>
-          </div>
-        ))}
-        {loading && <div className="flex justify-start pl-12"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>}
-        <div ref={messagesEndRef} />
+    <div className="flex flex-col h-full bg-white dark:bg-[#212121] overflow-hidden">
+      {/* Mobile Top Bar */}
+      <div className="md:hidden flex items-center justify-between p-4 border-b dark:border-white/5 bg-white dark:bg-[#212121] shrink-0">
+          <Button variant="ghost" size="icon" onClick={() => window.location.href = '/teacher/ai?new=true'} className="text-slate-500"><Plus className="w-5 h-5"/></Button>
+          <span className="font-black text-sm">المساعد الذكي</span>
+          <div className="w-8" /> {/* Spacer */}
       </div>
 
-      <div className="p-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border-t border-primary/10 shrink-0">
-        {selectedFile && (
-            <div className="flex items-center justify-between p-3 mb-4 bg-white rounded-xl border border-primary/20">
-                <div className='flex items-center gap-2 text-sm font-bold'><FileText className="w-4 h-4"/> {selectedFile.name}</div>
-                <Button variant="ghost" size="icon" onClick={() => setSelectedFile(null)}><X className="w-4 h-4" /></Button>
+      {/* Chat Area (Flex 1) */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar">
+          {/* Empty State / Welcome */}
+          {messages.length <= 1 && !loading && (
+            <div className="flex flex-col items-center justify-center p-6 text-center h-full">
+                <div className="w-16 h-16 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 shadow-inner">
+                    <Bot className="w-8 h-8 text-primary" />
+                </div>
+                <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-2">كيف يمكنني مساعدتكِ اليوم؟</h2>
+                <p className="text-slate-500 dark:text-slate-400 font-bold max-w-md mx-auto">
+                    أنا مساعدكِ الذكي لعلوم التجويد والقرآن. يمكنكِ رفع ملفات PDF أو الصور لاستخراج الأسئلة منها.
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-10 w-full max-w-2xl px-4">
+                    {[
+                        "استخرجي 5 أسئلة من هذا الملف",
+                        "اشرحي لي أحكام النون الساكنة",
+                        "ولدي لي اختبار عن الإدغام",
+                        "راجعي هذه الصورة واستخرجي منها سؤالاً"
+                    ].map((hint, i) => (
+                        <button 
+                            key={i} 
+                            onClick={() => setInput(hint)}
+                            className="p-4 bg-white dark:bg-[#2f2f2f] border border-slate-200 dark:border-white/10 rounded-2xl text-right text-sm font-black text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5 transition-premium shadow-sm"
+                        >
+                            {hint}
+                        </button>
+                    ))}
+                </div>
             </div>
-        )}
-        <div className="flex items-end gap-2 bg-white dark:bg-slate-800 p-2 rounded-2xl border border-primary/20 shadow-sm">
-            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="application/pdf,image/*" className="hidden" />
-            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl shrink-0" onClick={() => fileInputRef.current?.click()} disabled={loading}>
-                <FileUp className="w-5 h-5 text-primary" />
-            </Button>
-            <Textarea 
-                value={input} 
-                onChange={(e) => setInput(e.target.value)} 
-                placeholder="اكتبي سؤالاً أو ارفعي ملفاً..." 
-                className="flex-1 bg-transparent border-none focus-visible:ring-0 resize-none min-h-[40px] max-h-[120px]"
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault()
-                        handleSendMessage()
-                    }
-                }}
-            />
-            <Button onClick={handleSendMessage} disabled={loading} className="h-10 w-10 rounded-xl bg-primary shrink-0">
-                {loading ? <Loader2 className='animate-spin'/> : <Send className="w-5 h-5" /> }
-            </Button>
+          )}
+        
+        <div className="max-w-3xl mx-auto px-4 md:px-6 py-10 space-y-8">
+            {messages.map((m, i) => (
+            <div key={i} className={`flex gap-5 group ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                {m.role === 'assistant' && (
+                    <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-lg mt-1">
+                        <Bot className="w-5 h-5 text-white" />
+                    </div>
+                )}
+                
+                <div className={`flex flex-col gap-3 ${m.role === 'user' ? 'max-w-[85%]' : 'max-w-full flex-1'}`}>
+                    <div className={`text-lg leading-[1.8] transition-premium ${
+                        m.role === 'user' 
+                        ? 'bg-slate-100 dark:bg-[#2f2f2f] text-slate-900 dark:text-white px-5 py-3 rounded-[2rem] shadow-sm' 
+                        : 'text-slate-800 dark:text-slate-200 font-medium'
+                    }`}>
+                        <div className="whitespace-pre-wrap font-quran">{m.content}</div>
+                    </div>
+
+                    {m.questions && m.questions.length > 0 && (
+                        <div className="grid grid-cols-1 gap-4 mt-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] px-2">الأسئلة المقترحة:</p>
+                            {m.questions.map((q: Question, qIdx: number) => (
+                                <div key={qIdx} className='p-6 bg-white dark:bg-[#2f2f2f] rounded-3xl border border-slate-200 dark:border-white/10 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6 transition-premium hover:border-primary/40 group/q'>
+                                    <div className="flex-1 text-right">
+                                        <span className='font-black text-lg text-slate-900 dark:text-white leading-relaxed font-quran'>{q.text}</span>
+                                        <div className="flex gap-2 mt-2">
+                                            <span className="text-[9px] font-black px-2 py-0.5 bg-primary/10 text-primary rounded-full uppercase">{q.topic || 'عام'}</span>
+                                            <span className="text-[9px] font-black px-2 py-0.5 bg-slate-100 dark:bg-white/5 text-slate-500 rounded-full uppercase">{q.type}</span>
+                                        </div>
+                                    </div>
+                                    <Button size='lg' variant='outline' className="rounded-2xl font-black border-2 border-primary/20 hover:bg-primary hover:text-white hover:border-primary transition-premium shrink-0 h-12 shadow-sm" onClick={() => saveToBank(q)}>
+                                        <Save className='w-5 h-5 ml-2'/> حفظ في البنك
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {m.role === 'user' && (
+                    <div className="w-9 h-9 rounded-full bg-slate-800 dark:bg-white/10 flex items-center justify-center shrink-0 shadow-md mt-1">
+                        <User className="w-5 h-5 text-white" />
+                    </div>
+                )}
+            </div>
+            ))}
+            {loading && (
+                <div className="flex gap-5">
+                    <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-lg">
+                        <Bot className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex items-center gap-1.5 py-4">
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]" />
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
+                    </div>
+                </div>
+            )}
+            <div ref={messagesEndRef} />
+        </div>
+      </div>
+
+      {/* Input Area */}
+      <div className="p-4 md:p-8 bg-white dark:bg-[#212121] shrink-0 border-t dark:border-white/5">
+        <div className="max-w-3xl mx-auto relative group">
+            {selectedFile && (
+                <div className="mb-4 animate-in slide-in-from-bottom-4 duration-300">
+                    <div className="bg-slate-100 dark:bg-[#2f2f2f] p-4 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl flex items-center justify-between gap-4 max-w-sm ml-auto">
+                        <div className='flex items-center gap-3 overflow-hidden'>
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                                <FileText className="w-5 h-5 text-primary"/>
+                            </div>
+                            <div className="flex-1 overflow-hidden">
+                                <p className="text-sm font-black text-slate-900 dark:text-white truncate">{selectedFile.name}</p>
+                                <p className="text-[10px] text-slate-500 font-bold uppercase">{(selectedFile.size / 1024).toFixed(0)} KB</p>
+                            </div>
+                        </div>
+                        <Button variant="ghost" size="icon" onClick={() => setSelectedFile(null)} className="rounded-full hover:bg-red-50 dark:hover:bg-red-500/20 hover:text-red-500 transition-colors h-8 w-8 shrink-0"><X className="w-4 h-4" /></Button>
+                    </div>
+                </div>
+            )}
+            
+            <div className="bg-slate-100 dark:bg-[#2f2f2f] rounded-[2rem] border border-transparent focus-within:border-primary/20 dark:focus-within:border-white/20 transition-premium shadow-lg flex flex-col p-2 pr-4 pl-2">
+                <Textarea 
+                    value={input} 
+                    onChange={(e) => setInput(e.target.value)} 
+                    placeholder="اكتبي رسالة للقلم..." 
+                    className="flex-1 bg-transparent border-none focus-visible:ring-0 resize-none min-h-[56px] max-h-[200px] text-lg font-medium py-4 px-4 custom-scrollbar leading-relaxed text-slate-800 dark:text-white"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault()
+                            handleSendMessage()
+                        }
+                    }}
+                />
+                
+                <div className="flex items-center justify-between pb-1 px-2">
+                    <div className="flex items-center gap-1">
+                        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="application/pdf,image/*" className="hidden" />
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-10 w-10 rounded-full hover:bg-white dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 transition-premium" 
+                            onClick={() => fileInputRef.current?.click()} 
+                            disabled={loading}
+                        >
+                            <FileUp className="w-5 h-5" />
+                        </Button>
+                        <div className="w-[1px] h-6 bg-slate-300 dark:bg-white/10 mx-1" />
+                    </div>
+                    
+                    <Button 
+                        onClick={handleSendMessage} 
+                        disabled={loading || (!input.trim() && !selectedFile)} 
+                        className={`h-10 w-10 rounded-full transition-premium shadow-md ${
+                            (input.trim() || selectedFile) && !loading
+                            ? 'bg-primary text-white scale-110 shadow-primary/20' 
+                            : 'bg-slate-300 dark:bg-white/10 text-white dark:text-slate-500'
+                        }`}
+                    >
+                        {loading ? <Loader2 className='animate-spin h-4 w-4'/> : <Send className="w-4 h-4" /> }
+                    </Button>
+                </div>
+            </div>
+            <p className="text-center text-[10px] text-slate-400 mt-3 font-bold">قد يقدم القلم إجابات غير دقيقة، يرجى التحقق من المعلومات المهمة.</p>
         </div>
       </div>
     </div>

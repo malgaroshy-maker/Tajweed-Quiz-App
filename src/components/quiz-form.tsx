@@ -73,34 +73,37 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
 
   return (
     <form onSubmit={handleSubmit} className="space-y-12">
-      <Card className="parchment-card rounded-[2rem] shadow-xl">
-        <CardContent className="pt-8 p-8">
-          <Label htmlFor="guest_name" className="text-primary font-black uppercase tracking-widest text-xs mb-3 block">اسم الطالب</Label>
+      <Card className="parchment-card rounded-[2.5rem] shadow-2xl transition-premium hover:scale-[1.005]">
+        <CardContent className="pt-10 p-10">
+          <Label htmlFor="guest_name" className="text-primary font-black uppercase tracking-widest text-sm mb-4 block">اسم الطالبة الكريمة</Label>
           <Input 
             id="guest_name" 
             name="guest_name" 
-            placeholder="ادخلي اسمكِ الكريم هنا..." 
-            className="bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] h-14 rounded-2xl text-lg font-bold focus-visible:ring-primary" 
+            placeholder="ادخلي اسمكِ هنا..." 
+            className="bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] h-16 rounded-2xl text-xl font-black focus-visible:ring-primary shadow-inner" 
             defaultValue={answers['guest_name'] || guestName}
             onChange={(e) => handleValueChange('guest_name', e.target.value)}
           />
-          <p className="text-[10px] text-muted-foreground mt-3 font-bold opacity-60">* سيتم تسجيل النتيجة بهذا الاسم في لوحة صدارة المعلمة</p>
+          <p className="text-xs text-muted-foreground mt-4 font-bold opacity-70 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              سيتم تسجيل النتيجة بهذا الاسم في لوحة صدارة المعلمة
+          </p>
         </CardContent>
       </Card>
 
       {questions.map((q, index) => (
-        <Card key={q.id} className="parchment-card rounded-[2.5rem] shadow-2xl border-b-8 border-[#d4c3a3]/50 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-[4rem] pointer-events-none" />
-          <CardHeader className="p-8 pb-4">
-            <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground font-black text-xl shadow-lg">
+        <Card key={q.id} className="parchment-card rounded-[3rem] shadow-2xl border-b-[12px] border-[#d4c3a3]/30 relative overflow-hidden group transition-premium hover:border-[#d4c3a3]/50">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[6rem] pointer-events-none transition-transform group-hover:scale-110" />
+          <CardHeader className="p-10 pb-6">
+            <div className="flex items-center gap-4 mb-8">
+                <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground font-black text-2xl shadow-xl transition-premium group-hover:rotate-12">
                     {index + 1}
                 </div>
-                <div className="h-0.5 flex-1 bg-[#d4c3a3]/30 rounded-full" />
+                <div className="h-0.5 flex-1 bg-[#d4c3a3]/40 rounded-full" />
             </div>
-            <CardTitle className="text-2xl leading-relaxed font-black font-quran text-slate-900 dark:text-slate-100">
+            <CardTitle className="text-3xl leading-relaxed font-black font-quran text-slate-900 dark:text-slate-100 pr-2">
               {q.type === 'fill_in_blank' && q.text.includes('[...]') ? (
-                <span className="inline-block leading-[3rem]">
+                <span className="inline-block leading-[4rem]">
                   {q.text.split('[...]').map((part: string, i: number) => (
                     <span key={i}>
                       {part}
@@ -109,7 +112,7 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
                           type="text"
                           name={`question_${q.id}`}
                           placeholder=".........."
-                          className="inline-block w-40 border-b-4 border-primary/40 mx-2 h-10 px-4 bg-primary/5 outline-none text-primary text-center font-bold transition-all focus:border-primary focus:bg-primary/10 rounded-t-lg"
+                          className="inline-block w-48 border-b-4 border-primary/40 mx-3 h-12 px-5 bg-primary/5 outline-none text-primary text-center font-black transition-premium focus:border-primary focus:bg-primary/10 rounded-t-xl"
                           value={answers[q.id] || ''}
                           onChange={(e) => handleValueChange(q.id, e.target.value)}
                           required
@@ -123,26 +126,29 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
               )}
             </CardTitle>
             {q.image_url && (
-              <div className="mt-8 w-full max-w-2xl mx-auto overflow-hidden rounded-3xl border-4 border-[#d4c3a3]/30 bg-white/50 shadow-inner relative h-[350px]">
+              <div className="mt-10 w-full max-w-2xl mx-auto overflow-hidden rounded-[2.5rem] border-8 border-[#d4c3a3]/20 bg-white/50 shadow-inner relative h-[400px] transition-premium group-hover:border-[#d4c3a3]/40">
                 <Image 
                   src={q.image_url} 
                   alt="Question content" 
                   fill
-                  className="object-contain p-4" 
+                  className="object-contain p-6" 
                 />
               </div>
             )}
           </CardHeader>
-          <CardContent className="p-8 pt-4">
+          <CardContent className="p-10 pt-6">
             {q.type === 'short_answer' || (q.type === 'fill_in_blank' && !q.text.includes('[...]')) ? (
-              <div className="space-y-4">
-                <Label htmlFor={`q_${q.id}`} className="text-primary font-black uppercase tracking-widest text-xs">إجابتكِ المكتوبة:</Label>
+              <div className="space-y-6">
+                <Label htmlFor={`q_${q.id}`} className="text-primary font-black uppercase tracking-widest text-xs flex items-center gap-2">
+                    <span className="w-1 h-1 rounded-full bg-primary" />
+                    إجابتكِ المكتوبة:
+                </Label>
                 {q.type === 'short_answer' ? (
                   <Textarea 
                     name={`question_${q.id}`} 
                     id={`q_${q.id}`} 
                     placeholder="اكتبي إجابتكِ بالتفصيل هنا..." 
-                    className="min-h-[150px] text-xl font-bold font-quran bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] rounded-3xl p-6 focus-visible:ring-primary shadow-inner" 
+                    className="min-h-[200px] text-2xl font-black font-quran bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] rounded-[2rem] p-8 focus-visible:ring-primary shadow-inner leading-relaxed" 
                     value={answers[q.id] || ''}
                     onChange={(e) => handleValueChange(q.id, e.target.value)}
                   />
@@ -151,28 +157,28 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
                     name={`question_${q.id}`} 
                     id={`q_${q.id}`} 
                     placeholder="اكتبي الكلمة الصحيحة..." 
-                    className="h-16 text-xl font-bold font-quran bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] rounded-2xl px-6 focus-visible:ring-primary shadow-inner" 
+                    className="h-20 text-2xl font-black font-quran bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] rounded-2xl px-8 focus-visible:ring-primary shadow-inner" 
                     value={answers[q.id] || ''}
                     onChange={(e) => handleValueChange(q.id, e.target.value)}
                   />
                 )}
               </div>
             ) : q.type === 'fill_in_blank' && q.text.includes('[...]') ? (
-              <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10 flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <p className="text-sm text-primary font-bold">يرجى كتابة الإجابة في الفراغ الموجود داخل نص السؤال أعلاه.</p>
+              <div className="p-6 vellum-glass rounded-[2rem] border border-primary/20 flex items-center gap-4">
+                <div className="w-3 h-3 rounded-full bg-primary animate-pulse" />
+                <p className="text-lg text-primary font-black">يرجى كتابة الإجابة في الفراغ الموجود داخل نص السؤال أعلاه.</p>
               </div>
             ) : (
               <RadioGroup 
                 name={`question_${q.id}`} 
-                className="grid grid-cols-1 gap-4"
+                className="grid grid-cols-1 gap-6"
                 value={answers[q.id] || ''}
                 onValueChange={(val) => handleValueChange(q.id, val)}
               >
                 {q.options?.map((opt: { id: string; text: string }) => (
-                  <div key={opt.id} className={`flex items-center space-x-4 space-x-reverse rounded-[1.5rem] border-2 p-6 transition-all cursor-pointer group/opt ${answers[q.id] === opt.id ? 'bg-primary text-primary-foreground border-primary shadow-lg scale-[1.02]' : 'bg-white/50 dark:bg-black/20 border-[#d4c3a3] hover:border-primary/50 hover:bg-white dark:hover:bg-black/40'}`}>
-                    <RadioGroupItem value={opt.id} id={`opt_${opt.id}`} className={answers[q.id] === opt.id ? 'border-white text-white' : 'border-primary'} />
-                    <Label htmlFor={`opt_${opt.id}`} className="flex-1 cursor-pointer text-xl font-bold pr-3 font-quran leading-relaxed">
+                  <div key={opt.id} className={`flex items-center space-x-4 space-x-reverse rounded-[2rem] border-2 p-8 transition-premium cursor-pointer group/opt shadow-sm ${answers[q.id] === opt.id ? 'bg-primary text-primary-foreground border-primary shadow-2xl scale-[1.02]' : 'bg-white/50 dark:bg-black/20 border-[#d4c3a3] hover:border-primary/50 hover:bg-white dark:hover:bg-black/40'}`}>
+                    <RadioGroupItem value={opt.id} id={`opt_${opt.id}`} className={answers[q.id] === opt.id ? 'border-white text-white w-6 h-6' : 'border-primary w-6 h-6'} />
+                    <Label htmlFor={`opt_${opt.id}`} className="flex-1 cursor-pointer text-2xl font-black pr-6 font-quran leading-relaxed">
                       {opt.text}
                     </Label>
                   </div>
@@ -183,16 +189,24 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
         </Card>
       ))}
 
-      <div className="sticky bottom-6 z-20 p-6 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-2 border-[#d4c3a3] rounded-[2.5rem] shadow-2xl flex flex-col sm:flex-row justify-between items-center gap-6 max-w-4xl mx-auto">
+      <div className="sticky bottom-8 z-20 p-8 vellum-glass border-2 border-[#d4c3a3] rounded-[3rem] shadow-2xl flex flex-col sm:flex-row justify-between items-center gap-8 max-w-4xl mx-auto transition-premium hover:shadow-primary/10">
         <div className="flex flex-col items-center sm:items-start">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground mb-1">التقدم المحرز</span>
-            <span className="font-black text-slate-900 dark:text-white text-xl">
-                {Object.keys(answers).filter(k => k !== 'guest_name').length} من {questions.length} أسئلة
-            </span>
+            <span className="text-xs font-black uppercase tracking-[0.3em] text-primary/60 mb-2">التقدم في الاختبار</span>
+            <div className="flex items-center gap-3">
+                <span className="font-black text-slate-900 dark:text-white text-3xl tracking-tighter">
+                    {Object.keys(answers).filter(k => k !== 'guest_name').length} <span className="text-sm opacity-30 text-slate-500">/ {questions.length}</span>
+                </span>
+                <div className="w-32 h-3 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden shadow-inner hidden md:block">
+                    <div 
+                        className="bg-primary h-full transition-premium" 
+                        style={{ width: `${(Object.keys(answers).filter(k => k !== 'guest_name').length / questions.length) * 100}%` }} 
+                    />
+                </div>
+            </div>
         </div>
-        <Button type="submit" size="lg" className="w-full sm:w-auto h-16 px-12 text-xl font-black rounded-2xl shadow-xl shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all gap-3" disabled={isPending}>
-          {isPending ? <Loader2 className="w-6 h-6 animate-spin" /> : <Send className="w-6 h-6 -rotate-90" />}
-          {isPending ? 'جاري الحفظ...' : 'تسليم الاختبار النهائي'}
+        <Button type="submit" size="lg" className="w-full sm:w-auto h-20 px-16 text-2xl font-black rounded-3xl shadow-2xl shadow-primary/30 hover:scale-[1.05] active:scale-95 transition-premium gap-4 bg-primary text-white" disabled={isPending}>
+          {isPending ? <Loader2 className="w-8 h-8 animate-spin" /> : <Send className="w-8 h-8 -rotate-90" />}
+          {isPending ? 'جاري الحفظ...' : 'تسليم الاختبار'}
         </Button>
       </div>
     </form>

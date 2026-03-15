@@ -62,35 +62,51 @@ export default async function StudentsPage() {
   }))
 
   return (
-    <div className="space-y-8 pb-10">
-      <div className="mb-10">
-        <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-slate-100">طلابك</h1>
-        <p className="text-primary/70 mt-2 text-lg font-medium">قائمة بجميع الطلاب الذين شاركوا في اختباراتك</p>
+    <div className="space-y-10 pb-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h1 className="text-4xl font-black text-slate-900 dark:text-slate-100 tracking-tight">طالباتكِ المتميزات</h1>
+          <p className="text-primary/70 mt-2 text-lg font-medium">متابعة سجل أداء الطالبات اللواتي شاركن في اختباراتكِ</p>
+        </div>
       </div>
 
-      <Card className="border-none shadow-xl shadow-primary/5 rounded-3xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm overflow-hidden">
-        <CardHeader className="p-8 pb-4">
-          <CardTitle className="text-2xl font-black">إحصائيات الطلاب</CardTitle>
+      <Card className="parchment-card border-none shadow-2xl rounded-[3rem] overflow-hidden">
+        <CardHeader className="p-10 pb-4">
+          <CardTitle className="text-3xl font-black text-slate-900 flex items-center gap-4">
+             <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                <Users className="w-7 h-7" />
+             </div>
+             إحصائيات الطالبات
+          </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {studentList.length === 0 ? (
-            <div className="p-16 text-center text-muted-foreground font-bold">لا يوجد طلاب مسجلين بعد.</div>
+            <div className="p-24 text-center text-muted-foreground font-black text-xl italic">لا يوجد طالبات مسجلات بعد.</div>
           ) : (
-            <div className="divide-y divide-muted/50">
+            <div className="divide-y-2 divide-[#d4c3a3]/20">
               {studentList.map((student, i) => (
-                <div key={i} className="flex items-center justify-between p-6 px-8 hover:bg-muted/10 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-blue-600">
-                      <Users className="w-6 h-6" />
+                <div key={i} className="flex flex-col sm:flex-row items-center justify-between p-8 px-10 hover:bg-primary/[0.02] transition-premium group gap-6">
+                  <div className="flex items-center gap-6 flex-1 w-full text-right">
+                    <div className="w-16 h-16 rounded-[1.2rem] bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner group-hover:bg-blue-600 group-hover:text-white transition-premium">
+                      <Users className="w-8 h-8" />
                     </div>
                     <div>
-                      <p className="font-black text-lg text-slate-800">{student.name}</p>
-                      <p className="text-sm text-slate-500 font-bold">{student.totalAttempts} اختبارات مكتملة</p>
+                      <p className="font-black text-2xl text-slate-800 dark:text-white group-hover:text-primary transition-colors">{student.name}</p>
+                      <div className="flex items-center gap-3 mt-1">
+                          <div className="h-1.5 w-1.5 rounded-full bg-slate-300" />
+                          <p className="text-sm text-slate-500 font-black uppercase tracking-wider">{student.totalAttempts} اختبارات مكتملة</p>
+                      </div>
                     </div>
                   </div>
-                  <div className="text-left flex items-baseline gap-1">
-                    <span className="font-black text-2xl text-primary">{student.avgScore}%</span>
-                    <span className="text-muted-foreground font-black text-xs uppercase tracking-widest">متوسط الدرجة</span>
+                  <div className="text-left flex items-center gap-6 w-full sm:w-auto justify-end bg-white/50 px-8 py-3 rounded-[1.5rem] shadow-inner border border-primary/5">
+                    <div className="flex flex-col items-center">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">المعدل</span>
+                        <span className="font-black text-4xl text-primary tracking-tighter">{student.avgScore}%</span>
+                    </div>
+                    <div className="w-[2px] h-10 bg-slate-100 mx-2" />
+                    <div className="w-24 h-2 bg-slate-100 rounded-full overflow-hidden hidden lg:block">
+                        <div className="bg-primary h-full transition-premium" style={{ width: `${student.avgScore}%` }} />
+                    </div>
                   </div>
                 </div>
               ))}

@@ -25,20 +25,20 @@ export function GuestEntryForm() {
   }
 
   return (
-    <Card className="mt-6">
-      <CardHeader className="text-center">
-        <CardTitle className="text-lg">الدخول كضيف</CardTitle>
-        <CardDescription>لا يحتاج لحساب - أدخل رمز الاختبار واسمك</CardDescription>
+    <Card className="mt-8 border-2 border-primary/10 bg-primary/5 rounded-[2.5rem] shadow-inner transition-premium hover:bg-primary/[0.08]">
+      <CardHeader className="text-center p-8 pb-4">
+        <CardTitle className="text-xl font-black text-primary">الدخول السريع كطالبة</CardTitle>
+        <CardDescription className="text-primary/60 font-bold">لا يحتاج لحساب - أدخلي رمز الاختبار واسمكِ فقط</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-8 pt-0">
         {error && (
-          <div className="mb-4 rounded-md bg-destructive/15 p-3 text-sm text-destructive text-center">
+          <div className="mb-4 rounded-xl bg-destructive/10 p-3 text-sm text-destructive text-center font-bold animate-in fade-in">
             {error}
           </div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="guest-code" className="text-sm font-medium">رمز الاختبار</label>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-3">
+            <label htmlFor="guest-code" className="text-xs font-black text-primary/60 uppercase tracking-widest pr-2">رمز الاختبار</label>
             <Input 
               id="guest-code" 
               value={code} 
@@ -46,20 +46,21 @@ export function GuestEntryForm() {
               placeholder="مثال: ABC123" 
               maxLength={6} 
               required 
-              className="uppercase text-center tracking-widest"
+              className="h-14 rounded-2xl bg-white border-2 border-primary/10 focus-visible:ring-primary uppercase text-center tracking-[0.3em] font-black text-xl shadow-inner"
             />
           </div>
-          <div className="space-y-2">
-            <label htmlFor="guest-name" className="text-sm font-medium">اسمك</label>
+          <div className="space-y-3">
+            <label htmlFor="guest-name" className="text-xs font-black text-primary/60 uppercase tracking-widest pr-2">اسمكِ الكريم</label>
             <Input 
               id="guest-name" 
               value={name} 
               onChange={e => setName(e.target.value)}
-              placeholder="الاسم الكريم" 
+              placeholder="اكتبي اسمكِ هنا..." 
               required 
+              className="h-14 rounded-2xl bg-white border-2 border-primary/10 focus-visible:ring-primary font-bold text-lg shadow-inner"
             />
           </div>
-          <Button type="submit" className="w-full">بدء الاختبار</Button>
+          <Button type="submit" className="w-full h-14 rounded-2xl bg-slate-900 text-white font-black text-lg shadow-lg hover:scale-[1.02] transition-premium">بدء الاختبار الآن</Button>
         </form>
       </CardContent>
     </Card>

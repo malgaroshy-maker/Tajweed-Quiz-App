@@ -13,15 +13,15 @@ export default function StudentLayout({
   return (
     <SidebarProvider>
       <AppSidebarStudent />
-      <SidebarInset className="parchment-texture min-h-screen bg-background">
-        <header className="flex h-20 shrink-0 items-center justify-between gap-2 border-b border-primary/10 bg-background/95 backdrop-blur-md sticky top-0 z-50 px-8">
+      <SidebarInset className="parchment-texture min-h-screen bg-background p-4 md:p-6 lg:p-8">
+        <header className="flex h-20 shrink-0 items-center justify-between gap-2 vellum-glass rounded-2xl sticky top-0 z-50 px-8 mb-6 md:mb-10 shadow-sm transition-premium">
           <div className="flex items-center gap-6">
             <SidebarTrigger className="h-10 w-10 text-primary hover:bg-primary/10 transition-colors" />
             <div className="h-6 w-[1px] bg-primary/20 hidden md:block"></div>
             <h1 className="font-black text-xl text-slate-900 dark:text-slate-100 tracking-tight">بوابة الطالب</h1>
           </div>
         </header>
-        <main className="flex-1 overflow-auto p-6 md:p-10">
+        <main className="flex-1">
           <div className="max-w-6xl mx-auto">
             {children}
           </div>

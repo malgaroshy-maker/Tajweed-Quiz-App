@@ -4,9 +4,9 @@ import { Suspense } from 'react'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 
-export default async function AIStandalonePage({ searchParams }: { searchParams: { session?: string } }) {
+export default async function AIStandalonePage({ searchParams }: { searchParams: { session?: string, new?: string } }) {
   const params = await searchParams;
-  if (!params.session) {
+  if (!params.session && !params.new) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     

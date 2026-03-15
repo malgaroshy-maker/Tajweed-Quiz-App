@@ -79,5 +79,6 @@
 - [x] Create professional README.md for GitHub.
 
 ## Next Steps
-- [ ] Perform a final visual QA pass on 'Question Bank' and 'Teacher Dashboard' padding and mobile responsiveness.
+- [x] Perform a final visual QA pass on 'Question Bank', 'Results Dashboard', and 'Quiz Taking UI'.
 - [ ] Monitor actual Vercel deployment logs for any edge-case environment errors.
+- [ ] Consider adding a Student Settings page for profile management.

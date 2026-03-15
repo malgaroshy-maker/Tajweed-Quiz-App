@@ -25,50 +25,50 @@ export async function DashboardStats({ teacherId }: { teacherId: string }) {
     : 0
 
   return (
-    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-12">
-        <Card className="relative overflow-hidden border-none bg-white dark:bg-slate-900 shadow-xl shadow-primary/5 rounded-2xl group transition-all hover:shadow-primary/10">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-black text-foreground uppercase tracking-widest">الاختبارات النشطة</CardTitle>
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-              <BookOpen className="h-5 w-5" />
+    <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mb-12">
+        <Card className="parchment-card relative overflow-hidden border-none shadow-xl rounded-[2rem] group transition-premium hover:scale-[1.02]">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-sm font-black text-primary uppercase tracking-widest">الاختبارات النشطة</CardTitle>
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary transition-premium group-hover:rotate-12">
+              <BookOpen className="h-6 w-6" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-black text-foreground">{quizzesCount || 0}</div>
-            <div className="flex items-center text-xs text-primary/70 font-bold mt-2">
-              <TrendingUp className="w-3 h-3 ml-1" />
+            <div className="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{quizzesCount || 0}</div>
+            <div className="flex items-center text-sm text-primary/70 font-bold mt-4">
+              <TrendingUp className="w-4 h-4 ml-2" />
               +2 هذا الأسبوع
             </div>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-none bg-white dark:bg-slate-900 shadow-xl shadow-primary/5 rounded-2xl group transition-all hover:shadow-primary/10">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <Card className="parchment-card relative overflow-hidden border-none shadow-xl rounded-[2rem] group transition-premium hover:scale-[1.02]">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
             <CardTitle className="text-sm font-black text-blue-700 dark:text-blue-400 uppercase tracking-widest">إجمالي الطلاب</CardTitle>
-            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600">
-              <Users className="h-5 w-5" />
+            <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 transition-premium group-hover:rotate-12">
+              <Users className="h-6 w-6" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-black text-foreground">{studentsCount || 0}</div>
-            <div className="flex items-center text-xs text-blue-600/70 font-bold mt-2">
-              <Activity className="w-3 h-3 ml-1" />
+            <div className="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{studentsCount || 0}</div>
+            <div className="flex items-center text-sm text-blue-600/70 font-bold mt-4">
+              <Activity className="w-4 h-4 ml-2" />
               نشط الآن: {Math.floor(studentsCount * 0.2)}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="relative overflow-hidden border-none bg-white dark:bg-slate-900 shadow-xl shadow-primary/5 rounded-2xl group sm:col-span-2 lg:col-span-1 transition-all hover:shadow-primary/10">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest">متوسط الدرجات</CardTitle>
-            <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center text-amber-600">
-              <BarChart3 className="h-5 w-5" />
+        <Card className="parchment-card relative overflow-hidden border-none shadow-xl rounded-[2rem] group sm:col-span-2 lg:col-span-1 transition-premium hover:scale-[1.02]">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-sm font-black text-amber-700 dark:text-amber-400 uppercase tracking-widest">متوسط الأداء</CardTitle>
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center text-amber-600 transition-premium group-hover:rotate-12">
+              <BarChart3 className="h-6 w-6" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-black text-slate-900 dark:text-white">{avgScore}%</div>
-            <div className="w-full bg-muted dark:bg-slate-800 rounded-full h-2 mt-4 overflow-hidden">
-              <div className="bg-amber-500 h-full rounded-full" style={{ width: `${avgScore}%` }} />
+            <div className="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">{avgScore}%</div>
+            <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-3 mt-6 overflow-hidden shadow-inner">
+              <div className="bg-amber-500 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${avgScore}%` }} />
             </div>
           </CardContent>
         </Card>

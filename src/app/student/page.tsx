@@ -64,87 +64,96 @@ export default async function StudentDashboard() {
       </div>
 
       {/* Achievement Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card className="bg-primary border-none text-primary-foreground shadow-xl shadow-primary/10">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
-              <Trophy className="w-6 h-6 text-white" />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12">
+        <Card className="parchment-card border-none shadow-xl rounded-[2.5rem] group transition-premium hover:scale-[1.05]">
+          <CardContent className="p-8 flex items-center gap-6">
+            <div className="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg transition-premium group-hover:rotate-12">
+              <Trophy className="w-8 h-8" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest opacity-70">إجمالي النقاط</p>
-              <p className="text-3xl font-black">{totalPoints}</p>
+              <p className="text-xs font-black uppercase tracking-widest text-primary/60">إجمالي النقاط</p>
+              <p className="text-4xl font-black text-slate-900 tracking-tighter">{totalPoints}</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-white border-2 border-muted shadow-sm">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center">
-              <Star className="w-6 h-6 text-amber-500" />
+        <Card className="parchment-card border-none shadow-xl rounded-[2.5rem] group transition-premium hover:scale-[1.05]">
+          <CardContent className="p-8 flex items-center gap-6">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center shadow-lg transition-premium group-hover:rotate-12">
+              <Star className="w-8 h-8" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">اختبارات مكتملة</p>
-              <p className="text-3xl font-black text-slate-900">{completedCount}</p>
+              <p className="text-xs font-black uppercase tracking-widest text-amber-600/60">اختبارات مكتملة</p>
+              <p className="text-4xl font-black text-slate-900 tracking-tighter">{completedCount}</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-white border-2 border-muted shadow-sm">
-          <CardContent className="p-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center">
-              <Target className="w-6 h-6 text-blue-500" />
+        <Card className="parchment-card border-none shadow-xl rounded-[2.5rem] group transition-premium hover:scale-[1.05]">
+          <CardContent className="p-8 flex items-center gap-6">
+            <div className="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg transition-premium group-hover:rotate-12">
+              <Target className="w-8 h-8" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">متوسط الدقة</p>
-              <p className="text-3xl font-black text-slate-900">{avgAccuracy}%</p>
+              <p className="text-xs font-black uppercase tracking-widest text-blue-600/60">متوسط الدقة</p>
+              <p className="text-4xl font-black text-slate-900 tracking-tighter">{avgAccuracy}%</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="border-primary/30 border-2 shadow-lg shadow-primary/5 rounded-2xl overflow-hidden bg-primary/5">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-primary text-xl">
-              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-md">
-                <Search className="w-5 h-5" />
+      <div className="grid gap-10 md:grid-cols-2">
+        <Card className="parchment-card border-none shadow-2xl rounded-[3rem] overflow-hidden relative group transition-premium hover:scale-[1.01]">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-bl-[6rem] -mr-12 -mt-12 transition-transform group-hover:scale-110" />
+          <CardHeader className="relative p-10 pb-6">
+            <CardTitle className="flex items-center gap-4 text-primary text-2xl font-black">
+              <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground shadow-xl transition-premium group-hover:rotate-6">
+                <Search className="w-6 h-6" />
               </div>
               انضمام لاختبار
             </CardTitle>
-            <CardDescription className="text-primary/70 font-medium pt-2">أدخل الرمز الذي شاركه معك المعلم للبدء</CardDescription>
+            <CardDescription className="text-primary/70 font-black text-lg pt-4">أدخلي الرمز الذي شاركته معكِ المعلمة للبدء</CardDescription>
           </CardHeader>
-          <CardContent>
-            <form action={joinQuiz} className="flex gap-2">
+          <CardContent className="p-10 pt-0 relative">
+            <form action={joinQuiz} className="flex gap-4">
               <Input 
                 name="code" 
-                placeholder="أدخل الرمز..." 
+                placeholder="أدخلي الرمز..." 
                 required 
-                className="uppercase text-center font-bold tracking-widest text-xl h-14 bg-background border-2 border-primary/20 focus-visible:border-primary rounded-xl" 
+                className="uppercase text-center font-black tracking-[0.2em] text-2xl h-16 bg-white dark:bg-slate-900 border-2 border-primary/20 focus-visible:border-primary rounded-2xl shadow-inner" 
                 maxLength={6} 
               />
-              <Button type="submit" className="h-14 px-6 font-bold text-lg rounded-xl shadow-lg shadow-primary/20">دخول</Button>
+              <Button type="submit" className="h-16 px-10 font-black text-xl rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-premium bg-primary text-white">دخول</Button>
             </form>
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl border-none shadow-sm bg-muted/20">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <History className="text-muted-foreground w-5 h-5" />
+        <Card className="vellum-glass border-none shadow-xl rounded-[3rem] overflow-hidden">
+          <CardHeader className="p-10 pb-4">
+            <CardTitle className="flex items-center gap-4 text-xl font-black text-slate-900 dark:text-white">
+              <History className="text-primary w-6 h-6" />
               آخر الاختبارات
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-10 pt-0">
             {attempts?.length === 0 ? (
-              <p className="text-muted-foreground text-sm py-4 italic">لم تقم بإجراء أي اختبارات بعد.</p>
+              <div className="text-center py-12 space-y-4">
+                 <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto opacity-20">
+                    <History className="w-8 h-8" />
+                  </div>
+                <p className="text-muted-foreground text-lg font-bold italic">لم تقومي بإجراء أي اختبارات بعد.</p>
+              </div>
             ) : (
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 {attempts?.map((attempt) => (
-                  <li key={attempt.id} className="flex justify-between items-center bg-background p-3 rounded-xl border-2 border-muted/50">
-                    <div>
-                      <p className="font-bold text-sm line-clamp-1">{attempt.quizzes?.title}</p>
-                      <p className="text-[10px] text-muted-foreground font-medium">{new Date(attempt.started_at).toLocaleDateString('ar-EG')}</p>
+                  <li key={attempt.id} className="flex justify-between items-center bg-white/50 dark:bg-slate-800/50 p-5 rounded-2xl border border-primary/5 hover:border-primary/20 transition-premium shadow-sm group">
+                    <div className="flex items-center gap-4">
+                        <div className="w-2 h-10 rounded-full bg-primary/20 group-hover:bg-primary transition-colors" />
+                        <div>
+                          <p className="font-black text-lg text-slate-800 dark:text-white line-clamp-1">{attempt.quizzes?.title}</p>
+                          <p className="text-xs text-muted-foreground font-bold tracking-wider">{new Date(attempt.started_at).toLocaleDateString('ar-EG')}</p>
+                        </div>
                     </div>
                     <div className="text-left shrink-0">
-                      <span className={`font-black text-sm ${attempt.score >= (attempt.total_questions / 2) ? 'text-green-600' : 'text-red-600'}`}>
+                      <span className={`font-black text-xl ${attempt.score >= (attempt.total_questions / 2) ? 'text-green-600' : 'text-red-600'}`}>
                         {attempt.score !== null ? `${attempt.score} / ${attempt.total_questions}` : 'لم يكتمل'}
                       </span>
                     </div>
@@ -153,11 +162,13 @@ export default async function StudentDashboard() {
               </ul>
             )}
             {attempts && attempts.length > 0 && (
-              <div className="mt-4 w-full text-center">
-                <Link href="/student/history" className="text-primary hover:underline text-sm font-bold flex items-center justify-center gap-1">
-                  عرض كل النتائج
-                  <ArrowRight className="w-3 h-3" />
-                </Link>
+              <div className="mt-8 w-full">
+                <Button variant="ghost" asChild className="w-full h-12 rounded-xl text-primary font-black hover:bg-primary/10 transition-premium">
+                    <Link href="/student/history" className="gap-2">
+                      عرض كل النتائج
+                      <ArrowRight className="w-5 h-5" />
+                    </Link>
+                </Button>
               </div>
             )}
           </CardContent>
@@ -165,26 +176,29 @@ export default async function StudentDashboard() {
       </div>
 
       {availableQuizzes && availableQuizzes.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold px-1">الاختبارات المتاحة</h2>
-          <div className="grid gap-3">
+        <div className="space-y-6 pt-6">
+          <h2 className="text-2xl font-black px-2 text-slate-900 dark:text-white flex items-center gap-3">
+             <BookOpen className="text-primary w-6 h-6" />
+             الاختبارات المتاحة
+          </h2>
+          <div className="grid gap-6">
             {availableQuizzes?.map((quiz) => (
-              <Card key={quiz.id} className="rounded-2xl border-2 border-muted/50 hover:border-primary/30 transition-all group overflow-hidden">
+              <Card key={quiz.id} className="parchment-card border-none shadow-lg hover:shadow-2xl transition-premium group overflow-hidden rounded-[2.5rem]">
                 <CardContent className="p-0">
-                  <div className="flex items-center justify-between p-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                        <BookOpen className="w-6 h-6" />
+                  <div className="flex flex-col sm:flex-row items-center justify-between p-8 gap-8">
+                    <div className="flex items-center gap-6 text-right w-full sm:w-auto">
+                      <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-premium shadow-inner">
+                        <BookOpen className="w-8 h-8" />
                       </div>
-                      <div>
-                        <p className="font-bold text-lg">{quiz.title}</p>
+                      <div className="flex-1">
+                        <p className="font-black text-2xl text-slate-900 dark:text-white group-hover:text-primary transition-colors">{quiz.title}</p>
                         {quiz.description && (
-                          <p className="text-xs text-muted-foreground line-clamp-1 font-medium">{quiz.description}</p>
+                          <p className="text-sm text-slate-500 font-bold line-clamp-1 mt-1">{quiz.description}</p>
                         )}
                       </div>
                     </div>
-                    <Link href={`/take-quiz/${quiz.share_code}`}>
-                      <Button size="lg" className="rounded-xl font-bold h-12 px-6">ابدأ</Button>
+                    <Link href={`/take-quiz/${quiz.share_code}`} className="w-full sm:w-auto">
+                      <Button size="lg" className="w-full h-14 px-10 rounded-2xl font-black text-xl shadow-xl shadow-primary/20 transition-premium bg-slate-900 text-white hover:scale-105">ابدأ الآن</Button>
                     </Link>
                   </div>
                 </CardContent>
