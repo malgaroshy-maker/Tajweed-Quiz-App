@@ -1,20 +1,5 @@
 import { NextResponse } from 'next/server'
-
-// Polyfill browser globals to satisfy pdf.js dependencies
-if (typeof (global as any).DOMMatrix === 'undefined') {
-  (global as any).DOMMatrix = class DOMMatrix {};
-}
-if (typeof (global as any).ImageData === 'undefined') {
-  (global as any).ImageData = class ImageData {};
-}
-if (typeof (global as any).Path2D === 'undefined') {
-  (global as any).Path2D = class Path2D {};
-}
-
-// Ensure Canvas polyfill is minimal to satisfy PDFJS
-if (typeof (global as any).HTMLCanvasElement === 'undefined') {
-    (global as any).HTMLCanvasElement = class HTMLCanvasElement {};
-}
+const PDFParser = require('pdf2json')
 
 export async function POST(req: Request) {
   try {
@@ -27,24 +12,26 @@ export async function POST(req: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer())
     
-    // Require as CJS to ensure compatibility
-    const pdf = require('pdf-parse');
-    
-    // The library returns a promise that resolves to the parsed data
-    const data = await pdf(buffer, {
-        // Option to disable image parsing to avoid canvas dependencies
-        pagerender: (pageData: any) => {
-            return pageData.getTextContent().then((textContent: any) => {
-                let text = "";
-                for (let item of textContent.items) {
-                    text += item.str + " ";
-                }
-                return text;
-            });
-        }
-    })
+    const pdfParser = new PDFParser();
 
-    return NextResponse.json({ text: data.text })
+    return new Promise((resolve) => {
+      pdfParser.on('pdfParser_dataError', (errData) => {
+        console.error('PDF Parser error:', errData)
+        resolve(NextResponse.json({ error: 'Failed to parse PDF', details: String(errData) }, { status: 500 }));
+      });
+
+      pdfParser.on('pdfParser_dataReady', (pdfData) => {
+        // Extract text from the parsed JSON structure
+        const text = pdfData.Pages.map((page: any) => 
+          page.Texts.map((text: any) => decodeURIComponent(text.R[0].T)).join(' ')
+        ).join('\n');
+        
+        resolve(NextResponse.json({ text }));
+      });
+
+      pdfParser.parseBuffer(buffer);
+    });
+
   } catch (error: unknown) {
     console.error('PDF parsing error:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
