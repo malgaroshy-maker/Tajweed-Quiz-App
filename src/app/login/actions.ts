@@ -42,7 +42,7 @@ export async function signup(formData: FormData) {
   const password = formData.get('password') as string
   const first_name = formData.get('first_name') as string
   const last_name = formData.get('last_name') as string
-  const invitation_code = formData.get('invitation_code') as string
+  const invitation_code = (formData.get('invitation_code') as string || '').trim().toUpperCase()
 
   let role = 'student'
   if (invitation_code) {
