@@ -79,24 +79,6 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
     }
   }
 
-  const parseFile = async (file: File) => {
-    const formData = new FormData()
-    formData.append('file', file)
-    setUploading(true)
-    try {
-      const res = await fetch('/api/ai/parse-pdf', { method: 'POST', body: formData })
-      const data = await res.json()
-      if (data.text) {
-        setInput(prev => prev + "\n\n[محتوى الملف]:\n" + data.text.slice(0, 10000))
-      }
-    } catch {
-      alert('فشل في قراءة الملف')
-    } finally {
-      setUploading(false)
-      setSelectedFile(null)
-    }
-  }
-
   const saveToBank = async (q: Question) => {
     try {
       const res = await fetch('/api/ai/save', {
@@ -113,18 +95,15 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
   }
 
   const handleSendMessage = async () => {
-    if (selectedFile) {
-        await parseFile(selectedFile)
-        return
-    }
-    if (!input.trim()) return
+    if (!input.trim() && !selectedFile) return
 
     let activeSessionId = currentSessionId
     if (!activeSessionId) {
         const { data: { user } } = await supabase.auth.getUser()
+        const titleText = input ? input.slice(0, 30) + "..." : (selectedFile ? `ملف: ${selectedFile.name}` : "محادثة جديدة")
         const { data: session } = await supabase.from('ai_chat_sessions').insert({ 
             teacher_id: user?.id, 
-            title: input.slice(0, 30) + "..." 
+            title: titleText 
         }).select().single()
         
         if (session) {
@@ -133,51 +112,88 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
         }
     }
     
-    const userMsg: ChatMessage = { role: 'user', content: input }
+    // Convert file to base64 if it exists
+    let fileData = null
+    if (selectedFile) {
+        const base64 = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(selectedFile);
+            reader.onload = () => {
+                const result = reader.result as string;
+                // Remove the data:application/pdf;base64, prefix
+                const base64Data = result.split(',')[1];
+                resolve(base64Data);
+            };
+            reader.onerror = error => reject(error);
+        });
+
+        fileData = {
+            name: selectedFile.name,
+            type: selectedFile.type,
+            data: base64
+        }
+    }
+
+    // Add file name to message content if there's a file
+    const displayMsg = selectedFile ? `[مرفق ملف: ${selectedFile.name}]\n${input}`.trim() : input.trim()
+    
+    const userMsg: ChatMessage = { role: 'user', content: displayMsg }
+    
     setMessages(prev => [...prev, userMsg])
     setInput('')
     setLoading(true)
 
     if (activeSessionId) {
-      await supabase.from('ai_chat_messages').insert({ session_id: activeSessionId, role: 'user', content: userMsg.content })
+      await supabase.from('ai_chat_messages').insert({ session_id: activeSessionId, role: 'user', content: displayMsg })
     }
 
-    const res = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...messages, userMsg] }),
-    })
-    const data = await res.json()
-    
-    // Parse questions from the XML-like tag
-    let content = data.message
-    let questions: Question[] = []
-    const qMatch = content.match(/<questions>([\s\S]*?)<\/questions>/)
-    if (qMatch) {
-        try {
-            questions = JSON.parse(qMatch[1])
-            content = content.replace(qMatch[0], "").trim()
-        } catch (e) {
-            console.error("Failed to parse questions", e)
+    // Keep the actual request input clean
+    const requestMessages = [...messages, userMsg]
+
+    try {
+        const res = await fetch('/api/ai/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: requestMessages, file: fileData }),
+        })
+        const data = await res.json()
+        
+        if (!res.ok) {
+           throw new Error(data.error || 'حدث خطأ غير معروف')
         }
+
+        let content = data.message
+        let questions: Question[] = []
+        const qMatch = content.match(/<questions>([\s\S]*?)<\/questions>/)
+        if (qMatch) {
+            try {
+                questions = JSON.parse(qMatch[1])
+                content = content.replace(qMatch[0], "").trim()
+            } catch (e) {
+                console.error("Failed to parse questions", e)
+            }
+        }
+        
+        const assistantMsg: ChatMessage = { role: 'assistant', content, questions }
+        setMessages(prev => [...prev, assistantMsg])
+        
+        if (activeSessionId) {
+          await supabase.from('ai_chat_messages').insert({ session_id: activeSessionId, role: 'assistant', content: data.message })
+          
+          if (messages.length === 1) { 
+              await fetch('/api/ai/generate-title', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ sessionId: activeSessionId, firstMessage: displayMsg }),
+              })
+          }
+        }
+    } catch (err: any) {
+        alert(err.message)
+    } finally {
+        setLoading(false)
+        setSelectedFile(null)
     }
-    
-    const assistantMsg: ChatMessage = { role: 'assistant', content, questions }
-    setMessages(prev => [...prev, assistantMsg])
-    
-    if (activeSessionId) {
-      await supabase.from('ai_chat_messages').insert({ session_id: activeSessionId, role: 'assistant', content: data.message })
-      
-      // Auto-generate title after first exchange
-      if (messages.length === 1) { // 1 user + 1 assistant interaction completed
-          await fetch('/api/ai/generate-title', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ sessionId: activeSessionId, firstMessage: userMsg.content }),
-          })
-      }
-    }
-    setLoading(false)
   }
 
   return (
