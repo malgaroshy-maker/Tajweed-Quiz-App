@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server'
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const PDFParser = require('pdf2json');
+
+// Polyfill browser globals
+if (typeof (global as any).DOMMatrix === 'undefined') (global as any).DOMMatrix = class DOMMatrix {};
+if (typeof (global as any).ImageData === 'undefined') (global as any).ImageData = class ImageData {};
+if (typeof (global as any).Path2D === 'undefined') (global as any).Path2D = class Path2D {};
+if (typeof (global as any).HTMLCanvasElement === 'undefined') (global as any).HTMLCanvasElement = class HTMLCanvasElement {};
 
 export async function POST(req: Request) {
   try {
@@ -13,27 +17,20 @@ export async function POST(req: Request) {
 
     const buffer = Buffer.from(await file.arrayBuffer())
     
-    // Create an instance
-    const pdfParser = new PDFParser();
+    // Use the installed pdf-parse
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const pdf = require('pdf-parse');
+    
+    // Extract text specifically, avoiding rendering
+    const data = await pdf(buffer, {
+        pagerender: (pageData: any) => {
+            return pageData.getTextContent().then((textContent: any) => {
+                return textContent.items.map((item: any) => item.str).join(' ');
+            });
+        }
+    })
 
-    return new Promise((resolve) => {
-      pdfParser.on('pdfParser_dataError', (errData: any) => {
-        console.error('PDF Parser error:', errData)
-        resolve(NextResponse.json({ error: 'Failed to parse PDF', details: String(errData) }, { status: 500 }));
-      });
-
-      pdfParser.on('pdfParser_dataReady', (pdfData: any) => {
-        // Extract text from the parsed JSON structure
-        const text = pdfData.Pages.map((page: any) => 
-          page.Texts.map((textItem: any) => decodeURIComponent(textItem.R[0].T)).join(' ')
-        ).join('\n');
-        
-        resolve(NextResponse.json({ text }));
-      });
-
-      pdfParser.parseBuffer(buffer);
-    });
-
+    return NextResponse.json({ text: data.text })
   } catch (error: unknown) {
     console.error('PDF parsing error:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
