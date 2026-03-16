@@ -1,9 +1,10 @@
 import { createClient } from '@/utils/supabase/server'
 import { Button } from '@/components/ui/button'
 import { FolderPlus, FolderOpen, Trash2 } from 'lucide-react'
-import { createFolder, deleteFolder } from './actions'
+import { createFolder, deleteFolder, renameFolder } from './actions'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
+import { RenameDialog } from '@/components/RenameDialog'
 
 export default async function FoldersPage() {
   const supabase = await createClient()
@@ -59,11 +60,14 @@ export default async function FoldersPage() {
                   </div>
                   <span className="font-black text-slate-800 dark:text-white group-hover:text-primary">{folder.name}</span>
                 </a>
-                <form action={deleteFolder.bind(null, folder.id)}>
-                  <Button variant="ghost" size="icon" type="submit" className="h-12 w-12 rounded-2xl text-destructive hover:bg-red-50 transition-premium border border-transparent hover:border-red-100">
-                    <Trash2 className="w-6 h-6" />
-                  </Button>
-                </form>
+                <div className="flex gap-2">
+                    <RenameDialog id={folder.id} currentName={folder.name} onRename={renameFolder} />
+                    <form action={deleteFolder.bind(null, folder.id)}>
+                      <Button variant="ghost" size="icon" type="submit" className="h-12 w-12 rounded-2xl text-destructive hover:bg-red-50 transition-premium border border-transparent hover:border-red-100">
+                        <Trash2 className="w-6 h-6" />
+                      </Button>
+                    </form>
+                </div>
               </CardContent>
             </Card>
           ))

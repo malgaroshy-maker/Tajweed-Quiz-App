@@ -25,3 +25,18 @@ export async function deleteFolder(id: string) {
   
   revalidatePath('/teacher/folders')
 }
+
+export async function renameFolder(id: string, newName: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) return
+
+  await supabase
+    .from('folders')
+    .update({ name: newName })
+    .eq('id', id)
+    .eq('teacher_id', user.id)
+
+  revalidatePath('/teacher/folders')
+}

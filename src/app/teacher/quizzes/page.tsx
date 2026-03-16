@@ -5,7 +5,9 @@ import { FileQuestion, Plus, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { deleteQuiz } from './[id]/delete-quiz-action'
+import { renameQuiz } from './rename-quiz-action'
 import { MoveQuizSelect } from '@/components/MoveQuizSelect'
+import { RenameDialog } from '@/components/RenameDialog'
 
 export default async function QuizzesPage() {
   const supabase = await createClient()
@@ -74,6 +76,7 @@ export default async function QuizzesPage() {
                     <div className="h-10 w-[1px] bg-slate-200 dark:bg-slate-800 hidden md:block mx-2" />
 
                     <div className="flex items-center gap-2">
+                        <RenameDialog id={quiz.id} currentName={quiz.title} onRename={renameQuiz} />
                         <MoveQuizSelect quizId={quiz.id} currentFolderId={quiz.folder_id} folders={folders || []} />
                         <form action={deleteQuiz.bind(null, quiz.id, quiz.folder_id) as unknown as string}>
                           <Button variant="ghost" size="icon" type="submit" className="h-12 w-12 text-destructive hover:bg-red-50 rounded-2xl transition-premium">
