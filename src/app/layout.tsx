@@ -3,6 +3,7 @@ import { Tajawal, Amiri_Quran, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeColorProvider } from "@/components/theme-color-provider";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -52,9 +53,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider>
-            {children}
-          </TooltipProvider>
+          <ThemeColorProvider>
+            <TooltipProvider>
+              {children}
+            </TooltipProvider>
+          </ThemeColorProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -113,7 +113,7 @@ export default async function TeacherResultsPage() {
                             <table className="w-full text-right border-collapse">
                                 <thead>
                                     <tr className="bg-primary/5 border-y border-primary/10">
-                                        <th className="py-6 px-10 text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">الطالبة</th>
+                                        <th className="py-6 px-10 text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">الطالب</th>
                                         <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">الاختبار</th>
                                         <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">النتيجة</th>
                                         <th className="py-6 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">التاريخ والوقت</th>
@@ -126,7 +126,7 @@ export default async function TeacherResultsPage() {
                                             ? attempt.guest_name
                                             : attempt.profiles 
                                                 ? `${attempt.profiles.first_name} ${attempt.profiles.last_name}`.trim()
-                                                : 'طالبة غير معروفة'
+                                                : 'طالب غير معروفة'
 
                                         const percentage = Math.round((Number(attempt.score) / attempt.total_questions) * 100)
                                         const isPassing = percentage >= 50
@@ -192,7 +192,7 @@ export default async function TeacherResultsPage() {
                         <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center border-2 border-red-100 shadow-xl transition-premium group-hover:rotate-6">
                             <Sparkles className="w-7 h-7 animate-pulse text-red-600" />
                         </div>
-                        تحديات طالباتكِ
+                        تحديات طلابك
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-8 pt-0">
@@ -226,7 +226,7 @@ export default async function TeacherResultsPage() {
                                 <Activity className="w-10 h-10" />
                             </div>
                             <p className="text-lg text-slate-400 font-bold italic leading-relaxed px-10">
-                                سأقوم بتحليل أخطاء الطالبات وتقديم تقارير دورية فور توفر بيانات كافية بإذن الله.
+                                سأقوم بتحليل أخطاء الطلاب وتقديم تقارير دورية فور توفر بيانات كافية بإذن الله.
                             </p>
                         </div>
                     )}
@@ -241,12 +241,12 @@ export default async function TeacherResultsPage() {
                         <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
                             <Activity className="w-6 h-6" />
                         </div>
-                        توجيه شيختي
+                        توجيه المعلم
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-8 pt-0 space-y-6 relative">
                     <p className="text-white/90 leading-relaxed font-bold text-lg italic">
-                        بناءً على النتائج الأخيرة، ننصح بالتركيز على مخارج الحروف الشجرية في الدروس القادمة، حيث لوحظ تكرار الأخطاء فيها لدى معظم الطالبات.
+                        بناءً على النتائج الأخيرة، ننصح بالتركيز على مخارج الحروف الشجرية في الدروس القادمة، حيث لوحظ تكرار الأخطاء فيها لدى معظم الطلاب.
                     </p>
                     <div className="flex items-center gap-2">
                         <div className="h-1.5 w-12 bg-white/40 rounded-full" />

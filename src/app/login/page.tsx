@@ -84,10 +84,10 @@ export default async function LoginPage({
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                        <Label htmlFor="invitation_code" className="text-primary font-black uppercase tracking-widest text-xs pr-2">كود دعوة المعلمة</Label>
+                        <Label htmlFor="invitation_code" className="text-primary font-black uppercase tracking-widest text-xs pr-2">كود دعوة المعلم</Label>
                         <span className="text-[10px] font-black text-slate-400 italic">(اختياري للمدرسات فقط)</span>
                     </div>
-                    <Input id="invitation_code" name="invitation_code" placeholder="أدخلي الكود الممنوح لكِ..." className="h-14 rounded-2xl border-2 border-primary/20 focus-visible:ring-primary font-bold shadow-inner bg-primary/5" />
+                    <Input id="invitation_code" name="invitation_code" placeholder="أدخل الكود الممنوح لك..." className="h-14 rounded-2xl border-2 border-primary/20 focus-visible:ring-primary font-bold shadow-inner bg-primary/5" />
                   </div>
                   <Button type="submit" className="w-full h-16 rounded-2xl bg-primary text-white font-black text-xl shadow-xl shadow-primary/20 hover:scale-[1.02] transition-premium">إنشاء الحساب</Button>
                 </form>

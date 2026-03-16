@@ -108,7 +108,7 @@ export default async function QuestionBankPage({ searchParams }: { searchParams:
                 <BookOpen className="w-12 h-12 text-primary opacity-20" />
             </div>
             <h3 className="text-3xl font-black text-slate-400">لا توجد أسئلة تطابق بحثكِ</h3>
-            <p className="text-slate-400 mt-4 text-lg font-bold">حاولي تغيير معايير التصفية أو إضافة أسئلة جديدة</p>
+            <p className="text-slate-400 mt-4 text-lg font-bold">حاول تغيير معايير التصفية أو إضافة أسئلة جديدة</p>
           </div>
         ) : (
           questions?.map((q) => (

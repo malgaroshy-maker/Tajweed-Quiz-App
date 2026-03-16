@@ -6,8 +6,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Settings, Save, Moon, Type, Sparkles } from 'lucide-react'
+import { Settings, Save, Moon, Type, Sparkles, Palette } from 'lucide-react'
 import { useTheme } from 'next-themes'
+import { useThemeColor } from '@/components/theme-color-provider'
 import { saveSettings } from './actions'
 
 interface Model {
@@ -35,6 +36,7 @@ export function SettingsPageClient({
 }) {
   const [provider, setProvider] = useState(profile?.ai_provider || 'openrouter')
   const { theme, setTheme } = useTheme()
+  const { themeColor, setThemeColor } = useThemeColor()
 
   return (
     <div className="max-w-3xl mx-auto space-y-10 p-4">
@@ -44,7 +46,7 @@ export function SettingsPageClient({
         </div>
         <div>
           <h2 className="text-4xl font-black tracking-tight text-slate-900 dark:text-slate-100">الإعدادات</h2>
-          <p className="text-lg text-primary/70 font-bold">تخصيص تجربة شيختي الفاضلة</p>
+          <p className="text-lg text-primary/70 font-bold">تخصيص تجربة المعلم الفاضلة</p>
         </div>
       </div>
 
@@ -86,7 +88,7 @@ export function SettingsPageClient({
                     className="h-16 rounded-2xl border-2 border-primary/10 bg-white/50 focus-visible:ring-primary font-mono text-lg shadow-inner"
                   />
                   <p className="text-xs text-slate-400 font-bold pt-2 pr-2 italic">
-                    للحصول على مفتاح مجاني: <a href="https://openrouter.ai/keys" target="_blank" className="text-primary hover:underline font-black">اضغطي هنا</a>
+                    للحصول على مفتاح مجاني: <a href="https://openrouter.ai/keys" target="_blank" className="text-primary hover:underline font-black">اضغط هنا</a>
                   </p>
                 </div>
 
@@ -140,7 +142,7 @@ export function SettingsPageClient({
                     className="h-16 rounded-2xl border-2 border-primary/10 bg-white/50 focus-visible:ring-primary font-mono text-lg shadow-inner"
                   />
                   <p className="text-xs text-slate-400 font-bold pt-2 pr-2 italic">
-                    احصلي على مفتاح مجاني من <a href="https://aistudio.google.com/app/apikey" target="_blank" className="text-primary hover:underline font-black">Google AI Studio</a>
+                    احصل على مفتاح مجاني من <a href="https://aistudio.google.com/app/apikey" target="_blank" className="text-primary hover:underline font-black">Google AI Studio</a>
                   </p>
                 </div>
 
@@ -185,7 +187,7 @@ export function SettingsPageClient({
           <CardTitle className="text-3xl font-black text-slate-900">إعدادات العرض</CardTitle>
         </CardHeader>
         <CardContent className="p-10 pt-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="flex items-center justify-between p-8 vellum-glass rounded-[2rem] border border-primary/5 shadow-sm transition-premium hover:border-primary/20">
               <div className="flex items-center gap-6">
                 <div className="w-16 h-16 rounded-2xl bg-slate-900 dark:bg-white flex items-center justify-center shadow-lg transition-premium group-hover:rotate-12">
@@ -222,6 +224,54 @@ export function SettingsPageClient({
                 <Button size="icon" variant="outline" className="rounded-xl h-12 w-12 border-2 font-black text-xl hover:bg-primary hover:text-white transition-premium">+</Button>
               </div>
             </div>
+          </div>
+          
+          <div className="p-8 vellum-glass rounded-[2rem] border border-primary/5 shadow-sm transition-premium hover:border-primary/20">
+              <div className="flex items-center gap-6 mb-6">
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center shadow-lg transition-premium group-hover:rotate-12">
+                  <Palette className="w-8 h-8 text-primary" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xl font-black text-slate-800 dark:text-white">السمة البصرية (Theme)</Label>
+                  <p className="text-sm text-slate-500 font-bold">اختيار الألوان والروح البصرية للمنصة</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                 <Button 
+                    variant="outline" 
+                    className={`h-20 rounded-2xl border-2 font-black text-lg transition-premium flex flex-col gap-2 justify-center items-center ${themeColor === 'al-qalam' ? 'border-[#666600] bg-[#666600]/10 text-[#666600]' : 'border-[#d4c3a3] bg-white/50 text-slate-600'}`}
+                    onClick={() => setThemeColor('al-qalam')}
+                 >
+                     <span>القلم (الافتراضي)</span>
+                     <div className="flex gap-2">
+                        <div className="w-4 h-4 rounded-full bg-[#666600]" />
+                        <div className="w-4 h-4 rounded-full bg-[#fffdf5]" />
+                     </div>
+                 </Button>
+                 <Button 
+                    variant="outline" 
+                    className={`h-20 rounded-2xl border-2 font-black text-lg transition-premium flex flex-col gap-2 justify-center items-center ${themeColor === 'al-kaaba' ? 'border-[#10b981] bg-[#10b981]/10 text-[#10b981]' : 'border-[#d4c3a3] bg-white/50 text-slate-600'}`}
+                    onClick={() => setThemeColor('al-kaaba')}
+                 >
+                     <span>الكعبة (زمرد وذهبي)</span>
+                     <div className="flex gap-2">
+                        <div className="w-4 h-4 rounded-full bg-[#000000]" />
+                        <div className="w-4 h-4 rounded-full bg-[#10b981]" />
+                        <div className="w-4 h-4 rounded-full bg-[#d4af37]" />
+                     </div>
+                 </Button>
+                 <Button 
+                    variant="outline" 
+                    className={`h-20 rounded-2xl border-2 font-black text-lg transition-premium flex flex-col gap-2 justify-center items-center ${themeColor === 'al-lail' ? 'border-[#1e1b4b] bg-[#1e1b4b]/10 text-[#1e1b4b]' : 'border-[#d4c3a3] bg-white/50 text-slate-600'}`}
+                    onClick={() => setThemeColor('al-lail')}
+                 >
+                     <span>الليل (كحلي عميق)</span>
+                     <div className="flex gap-2">
+                        <div className="w-4 h-4 rounded-full bg-[#1e1b4b]" />
+                        <div className="w-4 h-4 rounded-full bg-[#fde047]" />
+                     </div>
+                 </Button>
+              </div>
           </div>
         </CardContent>
       </Card>

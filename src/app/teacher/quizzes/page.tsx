@@ -29,7 +29,7 @@ export default async function QuizzesPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-4xl font-black text-slate-900 dark:text-slate-100 tracking-tight">الاختبارات</h2>
-          <p className="text-primary/70 mt-2 text-lg font-medium">تنظيم وإدارة اختبارات طالباتكِ بكل سهولة</p>
+          <p className="text-primary/70 mt-2 text-lg font-medium">تنظيم وإدارة اختبارات طلابك بكل سهولة</p>
         </div>
         <Button asChild className="h-14 px-8 bg-primary text-white font-black rounded-2xl shadow-xl shadow-primary/20 transition-premium hover:scale-105">
           <Link href="/teacher/quizzes/new" className="gap-2">
@@ -46,7 +46,7 @@ export default async function QuizzesPage() {
                 <FileQuestion className="w-12 h-12 text-primary opacity-20" />
             </div>
             <h3 className="text-3xl font-black text-slate-400">لا توجد اختبارات حتى الآن</h3>
-            <p className="text-slate-400 mt-4 text-lg font-bold italic">ابدئي بإنشاء أول اختبار لكِ من الزر أعلاه</p>
+            <p className="text-slate-400 mt-4 text-lg font-bold italic">ابدأ بإنشاء أول اختبار لك من الزر أعلاه</p>
           </div>
         ) : (
           quizzes?.map((quiz) => (

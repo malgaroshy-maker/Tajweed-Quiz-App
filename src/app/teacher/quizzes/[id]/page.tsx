@@ -49,7 +49,7 @@ export default async function QuizEditorPage({
           {quiz.is_published ? (
             <div className="flex items-center gap-4 bg-white/50 dark:bg-black/20 p-3 pr-6 rounded-2xl border border-green-200 shadow-inner">
               <div className="flex flex-col items-end">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-green-600 mb-1">منشور ومتاح للطالبات</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-green-600 mb-1">منشور ومتاح للطلاب</span>
                 <span className="font-black text-2xl tracking-[0.2em] text-slate-900 dark:text-white">
                   {quiz.share_code}
                 </span>
@@ -62,7 +62,7 @@ export default async function QuizEditorPage({
             <div className="flex items-center gap-4 bg-white/50 dark:bg-black/20 p-3 pr-6 rounded-2xl border border-primary/10 shadow-inner">
               <div className="flex flex-col items-end mr-2">
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">مسودة قيد الإعداد</span>
-                <span className="text-sm font-black text-slate-500 italic">غير مرئي للطالبات</span>
+                <span className="text-sm font-black text-slate-500 italic">غير مرئي للطلاب</span>
               </div>
               <div className="flex gap-2">
                 <form action={publishQuiz.bind(null, quiz.id) as unknown as string}>
@@ -88,7 +88,7 @@ export default async function QuizEditorPage({
                   <Plus className="w-12 h-12 text-primary opacity-20" />
               </div>
               <h3 className="text-3xl font-black text-slate-400">لا توجد أسئلة في هذا الاختبار</h3>
-              <p className="text-slate-400 mt-4 text-lg font-bold">أضيفي سؤالاً جديداً أو استوردي من البنك للبدء</p>
+              <p className="text-slate-400 mt-4 text-lg font-bold">أضف سؤالاً جديداً أو استورد من البنك للبدء</p>
             </div>
           ) : (
             questions?.map((q, idx) => (

@@ -26,7 +26,7 @@ function AIChatContent() {
   const searchParams = useSearchParams()
   const suggestFor = searchParams.get('suggest_quiz_for')
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: 'السلام عليكم! أنا مساعدكِ الذكي لعلوم التجويد والقرآن. يمكنكِ طرح أي سؤال، أو رفع ملف PDF، أو لصق نص من كتاب وسأساعدكِ في استخراج أسئلة اختبار منه مباشرة.' }
+    { role: 'assistant', content: 'السلام عليكم! أنا مساعدك الذكي لعلوم التجويد والقرآن. يمكنكِ طرح أي سؤال، أو رفع ملف PDF، أو لصق نص من كتاب وسأساعدكِ في استخراج أسئلة اختبار منه مباشرة.' }
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -275,7 +275,7 @@ function AIChatContent() {
             <Textarea 
               value={input} 
               onChange={(e) => setInput(e.target.value)} 
-              placeholder="اكتبي سؤالاً، أو ارفعي ملف PDF للتحليل..." 
+              placeholder="اكتب سؤالاً، أو ارفعي ملف PDF للتحليل..." 
               className="min-h-[140px] p-6 pb-16 resize-none border-2 border-muted hover:border-primary/40 focus-visible:border-primary rounded-[2.5rem] text-slate-900 dark:text-slate-100 font-bold text-lg bg-[#fcfcfc] dark:bg-slate-800 shadow-inner transition-all placeholder:text-slate-300 dark:placeholder:text-slate-500"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {

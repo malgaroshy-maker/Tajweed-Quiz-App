@@ -67,74 +67,161 @@
   --border: #e5e5d1;
   --input: #e5e5d1;
   --ring: #666600;
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
   --radius: 0.5rem;
-  --sidebar: #666600;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #ffffff;
-  --sidebar-primary-foreground: #666600;
-  --sidebar-accent: rgba(255, 255, 255, 0.1);
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #ffffff;
+  
+  --parchment-bg: #fffdf5;
+  --parchment-border: #d4c3a3;
+  --parchment-glass: rgba(255, 253, 245, 0.7);
+  --parchment-shadow: rgba(0,0,0,0.05);
 }
 
 .dark {
-  --background: #23230f;
+  --background: #0f172a;
   --foreground: oklch(0.985 0 0);
-  --card: #2a2a14;
+  --card: #1e293b;
   --card-foreground: oklch(0.985 0 0);
-  --popover: #2a2a14;
+  --popover: #1e293b;
   --popover-foreground: oklch(0.985 0 0);
-  --primary: #8a8a2a;
-  --primary-foreground: #ffffff;
+  --primary: #a3e635; /* Olive glow */
+  --primary-foreground: #020617;
   --secondary: oklch(0.269 0 0);
-  --secondary-foreground: #8a8a2a;
+  --secondary-foreground: #a3e635;
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
-  --accent-foreground: #8a8a2a;
+  --accent-foreground: #a3e635;
   --destructive: oklch(0.704 0.191 22.216);
   --border: rgba(255, 255, 255, 0.1);
   --input: rgba(255, 255, 255, 0.15);
-  --ring: #8a8a2a;
-  --chart-1: oklch(0.809 0.105 251.813);
-  --chart-2: oklch(0.623 0.214 259.815);
-  --chart-3: oklch(0.546 0.245 262.881);
-  --chart-4: oklch(0.488 0.243 264.376);
-  --chart-5: oklch(0.424 0.199 265.638);
-  --sidebar: #1a1a0b;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #8a8a2a;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgba(255, 255, 255, 0.1);
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #8a8a2a;
+  --ring: #a3e635;
+
+  --parchment-bg: #0f172a;
+  --parchment-border: #334155;
+  --parchment-glass: rgba(15, 23, 42, 0.8);
+  --parchment-shadow: rgba(0,0,0,0.5);
+}
+
+[data-theme='al-kaaba'] {
+  --background: #f8fafc;
+  --foreground: #020617;
+  --card: #ffffff;
+  --card-foreground: #020617;
+  --popover: #ffffff;
+  --popover-foreground: #020617;
+  --primary: #10b981; /* Emerald */
+  --primary-foreground: #ffffff;
+  --secondary: #f1f5f9;
+  --secondary-foreground: #10b981;
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+  --accent: #f1f5f9;
+  --accent-foreground: #10b981;
+  --destructive: #ef4444;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #10b981;
+
+  --parchment-bg: #ffffff;
+  --parchment-border: #cbd5e1;
+  --parchment-glass: rgba(255, 255, 255, 0.7);
+  --parchment-shadow: rgba(0,0,0,0.05);
+}
+
+.dark[data-theme='al-kaaba'] {
+  --background: #000000;
+  --foreground: #f8fafc;
+  --card: #0f172a;
+  --card-foreground: #f8fafc;
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
+  --primary: #d4af37; /* Gold */
+  --primary-foreground: #000000;
+  --secondary: #1e293b;
+  --secondary-foreground: #d4af37;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #d4af37;
+  --destructive: #ef4444;
+  --border: #334155;
+  --input: #334155;
+  --ring: #d4af37;
+
+  --parchment-bg: #000000;
+  --parchment-border: #d4af37;
+  --parchment-glass: rgba(0, 0, 0, 0.8);
+  --parchment-shadow: rgba(212, 175, 55, 0.1);
+}
+
+[data-theme='al-lail'] {
+  --background: #fdfbf7;
+  --foreground: #1e1b4b;
+  --card: #ffffff;
+  --card-foreground: #1e1b4b;
+  --popover: #ffffff;
+  --popover-foreground: #1e1b4b;
+  --primary: #1e1b4b; /* Deep Navy */
+  --primary-foreground: #ffffff;
+  --secondary: #e0e7ff;
+  --secondary-foreground: #1e1b4b;
+  --muted: #e0e7ff;
+  --muted-foreground: #4f46e5;
+  --accent: #e0e7ff;
+  --accent-foreground: #1e1b4b;
+  --destructive: #ef4444;
+  --border: #c7d2fe;
+  --input: #c7d2fe;
+  --ring: #1e1b4b;
+
+  --parchment-bg: #ffffff;
+  --parchment-border: #a5b4fc;
+  --parchment-glass: rgba(255, 255, 255, 0.7);
+  --parchment-shadow: rgba(0,0,0,0.05);
+}
+
+.dark[data-theme='al-lail'] {
+  --background: #1e1b4b; /* Deep Navy */
+  --foreground: #f8fafc;
+  --card: #312e81;
+  --card-foreground: #f8fafc;
+  --popover: #312e81;
+  --popover-foreground: #f8fafc;
+  --primary: #fde047; /* Sand/Yellow */
+  --primary-foreground: #1e1b4b;
+  --secondary: #3730a3;
+  --secondary-foreground: #fde047;
+  --muted: #3730a3;
+  --muted-foreground: #a5b4fc;
+  --accent: #3730a3;
+  --accent-foreground: #fde047;
+  --destructive: #ef4444;
+  --border: #4338ca;
+  --input: #4338ca;
+  --ring: #fde047;
+
+  --parchment-bg: #1e1b4b;
+  --parchment-border: #4338ca;
+  --parchment-glass: rgba(30, 27, 75, 0.8);
+  --parchment-shadow: rgba(0,0,0,0.3);
 }
 
 @layer utilities {
   .parchment-texture {
-    background-image: radial-gradient(#e5e5d1 0.5px, transparent 0.5px);
+    background-image: radial-gradient(var(--border) 0.5px, transparent 0.5px);
     background-size: 20px 20px;
   }
   .parchment-card {
-    background-color: #fffdf5;
-    background-image: url("https://www.transparenttextures.com/patterns/old-mathematics.png");
-    border: 1px solid #d4c3a3;
+    background-color: var(--parchment-bg);
+    border: 1px solid var(--parchment-border);
     box-shadow: 
-      0 1px 1px rgba(0,0,0,0.05), 
-      0 2px 2px rgba(0,0,0,0.05), 
-      0 4px 4px rgba(0,0,0,0.05), 
-      0 8px 8px rgba(0,0,0,0.05);
+      0 1px 1px var(--parchment-shadow), 
+      0 2px 2px var(--parchment-shadow), 
+      0 4px 4px var(--parchment-shadow), 
+      0 8px 8px var(--parchment-shadow);
   }
   .stacked-paper {
     position: relative;
-    background: #fffdf5;
+    background: var(--parchment-bg);
   }
   .stacked-paper::before,
   .stacked-paper::after {
@@ -144,8 +231,8 @@
     left: 2px;
     right: 2px;
     height: 1px;
-    border: 1px solid #d4c3a3;
-    background: #fffdf5;
+    border: 1px solid var(--parchment-border);
+    background: var(--parchment-bg);
     z-index: -1;
     border-radius: 2px;
   }
@@ -155,24 +242,13 @@
     right: 4px;
   }
   .vellum-glass {
-    background-color: rgba(255, 253, 245, 0.7);
+    background-color: var(--parchment-glass);
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border: 1px solid rgba(212, 195, 163, 0.3);
-  }
-  .dark .vellum-glass {
-    background-color: rgba(26, 26, 11, 0.8);
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--parchment-border);
   }
   .transition-premium {
     transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .dark .parchment-card {
-    background-color: #2a2a14;
-    background-image: url("https://www.transparenttextures.com/patterns/dark-matter.png");
-    border-color: #4a4a2a;
-    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
   }
 }
 

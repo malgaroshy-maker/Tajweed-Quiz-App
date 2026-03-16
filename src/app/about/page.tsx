@@ -39,7 +39,7 @@ export default function AboutPage() {
             
             <div className="space-y-8">
               <p className="text-2xl md:text-3xl leading-[1.6] text-slate-800 dark:text-slate-200 font-bold font-quran">
-                تم تصميم هذا التطبيق كإهداء ومساندة لأمي الغالية <span className="text-primary font-black underline decoration-primary/20 underline-offset-8">الشيخة سناء</span> – حفظها الله وبارك في علمها – لتيسير إنشاء الاختبارات التعليمية التي تعين الطالبات على ضبط علوم القرآن الكريم وأحكام التجويد بأسلوب عصري ومنظم.
+                تم تصميم هذا التطبيق كإهداء ومساندة لأمي الغالية <span className="text-primary font-black underline decoration-primary/20 underline-offset-8">الشيخة سناء أبو العيد</span> – حفظها الله وبارك في علمها – لتيسير إنشاء الاختبارات التعليمية التي تعين الطلاب على ضبط علوم القرآن الكريم وأحكام التجويد بأسلوب عصري ومنظم.
               </p>
               
               <p className="text-xl md:text-2xl leading-relaxed text-slate-500 dark:text-slate-400 italic font-medium max-w-2xl mx-auto">

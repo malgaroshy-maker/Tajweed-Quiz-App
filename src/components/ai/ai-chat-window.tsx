@@ -22,7 +22,7 @@ interface ChatMessage {
 
 export function AIChatWindow({ sessionId }: { sessionId?: string }) {
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: 'السلام عليكم! أنا مساعدكِ الذكي لعلوم التجويد والقرآن.' }
+    { role: 'assistant', content: 'السلام عليكم! أنا مساعدك الذكي لعلوم التجويد والقرآن.' }
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -219,7 +219,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
                 </div>
                 <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-2">كيف يمكنني مساعدتكِ اليوم؟</h2>
                 <p className="text-slate-500 dark:text-slate-400 font-bold max-w-md mx-auto">
-                    أنا مساعدكِ الذكي لعلوم التجويد والقرآن. يمكنكِ رفع ملفات PDF أو الصور لاستخراج الأسئلة منها.
+                    أنا مساعدك الذكي لعلوم التجويد والقرآن. يمكنكِ رفع ملفات PDF أو الصور لاستخراج الأسئلة منها.
                 </p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-10 w-full max-w-2xl px-4">
@@ -327,7 +327,7 @@ export function AIChatWindow({ sessionId }: { sessionId?: string }) {
                 <Textarea 
                     value={input} 
                     onChange={(e) => setInput(e.target.value)} 
-                    placeholder="اكتبي رسالة للقلم..." 
+                    placeholder="اكتب رسالة للقلم..." 
                     className="flex-1 bg-transparent border-none focus-visible:ring-0 resize-none min-h-[56px] max-h-[200px] text-lg font-medium py-4 px-4 custom-scrollbar leading-relaxed text-slate-800 dark:text-white"
                     onKeyDown={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {

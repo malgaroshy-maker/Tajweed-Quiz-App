@@ -191,7 +191,7 @@ export default async function QuizResultPage({
                   {q.type === 'short_answer' || q.type === 'fill_in_blank' ? (
                     <div className="space-y-4">
                       <div className={`p-6 rounded-[2rem] border-2 shadow-inner ${ans.is_correct ? 'border-green-100 bg-green-50/50' : 'border-red-100 bg-red-50/50'}`}>
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] block mb-3">إجابتكِ:</span>
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] block mb-3">إجابتك:</span>
                         <p className="font-black text-xl text-slate-900 font-quran leading-relaxed">{ans.text_answer || <span className="italic opacity-40">لم يتم الإجابة</span>}</p>
                       </div>
                       {!ans.is_correct && q.type === 'fill_in_blank' && correctOpt && (
@@ -204,7 +204,7 @@ export default async function QuizResultPage({
                   ) : (
                    <div className="space-y-4">
                      <div className={`p-6 rounded-[2rem] border-2 shadow-inner ${ans.is_correct ? 'border-green-100 bg-green-50/50' : 'border-red-100 bg-red-50/50'}`}>
-                       <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] block mb-3">إجابتكِ:</span>
+                       <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] block mb-3">إجابتك:</span>
                        <p className="font-black text-xl text-slate-900 font-quran leading-relaxed">{selectedOption ? selectedOption.text : <span className="italic opacity-40">لم يتم الإجابة</span>}</p>
                      </div>
 
@@ -222,7 +222,7 @@ export default async function QuizResultPage({
                     <div className="absolute top-2 left-4 opacity-5 font-quran text-5xl pointer-events-none transition-premium group-hover/exp:scale-110">توضيح</div>
                     <div className="flex items-center gap-3 mb-4 font-black text-xs uppercase tracking-[0.3em] text-primary">
                       <Sparkles className="w-5 h-5 animate-pulse" />
-                      توضيح المعلمة
+                      توضيح المعلم
                     </div>
                     <p className="text-lg leading-relaxed font-bold text-slate-700 dark:text-slate-300 pr-2 italic">{q.explanation}</p>
                   </div>
@@ -250,7 +250,7 @@ export default async function QuizResultPage({
           </div>
           <div>
             <h2 className="text-3xl font-black text-slate-900 tracking-tight">لوحة الصدارة</h2>
-            <p className="text-slate-500 font-bold">أوائل الطالبات المتميزات في هذا الاختبار</p>
+            <p className="text-slate-500 font-bold">أوائل الطلاب المتميزات في هذا الاختبار</p>
           </div>
         </div>
         

@@ -75,18 +75,18 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
     <form onSubmit={handleSubmit} className="space-y-12">
       <Card className="parchment-card rounded-[2.5rem] shadow-2xl transition-premium hover:scale-[1.005]">
         <CardContent className="pt-10 p-10">
-          <Label htmlFor="guest_name" className="text-primary font-black uppercase tracking-widest text-sm mb-4 block">اسم الطالبة الكريمة</Label>
+          <Label htmlFor="guest_name" className="text-primary font-black uppercase tracking-widest text-sm mb-4 block">اسم الطالب الكريمة</Label>
           <Input 
             id="guest_name" 
             name="guest_name" 
-            placeholder="ادخلي اسمكِ هنا..." 
+            placeholder="ادخلي اسمك هنا..." 
             className="bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] h-16 rounded-2xl text-xl font-black focus-visible:ring-primary shadow-inner" 
             defaultValue={answers['guest_name'] || guestName}
             onChange={(e) => handleValueChange('guest_name', e.target.value)}
           />
           <p className="text-xs text-muted-foreground mt-4 font-bold opacity-70 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              سيتم تسجيل النتيجة بهذا الاسم في لوحة صدارة المعلمة
+              سيتم تسجيل النتيجة بهذا الاسم في لوحة صدارة المعلم
           </p>
         </CardContent>
       </Card>
@@ -141,13 +141,13 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
               <div className="space-y-6">
                 <Label htmlFor={`q_${q.id}`} className="text-primary font-black uppercase tracking-widest text-xs flex items-center gap-2">
                     <span className="w-1 h-1 rounded-full bg-primary" />
-                    إجابتكِ المكتوبة:
+                    إجابتك المكتوبة:
                 </Label>
                 {q.type === 'short_answer' ? (
                   <Textarea 
                     name={`question_${q.id}`} 
                     id={`q_${q.id}`} 
-                    placeholder="اكتبي إجابتكِ بالتفصيل هنا..." 
+                    placeholder="اكتب إجابتك بالتفصيل هنا..." 
                     className="min-h-[200px] text-2xl font-black font-quran bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] rounded-[2rem] p-8 focus-visible:ring-primary shadow-inner leading-relaxed" 
                     value={answers[q.id] || ''}
                     onChange={(e) => handleValueChange(q.id, e.target.value)}
@@ -156,7 +156,7 @@ export function QuizForm({ quiz, questions, guestName, submitAction }: QuizFormP
                   <Input 
                     name={`question_${q.id}`} 
                     id={`q_${q.id}`} 
-                    placeholder="اكتبي الكلمة الصحيحة..." 
+                    placeholder="اكتب الكلمة الصحيحة..." 
                     className="h-20 text-2xl font-black font-quran bg-white/50 dark:bg-black/20 border-2 border-[#d4c3a3] rounded-2xl px-8 focus-visible:ring-primary shadow-inner" 
                     value={answers[q.id] || ''}
                     onChange={(e) => handleValueChange(q.id, e.target.value)}

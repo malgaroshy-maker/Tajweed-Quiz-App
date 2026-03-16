@@ -19,7 +19,7 @@ export default function TeacherLayout({
           <div className="flex items-center gap-6">
             <SidebarTrigger className="h-10 w-10 text-primary hover:bg-primary/10 transition-colors" />
             <div className="h-6 w-[1px] bg-primary/20 hidden md:block"></div>
-            <h1 className="font-black text-xl text-slate-900 dark:text-slate-100 tracking-tight">لوحة المعلمة</h1>
+            <h1 className="font-black text-xl text-slate-900 dark:text-slate-100 tracking-tight">لوحة المعلم</h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center transition-premium hover:rotate-12">

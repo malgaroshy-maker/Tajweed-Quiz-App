@@ -21,7 +21,7 @@ export default async function FoldersPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-4xl font-black text-slate-900 dark:text-slate-100 tracking-tight">مجلداتي</h2>
-          <p className="text-primary/70 mt-2 text-lg font-medium">تنظيم اختباراتكِ في مجلدات خاصة لسهولة الوصول</p>
+          <p className="text-primary/70 mt-2 text-lg font-medium">تنظيم اختباراتك في مجلدات خاصة لسهولة الوصول</p>
         </div>
       </div>
 
@@ -47,7 +47,7 @@ export default async function FoldersPage() {
                 <FolderOpen className="w-12 h-12 text-primary opacity-20" />
             </div>
             <h3 className="text-3xl font-black text-slate-400">لا توجد مجلدات بعد</h3>
-            <p className="text-slate-400 mt-4 text-lg font-bold">ابدئي بتنظيم عملكِ بإنشاء أول مجلد لكِ</p>
+            <p className="text-slate-400 mt-4 text-lg font-bold">ابدأ بتنظيم عملك بإنشاء أول مجلد لك</p>
           </div>
         ) : (
           folders?.map((folder) => (

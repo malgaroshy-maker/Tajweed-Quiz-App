@@ -65,8 +65,8 @@ export default async function StudentsPage() {
     <div className="space-y-10 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-black text-slate-900 dark:text-slate-100 tracking-tight">طالباتكِ المتميزات</h1>
-          <p className="text-primary/70 mt-2 text-lg font-medium">متابعة سجل أداء الطالبات اللواتي شاركن في اختباراتكِ</p>
+          <h1 className="text-4xl font-black text-slate-900 dark:text-slate-100 tracking-tight">طلابك المتميزات</h1>
+          <p className="text-primary/70 mt-2 text-lg font-medium">متابعة سجل أداء الطلاب اللواتي شاركن في اختباراتك</p>
         </div>
       </div>
 
@@ -76,12 +76,12 @@ export default async function StudentsPage() {
              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
                 <Users className="w-7 h-7" />
              </div>
-             إحصائيات الطالبات
+             إحصائيات الطلاب
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {studentList.length === 0 ? (
-            <div className="p-24 text-center text-muted-foreground font-black text-xl italic">لا يوجد طالبات مسجلات بعد.</div>
+            <div className="p-24 text-center text-muted-foreground font-black text-xl italic">لا يوجد طلاب مسجلات بعد.</div>
           ) : (
             <div className="divide-y-2 divide-[#d4c3a3]/20">
               {studentList.map((student, i) => (

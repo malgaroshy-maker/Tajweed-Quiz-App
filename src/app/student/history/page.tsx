@@ -36,7 +36,7 @@ export default async function StudentHistoryPage() {
                 <HistoryIcon className="w-12 h-12 text-primary opacity-20" />
             </div>
             <h3 className="text-3xl font-black text-slate-400">لا توجد اختبارات مسجلة</h3>
-            <p className="text-slate-400 mt-4 text-lg font-bold italic">ابدئي برحلة التعلم وخوض الاختبارات لتظهر هنا</p>
+            <p className="text-slate-400 mt-4 text-lg font-bold italic">ابدأ برحلة التعلم وخوض الاختبارات لتظهر هنا</p>
           </div>
         ) : (
           attempts?.map((attempt) => {

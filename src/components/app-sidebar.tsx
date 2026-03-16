@@ -48,7 +48,7 @@ const items = [
     icon: BarChart2,
   },
   {
-    title: "طالباتي",
+    title: "طلابي",
     url: "/teacher/students",
     icon: Users,
   },

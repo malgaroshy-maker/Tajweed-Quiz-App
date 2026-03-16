@@ -125,7 +125,7 @@ export function AIChatSidebar({ currentSessionId, onNewChat }: { currentSessionI
                   أ
               </div>
               <div className="flex-1 overflow-hidden">
-                  <p className="text-sm font-bold text-slate-900 dark:text-white truncate">حساب المعلمة</p>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white truncate">حساب المعلم</p>
                   <p className="text-[10px] text-slate-500 dark:text-white/40 uppercase tracking-widest font-black">Free Plan</p>
               </div>
           </div>
