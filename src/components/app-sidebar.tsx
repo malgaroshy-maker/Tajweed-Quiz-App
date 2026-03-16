@@ -29,6 +29,7 @@ import {
 import { logout } from "@/app/login/logout"
 import { useRouter, usePathname } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
+import { Logo } from "@/components/ui/logo"
 
 // Menu items
 const items = [
@@ -110,11 +111,11 @@ export function AppSidebar() {
       <SidebarHeader className="p-8 border-b border-white/10 flex flex-col items-center justify-center">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-lg">
-            <BookOpen className="w-8 h-8 font-bold" />
+            <Logo className="w-8 h-8 font-bold" />
           </div>
           <div className="flex flex-col">
-            <h2 className="text-xl font-bold leading-none tracking-tight">القلم</h2>
-            <p className="text-[10px] text-white/60 mt-1 uppercase tracking-widest font-medium">Al-Qalam Portal</p>
+            <h2 className="text-xl font-bold leading-none tracking-tight">ترتيل</h2>
+            <p className="text-[10px] text-white/60 mt-1 uppercase tracking-widest font-medium">Tarteel Portal</p>
           </div>
         </div>
       </SidebarHeader>

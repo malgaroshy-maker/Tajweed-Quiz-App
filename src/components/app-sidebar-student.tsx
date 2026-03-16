@@ -6,9 +6,9 @@ import {
   LogOut,
   Search,
   History,
-  BookOpen,
   Heart,
-  User
+  Library,
+  Settings
 } from "lucide-react"
 
 import {
@@ -17,7 +17,6 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -26,6 +25,7 @@ import {
 import { logout } from "@/app/login/logout"
 import { useRouter, usePathname } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
+import { Logo } from "@/components/ui/logo"
 
 const items = [
   {
@@ -34,14 +34,24 @@ const items = [
     icon: LayoutDashboard,
   },
   {
-    title: "الانضمام باختبار (رمز)",
+    title: "مكتبة الاختبارات",
+    url: "/student/quizzes",
+    icon: Library,
+  },
+  {
+    title: "الانضمام برمز",
     url: "/student/join",
     icon: Search,
   },
   {
-    title: "نتائجي السابقة",
+    title: "سجل الإنجاز",
     url: "/student/history",
     icon: History,
+  },
+  {
+    title: "الإعدادات",
+    url: "/student/settings",
+    icon: Settings,
   },
   {
     title: "عن التطبيق",
@@ -77,44 +87,45 @@ export function AppSidebarStudent() {
   }, [supabase])
 
   return (
-    <Sidebar side="right" className="border-l">
-      <SidebarHeader className="h-20 flex flex-col items-center justify-center border-b bg-muted/30">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground">
-            <BookOpen className="w-5 h-5" />
+    <Sidebar side="right" className="border-l bg-primary text-white shadow-2xl z-20">
+      <SidebarHeader className="p-8 border-b border-white/10 flex flex-col items-center justify-center">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-primary shadow-lg">
+            <Logo className="w-8 h-8 font-bold" />
           </div>
-          <span className="font-bold text-xl text-primary">رتل وارتق</span>
+          <div className="flex flex-col">
+            <h2 className="text-xl font-bold leading-none tracking-tight">ترتيل</h2>
+            <p className="text-[10px] text-white/60 mt-1 uppercase tracking-widest font-medium">Tarteel Portal</p>
+          </div>
         </div>
-        <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest mt-1">بوابة الطالب</span>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="bg-primary">
         {profile && (
-          <div className="p-4 border-b bg-muted/10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold">
-                <User className="w-5 h-5" />
+          <div className="px-6 py-6 border-b border-white/5">
+            <div className="bg-white/5 rounded-2xl p-4 flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-primary/10 border-2 border-white/20 flex items-center justify-center text-white font-bold">
+                {profile.first_name?.[0]}{profile.last_name?.[0]}
               </div>
-              <div className="flex flex-col overflow-hidden">
-                <span className="font-semibold text-sm truncate">{profile.first_name} {profile.last_name}</span>
-                <span className="text-[10px] text-muted-foreground font-bold uppercase">طالب</span>
+              <div className="flex-1 overflow-hidden">
+                <h4 className="text-sm font-bold truncate text-white">{profile.first_name} {profile.last_name}</h4>
+                <p className="text-[10px] text-white/50 uppercase tracking-wider font-bold">Student</p>
               </div>
             </div>
           </div>
         )}
-        <SidebarGroup>
-          <SidebarGroupLabel className="px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70">القائمة الرئيسية</SidebarGroupLabel>
+        <SidebarGroup className="p-4 space-y-2">
           <SidebarGroupContent>
-            <SidebarMenu className="px-2">
+            <SidebarMenu className="gap-1">
               {items.map((item) => {
-                const isActive = pathname === item.url
+                const isActive = pathname === item.url || pathname.startsWith(item.url + '/')
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton 
                       onClick={() => router.push(item.url)}
-                      className={`h-10 px-3 transition-all ${isActive ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted'}`}
+                      className={`h-12 px-4 rounded-xl transition-all duration-200 flex items-center gap-4 ${isActive ? "bg-white/15 text-white shadow-lg shadow-black/10" : "hover:bg-white/10 text-white/70 hover:text-white"}`}
                     >
-                      <item.icon className={isActive ? 'text-primary' : 'text-muted-foreground'} />
-                      <span>{item.title}</span>
+                      <item.icon className={`w-5 h-5 ${isActive ? "text-white" : "text-white/70"}`} />
+                      <span className={`text-base ${isActive ? "font-bold" : "font-medium"}`}>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
@@ -123,13 +134,13 @@ export function AppSidebarStudent() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4 border-t">
+      <SidebarFooter className="p-6 space-y-4 bg-primary">
         <SidebarMenu>
           <SidebarMenuItem>
             <form action={logout}>
-              <SidebarMenuButton type="submit" className="w-full justify-center gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive h-10 border border-destructive/20 rounded-md transition-colors">
-                <LogOut className="w-4 h-4" />
-                <span className="font-semibold">تسجيل الخروج</span>
+              <SidebarMenuButton type="submit" className="w-full py-6 bg-white text-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-white/90 transition-all shadow-xl">
+                <LogOut className="w-5 h-5" />
+                <span>تسجيل الخروج</span>
               </SidebarMenuButton>
             </form>
           </SidebarMenuItem>

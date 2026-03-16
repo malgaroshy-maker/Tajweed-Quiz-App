@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { GuestEntryForm } from '@/components/guest-entry-form'
+import { Logo } from '@/components/ui/logo'
 
 export default async function LoginPage({
   searchParams,
@@ -20,15 +21,15 @@ export default async function LoginPage({
       <div className="w-full max-w-xl space-y-8">
         <div className="text-center space-y-4">
             <div className="w-24 h-24 bg-primary rounded-[2rem] flex items-center justify-center mx-auto shadow-2xl rotate-3 transition-premium hover:rotate-0">
-                <span className="text-white font-quran text-5xl font-black">ق</span>
+                <Logo className="w-14 h-14 text-white" />
             </div>
-            <h1 className="text-5xl font-black text-slate-900 dark:text-white tracking-tight">مِنصة القَلَم</h1>
-            <p className="text-primary/70 text-xl font-bold italic">بوابتكِ المتكاملة لعلوم التجويد والقرآن</p>
+            <h1 className="text-5xl font-black text-slate-900 dark:text-white tracking-tight">مِنصة ترتيل</h1>
+            <p className="text-primary/70 text-xl font-bold italic">بوابتك المتكاملة لعلوم التجويد والقرآن</p>
         </div>
 
         <Card className="parchment-card border-none shadow-2xl rounded-[3rem] overflow-hidden transition-premium hover:scale-[1.005]">
           <CardHeader className="text-center p-10 pb-6">
-            <CardTitle className="text-2xl font-black text-slate-900">مرحباً بكِ في رحاب العلم</CardTitle>
+            <CardTitle className="text-2xl font-black text-slate-900">مرحباً بك في رحاب العلم</CardTitle>
             <CardDescription className="text-slate-500 font-bold mt-2">قم بتسجيل الدخول أو إنشاء حساب جديد للبدء</CardDescription>
           </CardHeader>
           <CardContent className="p-10 pt-0">
@@ -85,7 +86,7 @@ export default async function LoginPage({
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                         <Label htmlFor="invitation_code" className="text-primary font-black uppercase tracking-widest text-xs pr-2">كود دعوة المعلم</Label>
-                        <span className="text-[10px] font-black text-slate-400 italic">(اختياري للمدرسات فقط)</span>
+                        <span className="text-[10px] font-black text-slate-400 italic">(اختياري للمدرسين فقط)</span>
                     </div>
                     <Input id="invitation_code" name="invitation_code" placeholder="أدخل الكود الممنوح لك..." className="h-14 rounded-2xl border-2 border-primary/20 focus-visible:ring-primary font-bold shadow-inner bg-primary/5" />
                   </div>
@@ -104,7 +105,7 @@ export default async function LoginPage({
         </Card>
         
         <p className="text-center text-slate-400 font-bold text-sm tracking-wide">
-            © {new Date().getFullYear()} منصة القلم لعلوم التجويد - جميع الحقوق محفوظة
+            © {new Date().getFullYear()} منصة ترتيل لعلوم التجويد - جميع الحقوق محفوظة
         </p>
       </div>
     </div>

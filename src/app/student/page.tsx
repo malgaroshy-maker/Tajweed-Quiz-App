@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Search, History, ArrowRight, BookOpen, Trophy, Star, Target } from 'lucide-react'
+import { Search, History, ArrowRight, Trophy, Star, Target, Library } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function StudentDashboard() {
@@ -25,10 +25,10 @@ export default async function StudentDashboard() {
     .select('score, total_questions')
     .eq('student_id', user.id)
 
-  const totalPoints = allAttempts?.reduce((acc, curr) => acc + (Number(curr.score) || 0), 0) || 0
-  const completedCount = allAttempts?.filter(a => a.score !== null).length || 0
+  const totalPoints = allAttempts?.reduce((acc: number, curr: any) => acc + (Number(curr.score) || 0), 0) || 0
+  const completedCount = allAttempts?.filter((a: any) => a.score !== null).length || 0
   const avgAccuracy = allAttempts && allAttempts.length > 0
-    ? Math.round((allAttempts.reduce((acc, curr) => acc + (Number(curr.score) / curr.total_questions), 0) / allAttempts.length) * 100)
+    ? Math.round((allAttempts.reduce((acc: number, curr: any) => acc + (Number(curr.score) / curr.total_questions), 0) / allAttempts.length) * 100)
     : 0
 
   const { data: attempts } = await supabase
@@ -37,41 +37,6 @@ export default async function StudentDashboard() {
     .eq('student_id', user.id)
     .order('started_at', { ascending: false })
     .limit(5)
-
-  // Fetch available published quizzes with teacher and folder details
-  const { data: availableQuizzesData } = await supabase
-    .from('quizzes')
-    .select(`
-      id, title, description, share_code,
-      profiles:teacher_id(first_name, last_name),
-      folders:folder_id(name)
-    `)
-    .eq('is_published', true)
-    .order('created_at', { ascending: false });
-
-  // Group quizzes by Teacher -> Folder
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const groupedQuizzes: Record<string, Record<string, any[]>> = {};
-
-  availableQuizzesData?.forEach((quiz) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const teacherProfile: any = Array.isArray(quiz.profiles) ? quiz.profiles[0] : quiz.profiles;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const folderData: any = Array.isArray(quiz.folders) ? quiz.folders[0] : quiz.folders;
-
-    const teacherName = teacherProfile 
-        ? `أ. ${teacherProfile.first_name} ${teacherProfile.last_name}`.trim() 
-        : 'معلم غير معروف';
-    const folderName = folderData?.name || 'اختبارات عامة';
-
-    if (!groupedQuizzes[teacherName]) {
-        groupedQuizzes[teacherName] = {};
-    }
-    if (!groupedQuizzes[teacherName][folderName]) {
-        groupedQuizzes[teacherName][folderName] = [];
-    }
-    groupedQuizzes[teacherName][folderName].push(quiz);
-  });
 
   async function joinQuiz(formData: FormData) {
     'use server'
@@ -85,8 +50,8 @@ export default async function StudentDashboard() {
     <div className="space-y-8 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">بوابة الطالب</h1>
-          <p className="text-muted-foreground mt-1 font-medium">مرحباً بك، {profile?.first_name} {profile?.last_name}</p>
+          <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-slate-100">بوابة الطالب</h1>
+          <p className="text-muted-foreground mt-2 text-lg font-bold">مرحباً بك، {profile?.first_name} {profile?.last_name}</p>
         </div>
       </div>
 
@@ -128,30 +93,44 @@ export default async function StudentDashboard() {
       </div>
 
       <div className="grid gap-10 md:grid-cols-2">
-        <Card className="parchment-card border-none shadow-2xl rounded-[3rem] overflow-hidden relative group transition-premium hover:scale-[1.01]">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-bl-[6rem] -mr-12 -mt-12 transition-transform group-hover:scale-110" />
-          <CardHeader className="relative p-10 pb-6">
-            <CardTitle className="flex items-center gap-4 text-primary text-2xl font-black">
-              <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground shadow-xl transition-premium group-hover:rotate-6">
-                <Search className="w-6 h-6" />
-              </div>
-              انضمام لاختبار
-            </CardTitle>
-            <CardDescription className="text-primary/70 font-black text-lg pt-4">أدخل الرمز الذي شاركته معكِ المعلم للبدء</CardDescription>
-          </CardHeader>
-          <CardContent className="p-10 pt-0 relative">
-            <form action={joinQuiz} className="flex gap-4">
-              <Input 
-                name="code" 
-                placeholder="أدخل الرمز..." 
-                required 
-                className="uppercase text-center font-black tracking-[0.2em] text-2xl h-16 bg-white dark:bg-slate-900 border-2 border-primary/20 focus-visible:border-primary rounded-2xl shadow-inner" 
-                maxLength={6} 
-              />
-              <Button type="submit" className="h-16 px-10 font-black text-xl rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-premium bg-primary text-white">دخول</Button>
-            </form>
-          </CardContent>
-        </Card>
+        <div className="space-y-10">
+            <Card className="parchment-card border-none shadow-2xl rounded-[3rem] overflow-hidden relative group transition-premium hover:scale-[1.01]">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-bl-[6rem] -mr-12 -mt-12 transition-transform group-hover:scale-110" />
+            <CardHeader className="relative p-10 pb-6">
+                <CardTitle className="flex items-center gap-4 text-primary text-2xl font-black">
+                <div className="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-primary-foreground shadow-xl transition-premium group-hover:rotate-6">
+                    <Search className="w-6 h-6" />
+                </div>
+                انضمام باختبار
+                </CardTitle>
+                <CardDescription className="text-primary/70 font-black text-lg pt-4">أدخل الرمز الذي شاركه معك المعلم للبدء</CardDescription>
+            </CardHeader>
+            <CardContent className="p-10 pt-0 relative">
+                <form action={joinQuiz} className="flex gap-4">
+                <Input 
+                    name="code" 
+                    placeholder="أدخل الرمز..." 
+                    required 
+                    className="uppercase text-center font-black tracking-[0.2em] text-2xl h-16 bg-white dark:bg-slate-900 border-2 border-primary/20 focus-visible:border-primary rounded-2xl shadow-inner" 
+                    maxLength={6} 
+                />
+                <Button type="submit" className="h-16 px-10 font-black text-xl rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-premium bg-primary text-white">دخول</Button>
+                </form>
+            </CardContent>
+            </Card>
+
+            <Card className="parchment-card border-none shadow-2xl rounded-[3rem] overflow-hidden group transition-premium hover:scale-[1.01]">
+                <div className="bg-primary text-white p-10 flex flex-col justify-center items-center text-center space-y-6 relative h-full min-h-[300px]">
+                    <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[150%] bg-white/10 rounded-full blur-3xl pointer-events-none" />
+                    <Library className="w-16 h-16 text-white mb-2 animate-bounce" />
+                    <h3 className="text-3xl font-black relative z-10">مكتبة الاختبارات</h3>
+                    <p className="text-lg font-bold text-white/80 max-w-sm relative z-10">تصفح جميع الاختبارات المتاحة، منظمة حسب المعلم والمجلد لسهولة الوصول.</p>
+                    <Button asChild size="lg" className="w-full h-16 text-2xl font-black rounded-2xl bg-white text-primary hover:bg-slate-50 shadow-xl transition-premium mt-4 relative z-10 hover:scale-105">
+                        <Link href="/student/quizzes">دخول المكتبة</Link>
+                    </Button>
+                </div>
+            </Card>
+        </div>
 
         <Card className="vellum-glass border-none shadow-xl rounded-[3rem] overflow-hidden">
           <CardHeader className="p-10 pb-4">
@@ -166,7 +145,7 @@ export default async function StudentDashboard() {
                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto opacity-20">
                     <History className="w-8 h-8" />
                   </div>
-                <p className="text-muted-foreground text-lg font-bold italic">لم تقوم بإجراء أي اختبارات بعد.</p>
+                <p className="text-muted-foreground text-lg font-bold italic">لم تقم بإجراء أي اختبارات بعد.</p>
               </div>
             ) : (
               <ul className="space-y-4">
@@ -201,59 +180,6 @@ export default async function StudentDashboard() {
           </CardContent>
         </Card>
       </div>
-
-      {Object.keys(groupedQuizzes).length > 0 && (
-        <div className="space-y-10 pt-6">
-          <h2 className="text-3xl font-black px-2 text-slate-900 dark:text-white flex items-center gap-4">
-             <BookOpen className="text-primary w-8 h-8" />
-             الاختبارات المتاحة
-          </h2>
-          <div className="grid gap-10">
-            {Object.entries(groupedQuizzes).map(([teacherName, folders]) => (
-                <div key={teacherName} className="space-y-6">
-                    <div className="flex items-center gap-4 bg-primary/5 px-6 py-3 rounded-2xl w-fit border border-primary/10">
-                        <span className="w-3 h-3 rounded-full bg-primary" />
-                        <h3 className="text-2xl font-black text-slate-800 dark:text-white">{teacherName}</h3>
-                    </div>
-                    <div className="grid gap-8 mr-4 sm:mr-8 border-r-4 border-primary/20 pr-6">
-                        {Object.entries(folders).map(([folderName, quizzes]) => (
-                            <div key={folderName} className="space-y-4">
-                                <h4 className="text-xl font-black text-primary/80 flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-primary/50" />
-                                    {folderName}
-                                </h4>
-                                <div className="grid gap-4">
-                                    {quizzes.map((quiz: any) => (
-                                        <Card key={quiz.id} className="parchment-card border-none shadow-md hover:shadow-xl transition-premium group overflow-hidden rounded-[2rem]">
-                                            <CardContent className="p-0">
-                                            <div className="flex flex-col sm:flex-row items-center justify-between p-6 gap-6">
-                                                <div className="flex items-center gap-5 text-right w-full sm:w-auto">
-                                                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-premium shadow-inner shrink-0">
-                                                    <BookOpen className="w-6 h-6" />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <p className="font-black text-xl text-slate-900 dark:text-white group-hover:text-primary transition-colors">{quiz.title}</p>
-                                                    {quiz.description && (
-                                                    <p className="text-xs text-slate-500 font-bold line-clamp-1 mt-1">{quiz.description}</p>
-                                                    )}
-                                                </div>
-                                                </div>
-                                                <Link href={`/take-quiz/${quiz.share_code}`} className="w-full sm:w-auto">
-                                                <Button size="lg" className="w-full sm:w-auto h-12 px-8 rounded-xl font-black text-lg shadow-lg shadow-primary/20 transition-premium bg-slate-900 text-white hover:scale-105">ابدأ</Button>
-                                                </Link>
-                                            </div>
-                                            </CardContent>
-                                        </Card>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

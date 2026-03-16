@@ -1,7 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card"
-import { BookOpen, Heart, Code, ArrowRight } from "lucide-react"
+import { Heart, Code, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { Logo } from "@/components/ui/logo"
 
 export default function AboutPage() {
   return (
@@ -26,7 +27,7 @@ export default function AboutPage() {
         <div className="flex justify-center">
           <div className="w-28 h-28 bg-primary rounded-[2.5rem] flex items-center justify-center shadow-2xl relative overflow-hidden group rotate-3 transition-premium hover:rotate-0">
             <div className="absolute inset-0 bg-white/10 group-hover:scale-150 transition-transform duration-700" />
-            <BookOpen className="w-14 h-14 text-white relative z-10" />
+            <Logo className="w-14 h-14 text-white relative z-10" />
           </div>
         </div>
 
@@ -34,7 +35,7 @@ export default function AboutPage() {
           <CardContent className="p-10 md:p-16 text-center space-y-10">
             <div className="space-y-4">
                 <span className="text-primary font-black uppercase tracking-[0.4em] text-xs opacity-50">قصة المشروع</span>
-                <h1 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter">عن مَنصة القَلَم</h1>
+                <h1 className="text-5xl md:text-6xl font-black text-slate-900 tracking-tighter">عن مَنصة ترتيل</h1>
             </div>
             
             <div className="space-y-8">
