@@ -15,7 +15,7 @@ type Quiz = {
     share_code: string;
     teacher_name: string;
     teacher_id: string;
-    folder_name: string;
+    folder_name: string | null;
     folder_id: string | null;
 };
 
@@ -30,31 +30,50 @@ export default function StudentQuizzesLibrary() {
   useEffect(() => {
     const fetchQuizzes = async () => {
       const supabase = createClient()
-      const { data } = await supabase
+      
+      // Fetch all published quizzes
+      const { data: quizzesData, error: quizzesError } = await supabase
         .from('quizzes')
         .select(`
           id, title, description, share_code, teacher_id, folder_id,
-          profiles:teacher_id(first_name, last_name),
-          folders:folder_id(name)
+          teacher:profiles!teacher_id(first_name, last_name)
         `)
         .eq('is_published', true)
         .order('created_at', { ascending: false });
 
-      if (data) {
-        const formatted: Quiz[] = data.map(q => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const p: any = Array.isArray(q.profiles) ? q.profiles[0] : q.profiles;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const f: any = Array.isArray(q.folders) ? q.folders[0] : q.folders;
+      if (quizzesError) {
+          console.error("Quizzes fetch error:", quizzesError);
+      }
+
+      // Fetch all folders that are linked to these quizzes (to ensure we get names)
+      const folderIds = quizzesData?.map(q => q.folder_id).filter(id => id !== null) as string[];
+      let foldersMapData = new Map<string, string>();
+
+      if (folderIds && folderIds.length > 0) {
+          const { data: foldersData } = await supabase
+            .from('folders')
+            .select('id, name')
+            .in('id', Array.from(new Set(folderIds)));
+          
+          if (foldersData) {
+              foldersData.forEach(f => foldersMapData.set(f.id, f.name));
+          }
+      }
+
+      if (quizzesData) {
+        const formatted: Quiz[] = quizzesData.map(q => {
+            const t: any = q.teacher;
+            const teacherProfile = Array.isArray(t) ? t[0] : t;
+            
             return {
                 id: q.id,
                 title: q.title,
                 description: q.description || '',
                 share_code: q.share_code,
                 teacher_id: q.teacher_id,
-                teacher_name: p ? `أ. ${p.first_name} ${p.last_name}` : 'معلم غير معروف',
+                teacher_name: teacherProfile ? `أ. ${teacherProfile.first_name} ${teacherProfile.last_name}` : 'معلم غير معروف',
                 folder_id: q.folder_id,
-                folder_name: f?.name || null // Keep null explicitly to separate loose quizzes
+                folder_name: q.folder_id ? foldersMapData.get(q.folder_id) || 'مجلد غير معروف' : null
             }
         });
         setQuizzes(formatted)
@@ -162,56 +181,49 @@ export default function StudentQuizzesLibrary() {
                 <h3 className="text-2xl font-black text-slate-800 dark:text-white">{teacherName}</h3>
             </div>
             
-            {foldersList.length > 0 && (
-                <div className="space-y-4">
-                    <h4 className="text-xl font-black text-primary/80 px-2">المجلدات</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {foldersList.map(f => (
-                            <Card key={f.id} onClick={() => setSelectedFolderId(f.id)} className="parchment-card border-none shadow-md hover:shadow-xl transition-premium group overflow-hidden rounded-[2.5rem] cursor-pointer">
-                                <CardContent className="p-8 flex items-center justify-between">
-                                    <div className="flex items-center gap-6">
-                                        <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 shadow-inner group-hover:bg-amber-500 group-hover:text-white transition-premium">
-                                            <FolderOpen className="w-8 h-8" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-black text-xl text-slate-900 dark:text-white group-hover:text-primary">{f.name}</h4>
-                                            <p className="text-sm text-slate-500 font-bold">{f.count} اختبارات</p>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {looseQuizzes.length > 0 && (
-                <div className="space-y-4 pt-6">
-                    <h4 className="text-xl font-black text-primary/80 px-2">اختبارات أخرى</h4>
-                    <div className="grid gap-6">
-                        {looseQuizzes.map(quiz => (
-                            <Card key={quiz.id} className="parchment-card border-none shadow-md hover:shadow-xl transition-premium group overflow-hidden rounded-[2.5rem]">
-                                <CardContent className="p-0">
-                                <div className="flex flex-col sm:flex-row items-center justify-between p-8 gap-8">
-                                    <div className="flex items-center gap-6 text-right w-full sm:w-auto">
-                                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-premium shadow-inner shrink-0">
-                                        <BookOpen className="w-8 h-8" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="font-black text-2xl text-slate-900 dark:text-white group-hover:text-primary transition-colors">{quiz.title}</p>
-                                        {quiz.description && (
-                                        <p className="text-sm text-slate-500 font-bold line-clamp-1 mt-1">{quiz.description}</p>
-                                        )}
-                                    </div>
-                                    </div>
-                                    <Link href={`/take-quiz/${quiz.share_code}`} className="w-full sm:w-auto">
-                                        <Button size="lg" className="w-full h-14 px-10 rounded-2xl font-black text-xl shadow-xl shadow-primary/20 transition-premium bg-slate-900 text-white hover:scale-105">ابدأ الاختبار</Button>
-                                    </Link>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* Unified grid for both Folders and Loose Quizzes */}
+                {foldersList.map(f => (
+                    <Card key={f.id} onClick={() => setSelectedFolderId(f.id)} className="parchment-card border-none shadow-md hover:shadow-xl transition-premium group overflow-hidden rounded-[2.5rem] cursor-pointer hover:scale-[1.02]">
+                        <CardContent className="p-8 flex items-center justify-between h-full">
+                            <div className="flex items-center gap-6">
+                                <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 shadow-inner group-hover:bg-amber-500 group-hover:text-white transition-premium shrink-0">
+                                    <FolderOpen className="w-8 h-8" />
                                 </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
+                                <div>
+                                    <h4 className="font-black text-xl text-slate-900 dark:text-white group-hover:text-primary transition-colors">{f.name}</h4>
+                                    <p className="text-sm text-slate-500 font-bold">{f.count} اختبارات</p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))}
+
+                {looseQuizzes.map(quiz => (
+                    <Card key={quiz.id} className="parchment-card border-none shadow-md hover:shadow-xl transition-premium group overflow-hidden rounded-[2.5rem] hover:scale-[1.02]">
+                        <CardContent className="p-8 h-full flex flex-col justify-between">
+                            <div className="flex items-center gap-6 mb-6">
+                                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-premium shadow-inner shrink-0">
+                                    <BookOpen className="w-8 h-8" />
+                                </div>
+                                <div className="flex-1">
+                                    <h4 className="font-black text-xl text-slate-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2">{quiz.title}</h4>
+                                    {quiz.description && (
+                                        <p className="text-xs text-slate-500 font-bold line-clamp-1 mt-1">{quiz.description}</p>
+                                    )}
+                                </div>
+                            </div>
+                            <Link href={`/take-quiz/${quiz.share_code}`} className="w-full">
+                                <Button size="lg" className="w-full h-12 rounded-xl font-black text-lg shadow-lg shadow-primary/20 transition-premium bg-slate-900 text-white hover:scale-105">ابدأ الاختبار</Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+
+            {foldersList.length === 0 && looseQuizzes.length === 0 && (
+                <div className="text-center py-20 parchment-card rounded-[3rem] border-2 border-dashed border-[#d4c3a3]">
+                    <p className="text-slate-500 font-bold">لا توجد اختبارات متاحة لهذا المعلم حالياً.</p>
                 </div>
             )}
         </div>
