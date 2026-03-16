@@ -54,7 +54,7 @@ export default function StudentQuizzesLibrary() {
                 teacher_id: q.teacher_id,
                 teacher_name: p ? `أ. ${p.first_name} ${p.last_name}` : 'معلم غير معروف',
                 folder_id: q.folder_id,
-                folder_name: f?.name || 'اختبارات عامة'
+                folder_name: f?.name || null // Keep null explicitly to separate loose quizzes
             }
         });
         setQuizzes(formatted)
@@ -130,16 +130,22 @@ export default function StudentQuizzesLibrary() {
   }
 
   if (selectedTeacherId !== null) {
-      // LEVEL 2: Folders of a Teacher
+      // LEVEL 2: Folders & Loose Quizzes of a Teacher
       const teacherQuizzes = quizzes.filter(q => q.teacher_id === selectedTeacherId);
       const teacherName = teacherQuizzes[0]?.teacher_name || '';
       
-      const foldersMap = new Map<string | null, { id: string | null, name: string, count: number }>();
+      const foldersMap = new Map<string, { id: string, name: string, count: number }>();
+      const looseQuizzes: Quiz[] = [];
+
       teacherQuizzes.forEach(q => {
-          if (!foldersMap.has(q.folder_id)) {
-              foldersMap.set(q.folder_id, { id: q.folder_id, name: q.folder_name, count: 0 })
+          if (q.folder_id && q.folder_name) {
+             if (!foldersMap.has(q.folder_id)) {
+                 foldersMap.set(q.folder_id, { id: q.folder_id, name: q.folder_name, count: 0 })
+             }
+             foldersMap.get(q.folder_id)!.count++;
+          } else {
+             looseQuizzes.push(q);
           }
-          foldersMap.get(q.folder_id)!.count++;
       })
       const foldersList = Array.from(foldersMap.values());
 
@@ -156,23 +162,58 @@ export default function StudentQuizzesLibrary() {
                 <h3 className="text-2xl font-black text-slate-800 dark:text-white">{teacherName}</h3>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {foldersList.map(f => (
-                    <Card key={f.id || 'none'} onClick={() => setSelectedFolderId(f.id || 'none')} className="parchment-card border-none shadow-md hover:shadow-xl transition-premium group overflow-hidden rounded-[2.5rem] cursor-pointer">
-                        <CardContent className="p-8 flex items-center justify-between">
-                            <div className="flex items-center gap-6">
-                                <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 shadow-inner group-hover:bg-amber-500 group-hover:text-white transition-premium">
-                                    <FolderOpen className="w-8 h-8" />
+            {foldersList.length > 0 && (
+                <div className="space-y-4">
+                    <h4 className="text-xl font-black text-primary/80 px-2">المجلدات</h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {foldersList.map(f => (
+                            <Card key={f.id} onClick={() => setSelectedFolderId(f.id)} className="parchment-card border-none shadow-md hover:shadow-xl transition-premium group overflow-hidden rounded-[2.5rem] cursor-pointer">
+                                <CardContent className="p-8 flex items-center justify-between">
+                                    <div className="flex items-center gap-6">
+                                        <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 shadow-inner group-hover:bg-amber-500 group-hover:text-white transition-premium">
+                                            <FolderOpen className="w-8 h-8" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-xl text-slate-900 dark:text-white group-hover:text-primary">{f.name}</h4>
+                                            <p className="text-sm text-slate-500 font-bold">{f.count} اختبارات</p>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {looseQuizzes.length > 0 && (
+                <div className="space-y-4 pt-6">
+                    <h4 className="text-xl font-black text-primary/80 px-2">اختبارات أخرى</h4>
+                    <div className="grid gap-6">
+                        {looseQuizzes.map(quiz => (
+                            <Card key={quiz.id} className="parchment-card border-none shadow-md hover:shadow-xl transition-premium group overflow-hidden rounded-[2.5rem]">
+                                <CardContent className="p-0">
+                                <div className="flex flex-col sm:flex-row items-center justify-between p-8 gap-8">
+                                    <div className="flex items-center gap-6 text-right w-full sm:w-auto">
+                                    <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-premium shadow-inner shrink-0">
+                                        <BookOpen className="w-8 h-8" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="font-black text-2xl text-slate-900 dark:text-white group-hover:text-primary transition-colors">{quiz.title}</p>
+                                        {quiz.description && (
+                                        <p className="text-sm text-slate-500 font-bold line-clamp-1 mt-1">{quiz.description}</p>
+                                        )}
+                                    </div>
+                                    </div>
+                                    <Link href={`/take-quiz/${quiz.share_code}`} className="w-full sm:w-auto">
+                                        <Button size="lg" className="w-full h-14 px-10 rounded-2xl font-black text-xl shadow-xl shadow-primary/20 transition-premium bg-slate-900 text-white hover:scale-105">ابدأ الاختبار</Button>
+                                    </Link>
                                 </div>
-                                <div>
-                                    <h4 className="font-black text-xl text-slate-900 dark:text-white group-hover:text-primary">{f.name}</h4>
-                                    <p className="text-sm text-slate-500 font-bold">{f.count} اختبارات</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
       )
   }

@@ -101,6 +101,15 @@ export default async function LoginPage({
             </div>
 
             <GuestEntryForm />
+            
+            <div className="mt-8 flex justify-center">
+                <Button variant="ghost" asChild className="gap-2 text-primary font-black hover:bg-primary/10 rounded-xl h-12 px-6 transition-premium">
+                    <a href="/about">
+                        <Logo className="w-5 h-5" />
+                        تعرف على منصة ترتيل
+                    </a>
+                </Button>
+            </div>
           </CardContent>
         </Card>
         
