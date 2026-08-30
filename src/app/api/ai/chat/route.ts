@@ -105,10 +105,14 @@ export async function POST(req: Request) {
         const lastParts: Array<{ text?: string; inlineData?: { mimeType: string; data: string } }> = []
 
         if (file && file.data) {
+          const rawBase64 = file.data.includes(',') ? file.data.split(',')[1] : file.data;
+          const cleanBase64 = rawBase64.replace(/\s/g, '');
+          const mimeType = file.type || (file.name?.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
+
           lastParts.push({
             inlineData: {
-              mimeType: file.type || 'application/pdf',
-              data: file.data
+              mimeType,
+              data: cleanBase64
             }
           })
         }
@@ -122,16 +126,21 @@ export async function POST(req: Request) {
 
         for (const modelName of candidateModels) {
           try {
+            const isThinkingSupported = modelName.includes('3.7')
+            const callConfig: Record<string, unknown> = {
+              systemInstruction: systemPrompt,
+              temperature: 0.4,
+            }
+            if (isThinkingSupported) {
+              callConfig.thinkingConfig = {
+                thinkingLevel: ThinkingLevel.LOW
+              }
+            }
+
             const response = await ai.models.generateContent({
               model: modelName,
               contents: contents,
-              config: {
-                systemInstruction: systemPrompt,
-                temperature: 0.4,
-                thinkingConfig: {
-                  thinkingLevel: ThinkingLevel.LOW
-                }
-              }
+              config: callConfig
             })
 
             if (response.text) {
@@ -161,19 +170,35 @@ export async function POST(req: Request) {
 
       const finalMessages = [...messages];
 
-      if (file) {
-        let extractedText = "";
-        if (file.type === 'application/pdf') {
-          extractedText = await parsePdfBase64(file.data);
-        } else {
-          extractedText = "[تم إرفاق ملف/صورة، يرجى التبديل لمزود Gemini للتحليل البصري المباشر]";
-        }
+      if (file && file.data) {
+        const isImage = (file.type && file.type.startsWith('image/')) || /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name || '');
+        const rawBase64 = file.data.includes(',') ? file.data.split(',')[1] : file.data;
+        const cleanBase64 = rawBase64.replace(/\s/g, '');
 
-        const lastMsgIndex = finalMessages.length - 1;
-        finalMessages[lastMsgIndex] = {
-          ...finalMessages[lastMsgIndex],
-          content: finalMessages[lastMsgIndex].content + `\n\n[محتوى الملف المرفق: ${file.name}]\n${extractedText.slice(0, 50000)}`
-        };
+        if (isImage) {
+          const mimeType = file.type || 'image/jpeg';
+          const dataUri = `data:${mimeType};base64,${cleanBase64}`;
+          const lastMsgIndex = finalMessages.length - 1;
+          const userText = finalMessages[lastMsgIndex]?.content || "يرجى تحليل هذه الصورة واستخراج وتطبيق أحكام التجويد منها:";
+          
+          (finalMessages as any)[lastMsgIndex] = {
+            role: 'user',
+            content: [
+              { type: 'text', text: userText },
+              { type: 'image_url', image_url: { url: dataUri } }
+            ]
+          };
+        } else {
+          let extractedText = "";
+          if (file.type === 'application/pdf' || file.name?.endsWith('.pdf')) {
+            extractedText = await parsePdfBase64(cleanBase64);
+          }
+          const lastMsgIndex = finalMessages.length - 1;
+          finalMessages[lastMsgIndex] = {
+            ...finalMessages[lastMsgIndex],
+            content: finalMessages[lastMsgIndex].content + `\n\n[محتوى الملف المرفق: ${file.name}]\n${extractedText.slice(0, 50000)}`
+          };
+        }
       }
 
       const requestPayload: Record<string, unknown> = {
@@ -205,7 +230,10 @@ export async function POST(req: Request) {
 
       const data = await response.json()
       if (data.error) {
-        throw new Error(data.error.message || "OpenRouter API Error");
+        console.error("[OpenRouter Error Response]:", data.error);
+        return NextResponse.json({ 
+          error: `خطأ من مزود الذكاء الاصطناعي: ${data.error.message || 'تعذر معالجة الطلب'}` 
+        }, { status: response.status || 500 });
       }
 
       aiResponse = data.choices?.[0]?.message?.content || ""
