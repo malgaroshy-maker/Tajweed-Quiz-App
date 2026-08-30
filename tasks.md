@@ -1,84 +1,104 @@
 # Development Roadmap & Task Breakdown
 
-## Phase 1: Foundation & Setup
-- [x] Initialize Next.js 15 project with Tailwind CSS & TypeScript.
-- [x] Configure RTL layout (`dir="rtl"`, `lang="ar"`) and Arabic typography (Uthmani font fallback).
-- [x] Setup `next-themes` for Dark/Light mode toggle.
-- [x] Apply Supabase SQL schema (`database_schema.sql`) to `Tajweed-quiz` project.
-- [x] Setup Supabase Client (`@supabase/ssr`) and environment variables.
+---
 
-## Phase 2: Authentication & Authorization
+## Phase 1: Foundation & Project Setup (Completed)
+- [x] Initialize Next.js 16 project with Tailwind CSS & TypeScript.
+- [x] Configure RTL layout (`dir="rtl"`, `lang="ar"`) and Arabic typography (`Tajawal`, `Amiri Quran`).
+- [x] Setup `next-themes` for Dark / Light mode toggle.
+- [x] Apply Supabase SQL schema (`database_schema.sql`).
+- [x] Setup Supabase Client (`@supabase/ssr`) and environment variable configuration.
+
+---
+
+## Phase 2: Authentication & Authorization (Completed)
 - [x] Implement Teacher Registration & Login flow (UI + Supabase Auth).
 - [x] Implement Student Registration & Login flow.
 - [x] Create Route Middleware to protect `/teacher` and `/student` routes.
-- [x] Implement Profile creation trigger in Supabase (auto-insert into `profiles` table on signup).
+- [x] Implement Profile creation trigger in Supabase (auto-insert into `profiles` on signup).
+- [x] Implement administrative Invitation Code system for Teacher onboarding (`invitation_codes`).
 
-## Phase 3: Teacher Dashboard (Core)
-- [x] Build mobile-responsive Teacher Dashboard layout with Sidebar/Bottom Nav.
+---
+
+## Phase 3: Teacher Dashboard (Core) (Completed)
+- [x] Build mobile-responsive Teacher Dashboard layout with `AppSidebar`.
 - [x] Implement Folders CRUD (Create, Read, Update, Delete).
-- [x] Implement Quizzes CRUD (Create title/desc, assign to folder, generate Share Code).
-- [x] Setup Supabase Storage bucket (`quiz-images`) and implement image upload UI.
+- [x] Implement Quizzes CRUD (Create title/desc, assign to folder, generate 6-character Share Code).
+- [x] Setup Supabase Storage bucket (`quiz-images`) with image compression and upload UI.
 
-## Phase 4: Question Management & AI (Refining)
-- [x] Build Question Editor UI (Multiple Choice, True/False, Short Answer).
+---
+
+## Phase 4: Question Management & AI Integration (Completed)
+- [x] Build Split-View Question Editor with Manuscript-style live preview.
+- [x] Support question types: Multiple Choice (MCQ), True/False, Fill in Blank, Short Answer, Tajweed Rule.
 - [x] Integrate OpenRouter API Route (`/api/ai/generate`).
-- [x] Build AI Assistant UI inside Quiz Editor.
-- [x] Basic Question Bank listing.
+- [x] Integrate Google Gemini 2.0 Flash for native Arabic PDF/image vision parsing.
+- [x] Build persistent Question Bank listing (`/teacher/questions`).
 
-## Phase 5: Student Experience (Refining)
-- [x] Create Student Dashboard.
-- [x] Build Guest access flow.
-- [x] Build Quiz Taking UI with randomization.
-- [x] Ensure all Quranic content uses `.font-quran` class for Uthmani font.
+---
 
-## Phase 6: Submissions & Analytics (Refining)
-- [x] Implement `POST /api/quiz/submit` to calculate score.
-- [x] Build Student Results view.
-- [x] Build Teacher Results Dashboard.
-- [x] Implement "Most missed questions" SQL view.
-- [x] **CSV Export:** Implement server-side CSV generation for quiz results.
-- [x] **Advanced Analytics:** Add Average Score and Completion Rate metrics to teacher dashboard.
-
-## Phase 7: Advanced Question Logic & Reuse
-- [x] **Import from Bank:** Create a dialog in Quiz Editor to import questions from the teacher's bank.
-- [x] **New Question Types:** Implement UI and auto-grading for "Fill in the Blank".
-- [x] **Tajweed Template:** Create specialized MCQ UI for Tajweed rules (via topics and custom types).
-- [x] **Question Ordering:** Implement reordering logic (drag & drop or index-based).
-
-## Phase 8: Polish & Production Build Stabilization
-- [-] **PWA Assets:** Skipped due to Turbopack / Vercel navigation instability.
-- [-] **Offline Resilience:** Removed service worker caching. Focusing purely on standard online Next.js delivery.
-- [x] Final UI/UX review for "extremely simple" design and accessibility.
-
-## Phase 9: UI/UX Refinement (Stitch Design Integration)
-- [x] Refactor `AppSidebar` with professional layout and teacher profile summary.
-- [x] Rebuild Teacher Dashboard (`/teacher`) with advanced stats (Active Quizzes, Student Activity) and status-aware quiz feed.
-- [x] Implement Split-View Question Editor with Manuscript-style Live Preview (parchment backgrounds, elegant borders).
-- [x] Add "Learning Insights" panel to the results dashboard for automated student performance tips.
-
-## Phase 10: AI Assistant Pivot (Chat-Based)
-- [x] Enhance AI Assistant page with a conversational chat interface for "Content-to-Quiz" generation.
-- [x] Allow teachers to paste text (from PDFs or books) for AI to process into questions.
-- [x] Implement direct "Add to Quiz" and "Add to Bank" actions from AI chat suggestions.
-
-## Phase 11: Missing MVP Pages & Polish
+## Phase 5: Student Portal & Quiz Taking (Completed)
+- [x] Create Student Dashboard (`/student`).
+- [x] Build frictionless Guest access flow with 6-character share code (`/take-quiz/[code]`).
+- [x] Build Single-Question Quiz Taking UI with progress indicators and question randomization.
+- [x] Ensure all Quranic verses render with `.font-quran` (`Amiri Quran`).
 - [x] Create Student History page (`/student/history`) for tracking past attempts.
-- [x] Create dedicated Student Join page (`/student/join`) for a focused entry experience.
-- [x] Final visual pass for RTL consistency and high-end manuscript typography.
-- [x] **Mobile Optimization:** Full pass for touch-friendly targets, tabbed editor views, and app-like layouts.
+- [x] Create Student Settings page (`/student/settings`) for profile preferences.
 
-## Phase 12: Hardening & Gamification
-- [x] **Student Achievement:** Add "Lifetime Points" and "Achievement Medals" to student dashboard.
-- [x] **Quiz Leaderboards:** Implement a feature for students to see their rank within a quiz (optional toggle for teachers).
-- [x] **Confetti Celebration:** Add visual reward animations on quiz completion.
-- [-] **PWA Audit:** Skipped.
+---
 
-## Phase 13: QA & Hardening (Completed)
-- [x] Systematically resolve all ESLint warnings (specifically `any` types and unused variables).
-- [x] Monitor Vercel build logs for PDF parser dynamic import stability (Verified local production build).
-- [x] Create professional README.md for GitHub.
+## Phase 6: Submissions & Analytics (Completed)
+- [x] Implement secure server-side answer evaluation (`/take-quiz/[code]/actions.ts`).
+- [x] Build Student Results view with breakdown and explanations.
+- [x] Build Teacher Results Dashboard (`/teacher/results`) with Average Score & Completion Rate.
+- [x] Implement `most_missed_questions` SQL view for pinpointing common student errors.
+- [x] Implement CSV Export Route (`/api/teacher/results/export`) for gradebook download.
 
-## Next Steps
-- [x] Perform a final visual QA pass on 'Question Bank', 'Results Dashboard', and 'Quiz Taking UI'.
-- [ ] Monitor actual Vercel deployment logs for any edge-case environment errors.
-- [ ] Consider adding a Student Settings page for profile management.
+---
+
+## Phase 7: Advanced Question Logic & Ordering (Completed)
+- [x] Import from Question Bank dialog inside Quiz Editor.
+- [x] Specialized Tajweed Rule MCQ templates.
+- [x] Reorder questions by index (`order_index` swap action).
+- [x] Automatic client-side image compression with `browser-image-compression`.
+
+---
+
+## Phase 8: AI Chat Assistant (Content-to-Quiz) (Completed)
+- [x] Conversational AI Chat interface (`/teacher/ai`) with session management (`ai_chat_sessions`, `ai_chat_messages`).
+- [x] Direct "Add to Quiz" and "Add to Bank" actions from AI chat suggestions.
+- [x] Dual-engine PDF parsing (`pdf-parse`, `pdf2json`, and Gemini API vision).
+
+---
+
+## Phase 9: Gamification & UX Polish (Completed)
+- [x] Student "Lifetime Points" and "Achievement Medals".
+- [x] Confetti reward animation on quiz completion (`canvas-confetti`).
+- [x] High-end Islamic Manuscript styling (`parchment-card`, gold accents, dark mode support).
+- [x] Touch-friendly mobile optimization and RTL logical CSS properties.
+
+---
+
+## Phase 10: 24/7 Automated Keep-Alive & Performance (Completed)
+- [x] Implement redundant GitHub Actions workflow ([`keep-alive.yml`](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/.github/workflows/keep-alive.yml)) running every 48 hours.
+- [x] Upgrade Vercel Cron to daily schedule (`0 0 * * *`).
+- [x] Upgrade API route ([`/api/cron/keep-alive`](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/src/app/api/cron/keep-alive/route.ts)) with `CRON_SECRET` authentication and multi-table queries.
+- [x] Create direct standalone database pinger ([`ping-supabase.js`](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/scripts/ping-supabase.js)).
+- [x] Add composite PostgreSQL performance indexes across all foreign keys.
+- [x] Create comprehensive database health audit tool ([`check-database-health.js`](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/scripts/check-database-health.js)).
+
+---
+
+## Future Roadmap & Backlog
+
+### Phase 11: Audio Recitation & Multimedia Enhancements
+- [ ] **Audio Playback:** Embed official Quranic recitations (e.g. Minshawi, Husary) directly inside quiz questions to test auditory Tajweed recognition.
+- [ ] **Voice Answer Recording:** Allow students to record their voice recitation for teacher grading.
+
+### Phase 12: Classroom & Halaqah Management
+- [ ] **Student Groups:** Group students into Halaqat (classes) for targeted quiz assignment.
+- [ ] **Scheduled Quizzes:** Add start/end dates and automatic quiz closing.
+
+### Phase 13: Printable Exams & Reports
+- [ ] **PDF Exam Generator:** Export formatted, printable paper exams with Arabic calligraphy and answer keys.
+- [ ] **Student Progress Certificates:** Generate downloadable completion certificates (PDF/PNG).

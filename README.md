@@ -4,13 +4,17 @@
   <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Gemini_AI-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini AI" />
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
 
   <br />
   <br />
 
-  <h1 align="center">Al-Qalam (القلم) - Tajweed Quiz Platform</h1>
+  <h1 align="center">Al-Qalam (القلم) — Tajweed Quiz Platform</h1>
   <p align="center">
-    A premium, AI-powered educational platform designed specifically for Quran and Tajweed teachers to create, manage, and gamify quizzes for their students.
+    A premium, AI-powered educational platform designed specifically for Quran and Tajweed teachers to create, organize, and administer interactive quizzes with traditional Islamic manuscript aesthetics.
+  </p>
+  <p align="center">
+    <a href="https://tajweed-quiz-app.vercel.app/" target="_blank"><strong>🌐 Live Demo: tajweed-quiz-app.vercel.app</strong></a>
   </p>
 </div>
 
@@ -18,97 +22,111 @@
 
 ## 📖 Overview
 
-**Al-Qalam** is a mobile-first web application tailored for Quranic education. It bridges the gap between traditional learning and modern technology by offering a high-end "Manuscript" aesthetic (using parchment textures and professional Arabic typography like Amiri Quran) combined with powerful AI-driven tools. 
+**Al-Qalam (القلم)** bridges traditional Quranic education with modern web technology. It provides a distraction-free **"Manuscript" (مخطوطة)** interface utilizing authentic Arabic typography (`Amiri Quran`, `Tajawal`) and parchment textures, powered by multimodal AI to convert Tajweed PDFs, textbooks, and notes directly into structured quizzes.
 
-Teachers can easily extract questions from Tajweed PDFs, manage a personalized question bank, and track student performance through a beautifully crafted, RTL-optimized dashboard.
+---
 
-## ✨ Core Features
+## ✨ Key Features
 
 ### 👩‍🏫 For Teachers
-* **Smart Dashboard**: Real-time analytics, active quiz tracking, and student performance insights.
-* **AI Chat Assistant (Content-to-Quiz)**: Upload Tajweed PDFs or paste text, and let the AI instantly generate multiple-choice, true/false, or fill-in-the-blank questions.
-* **Native Arabic PDF Parsing**: Seamlessly handles Right-to-Left (RTL) Arabic text extraction using native Gemini API vision and fallback heuristics.
-* **Question Bank & Quiz Editor**: Split-view editor to build quizzes and save favorite questions for future reuse. Includes image support for Ayah references.
+- **AI Chat Assistant (Content-to-Quiz)**: Upload Tajweed PDFs or paste text, and let Gemini 2.0 Flash extract MCQs, True/False, and Fill-in-the-Blank questions with Harakat.
+- **Split-View Quiz Editor**: Live Manuscript preview alongside question editing with drag/swap reordering.
+- **Question Bank & Folder Organization**: Organize quizzes into nested folders and build a reusable question repository.
+- **Student Analytics & CSV Export**: Real-time attempt tracking, average score metrics, most-missed questions analysis, and downloadable gradebooks.
+- **Image Attachments**: Direct upload of Ayah references and articulation diagrams (Makhaarij).
 
 ### 🎓 For Students
-* **Manuscript Experience**: A distraction-free, beautifully themed interface utilizing authentic Uthmani script for Quranic verses.
-* **Gamification**: Earn "Lifetime Points", achieve medals, and compete on quiz leaderboards (optional toggle by teacher).
-* **Progress Tracking**: Dedicated history page to review past attempts and learn from mistakes.
+- **Manuscript Experience**: Clear, beautiful Uthmani script rendering for Quranic verses.
+- **Frictionless Entry**: Join by 6-character code (`/take-quiz/[code]`) with or without an account.
+- **Gamified Progress**: Lifetime Points, Achievement Medals, and celebratory completion animations.
+- **Attempt History & Settings**: Review previous quiz submissions and manage profile preferences.
+
+---
 
 ## 🛠️ Technical Stack
 
-* **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Turbopack)
-* **Styling**: [Tailwind CSS](https://tailwindcss.com/) & Radix UI Primitives (via shadcn/ui)
-* **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL, Row Level Security, Storage)
-* **AI Integration**: [Google Gemini 2.0 Flash](https://aistudio.google.com/) (Native PDF Parsing) & [OpenRouter](https://openrouter.ai/) (LLM routing for Llama/Gemma)
-* **Language**: TypeScript
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Turbopack, Server Actions)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & Radix UI Primitives (shadcn/ui)
+- **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL 17, Row Level Security, Storage)
+- **AI Engines**: [Google Gemini 2.0 Flash](https://aistudio.google.com/) (Native Arabic Vision & PDF parsing) & [OpenRouter](https://openrouter.ai/)
+- **Keep-Alive Automation**: GitHub Actions scheduled workflow + Daily Vercel Cron
+
+---
 
 ## 🚀 Getting Started
 
-Follow these steps to set up the project locally.
-
 ### Prerequisites
+- Node.js 18.17+ or later
+- A free [Supabase](https://supabase.com/) account
+- API keys for Google Gemini or OpenRouter
 
-* Node.js 18.17 or later
-* npm, pnpm, or yarn
-* A Supabase project
-* API Keys for Google Gemini or OpenRouter
+### 1. Clone & Install
+```bash
+git clone https://github.com/malgaroshy-maker/Tajweed-Quiz-App.git
+cd Tajweed-Quiz-App
+npm install
+```
 
-### Installation
+### 2. Configure Environment Variables
+Create a `.env.local` file in the root directory:
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/malgaroshy-maker/Tajweed-Quiz-App.git
-   cd Tajweed-Quiz-App
-   ```
+```env
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-publishable-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-secret-key
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+# AI Providers (At least one is required)
+GEMINI_API_KEY=your-gemini-api-key
+OPENROUTER_API_KEY=your-openrouter-api-key
 
-3. **Set up Environment Variables:**
-   Create a `.env.local` file in the root directory and add the following keys:
-   ```env
-   # Supabase Configuration
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+# Keep-Alive & Cron Secret
+CRON_SECRET=your-random-cron-secret-token
+```
 
-   # AI Providers (At least one is required for the AI Assistant)
-   GEMINI_API_KEY=your_gemini_api_key
-   OPENROUTER_API_KEY=your_openrouter_api_key
-   ```
+| Variable | Required | Purpose |
+| :--- | :---: | :--- |
+| `NEXT_PUBLIC_SUPABASE_URL` | **Yes** | Your Supabase project REST URL. |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | **Yes** | Public anonymous client API key. |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Yes** | Secret admin key for verifying teacher invitation codes. |
+| `GEMINI_API_KEY` | Optional | Google Gemini API key for native PDF vision and question generation. |
+| `OPENROUTER_API_KEY` | Optional | OpenRouter API key for LLM question generation fallback. |
+| `CRON_SECRET` | **Yes** | Bearer authentication token protecting the `/api/cron/keep-alive` route. |
 
-4. **Database Setup:**
-   Run the provided `database_schema.sql` file in your Supabase SQL Editor to set up the required tables, triggers, and RLS policies.
+### 3. Database Initialization
+Open the **SQL Editor** in your Supabase Dashboard and run [`database_schema.sql`](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/database_schema.sql) to set up all tables, views, storage buckets, and RLS policies.
 
-5. **Run the Development Server:**
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) in your browser to see the app.
+### 4. Run Development Server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 📁 Project Structure
+---
 
-* `/src/app`: Next.js App Router pages (e.g., `/teacher`, `/student`, `/take-quiz`).
-* `/src/components`: Reusable UI components (shadcn/ui, layout components, AI chat interfaces).
-* `/src/app/api`: Serverless API routes (AI generation, PDF parsing, Supabase integration).
-* `/src/utils`: Utility functions (Supabase clients, formatting helpers).
+## 🔄 24/7 Automated Keep-Alive Setup
 
-## 🔒 Security
+To ensure your free Supabase database is never paused due to inactivity:
 
-* **Teacher Verification**: Registration as a teacher requires a valid invitation code generated by an existing teacher administrator to prevent unauthorized access.
-* **Row Level Security (RLS)**: Strictly enforced in Supabase to ensure students only see their own data, and teachers only manage their respective quizzes and students.
+1. In your GitHub repository, go to **Settings** > **Secrets and variables** > **Actions**.
+2. Add the following secrets:
+   - `SUPABASE_URL`: `https://your-project.supabase.co`
+   - `SUPABASE_ANON_KEY`: `your-anon-publishable-key`
+   - `CRON_SECRET`: *(Same secret token as in `.env.local`)*
+   - `APP_URL`: `https://tajweed-quiz-app.vercel.app`
+3. The GitHub Actions workflow ([`keep-alive.yml`](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/.github/workflows/keep-alive.yml)) will automatically ping the database every 48 hours.
 
-## 🎨 Design Identity
+---
 
-* **Primary Theme**: Olive Green (`#666600`) and Gold.
-* **Typography**: *Inter* for UI elements, *Tajawal* for general Arabic text, and *Amiri Quran* for Quranic verses.
-* **Textures**: Custom parchment CSS background classes to emulate traditional Islamic stationery.
+## 🔒 Security & Architecture
+
+For detailed architecture diagrams, database ERD, and security specifications, refer to:
+- 📐 [**System Architecture Documentation** (`architecture.md`)](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/architecture.md)
+- 📋 [**Product Requirements Document** (`tajweed_quiz_prd.md`)](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/tajweed_quiz_prd.md)
+- 🗺️ [**Development Roadmap** (`tasks.md`)](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/tasks.md)
 
 ---
 
 <div align="center">
-  Made with ❤️ for Quran educators.
+  Made with ❤️ for Quran educators worldwide.
 </div>
