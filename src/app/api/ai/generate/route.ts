@@ -65,7 +65,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'مفتاح Gemini API غير متوفر. يرجى ضبطه في إعدادات الحساب.' }, { status: 400 })
       }
 
-      const ai = new GoogleGenAI({ apiKey: gApiKey })
+      const ai = new GoogleGenAI({ apiKey: gApiKey, httpOptions: { timeout: 12000 } })
       const requestedModel = profile?.gemini_model || 'gemini-3.7-flash'
       const candidateModels = Array.from(new Set([
         requestedModel,

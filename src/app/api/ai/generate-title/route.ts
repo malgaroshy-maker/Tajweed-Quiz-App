@@ -29,8 +29,8 @@ export async function POST(req: Request) {
       const gApiKey = profile?.gemini_api_key || process.env.GEMINI_API_KEY
       if (!gApiKey) return NextResponse.json({ error: 'API Key missing' }, { status: 400 })
       
-      const ai = new GoogleGenAI({ apiKey: gApiKey })
-      const candidateModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-3.7-flash']
+      const ai = new GoogleGenAI({ apiKey: gApiKey, httpOptions: { timeout: 6000 } })
+      const candidateModels = ['gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.7-flash']
 
       for (const modelName of candidateModels) {
         try {
