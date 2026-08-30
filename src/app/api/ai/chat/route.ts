@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 import { GoogleGenAI, ThinkingLevel } from '@google/genai'
+import { getAiApiKeys } from '@/lib/ai-env'
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -69,13 +70,7 @@ export async function POST(req: Request) {
     let aiResponse = "";
     let generated = false;
 
-    const gApiKey = (profile?.gemini_api_key?.trim() && profile.gemini_api_key.trim().length > 5)
-      ? profile.gemini_api_key.trim()
-      : (process.env.GEMINI_API_KEY?.trim() || '')
-
-    const oApiKey = (profile?.openrouter_api_key?.trim() && profile.openrouter_api_key.trim().length > 5)
-      ? profile.openrouter_api_key.trim()
-      : (process.env.OPENROUTER_API_KEY?.trim() || '')
+    const { geminiApiKey: gApiKey, openrouterApiKey: oApiKey } = getAiApiKeys(profile)
 
     if (provider === 'gemini') {
       if (!gApiKey) {
