@@ -23,21 +23,34 @@ export async function POST(req: Request) {
 
   try {
     let title = "محادثة تجويد جديدة";
+    let generated = false;
 
     if (provider === 'gemini') {
       const gApiKey = profile?.gemini_api_key || process.env.GEMINI_API_KEY
       if (!gApiKey) return NextResponse.json({ error: 'API Key missing' }, { status: 400 })
       
       const ai = new GoogleGenAI({ apiKey: gApiKey })
-      const modelName = profile?.gemini_model || 'gemini-3.5-flash-lite'
+      const candidateModels = ['gemini-3.5-flash-lite', 'gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-3.7-flash']
 
-      const response = await ai.models.generateContent({
-        model: modelName,
-        contents: `${systemPrompt}\n\nنص الرسالة: ${firstMessage}`,
-      })
+      for (const modelName of candidateModels) {
+        try {
+          const response = await ai.models.generateContent({
+            model: modelName,
+            contents: `${systemPrompt}\n\nنص الرسالة: ${firstMessage}`,
+          })
 
-      title = response.text || title
-    } else {
+          if (response.text) {
+            title = response.text
+            generated = true
+            break
+          }
+        } catch {
+          // Try next candidate
+        }
+      }
+    }
+
+    if (!generated) {
       const oApiKey = profile?.openrouter_api_key || process.env.OPENROUTER_API_KEY
       const selectedModel = profile?.openrouter_model || 'auto-quality-free'
 

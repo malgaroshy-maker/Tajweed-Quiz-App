@@ -57,6 +57,7 @@ export async function POST(req: Request) {
 
   try {
     let parsedData;
+    let generated = false;
 
     if (provider === 'gemini') {
       const gApiKey = profile?.gemini_api_key || process.env.GEMINI_API_KEY
@@ -65,26 +66,49 @@ export async function POST(req: Request) {
       }
 
       const ai = new GoogleGenAI({ apiKey: gApiKey })
-      const modelName = profile?.gemini_model || 'gemini-3.7-flash'
+      const requestedModel = profile?.gemini_model || 'gemini-3.7-flash'
+      const candidateModels = Array.from(new Set([
+        requestedModel,
+        'gemini-2.5-flash',
+        'gemini-1.5-flash',
+        'gemini-2.0-flash',
+        'gemini-3.5-flash-lite'
+      ]))
 
-      const response = await ai.models.generateContent({
-        model: modelName,
-        contents: systemPrompt,
-        config: {
-          responseMimeType: 'application/json',
-          temperature: 0.3,
+      for (const modelName of candidateModels) {
+        try {
+          const response = await ai.models.generateContent({
+            model: modelName,
+            contents: systemPrompt,
+            config: {
+              responseMimeType: 'application/json',
+              temperature: 0.3,
+            }
+          })
+
+          const textResult = response.text || '[]'
+          parsedData = JSON.parse(textResult)
+          if (Array.isArray(parsedData) && parsedData.length > 0) {
+            generated = true
+            break
+          }
+        } catch (err: any) {
+          console.warn(`[AI Generate] Gemini candidate '${modelName}' unavailable (${err?.status || err?.message}). Trying next fallback...`)
         }
-      })
+      }
+    }
 
-      const textResult = response.text || '[]'
-      parsedData = JSON.parse(textResult)
-
-    } else {
-      // OpenRouter logic as reliable fallback
+    // If OpenRouter selected or all Gemini candidates failed
+    if (!generated) {
       const oApiKey = profile?.openrouter_api_key || process.env.OPENROUTER_API_KEY
       const selectedModel = profile?.openrouter_model || 'auto-quality-free'
 
       if (!oApiKey) {
+        if (provider === 'gemini') {
+          return NextResponse.json({ 
+            error: 'خوادم Google تواجه ضغطاً مؤقتاً (503 High Demand). يرجى المحاولة بعد قليل أو إضافة مفتاح OpenRouter في الإعدادات كاحتياطي تلقائي.' 
+          }, { status: 503 })
+        }
         return NextResponse.json({ error: 'مفتاح OpenRouter API غير متوفر. يرجى ضبطه في إعدادات الحساب.' }, { status: 400 })
       }
 
