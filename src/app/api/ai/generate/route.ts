@@ -72,6 +72,8 @@ export async function POST(req: Request) {
         const requestedModel = profile?.gemini_model || 'gemini-3.7-flash'
         const candidateModels = Array.from(new Set([
           requestedModel,
+          'gemini-3.1-flash-lite',
+          'gemini-3-flash-preview',
           'gemini-3.7-flash',
           'gemini-3.6-flash',
           'gemini-3.5-flash',
@@ -80,16 +82,21 @@ export async function POST(req: Request) {
 
         for (const modelName of candidateModels) {
           try {
+            const isThinkingSupported = modelName.includes('3.7')
+            const genConfig: Record<string, unknown> = {
+              responseMimeType: 'application/json',
+              temperature: 0.3,
+            }
+            if (isThinkingSupported) {
+              genConfig.thinkingConfig = {
+                thinkingLevel: ThinkingLevel.LOW
+              }
+            }
+
             const response = await ai.models.generateContent({
               model: modelName,
               contents: systemPrompt,
-              config: {
-                responseMimeType: 'application/json',
-                temperature: 0.3,
-                thinkingConfig: {
-                  thinkingLevel: ThinkingLevel.LOW
-                }
-              }
+              config: genConfig
             })
 
             const textResult = response.text || '[]'
