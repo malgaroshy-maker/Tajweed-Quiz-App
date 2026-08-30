@@ -167,7 +167,21 @@ export function SettingsPageClient({
                 </div>
               </div>
             )}
-            
+
+            {/* Hidden fallback fields to preserve non-active provider settings */}
+            {provider !== 'openrouter' && (
+              <>
+                <input type="hidden" name="openrouter_key" value={openrouterKey} />
+                <input type="hidden" name="openrouter_model" value={openrouterModel} />
+              </>
+            )}
+            {provider !== 'gemini' && (
+              <>
+                <input type="hidden" name="gemini_key" value={geminiKey} />
+                <input type="hidden" name="gemini_model" value={geminiModel} />
+              </>
+            )}
+
             <Button type="submit" className="w-full h-20 text-2xl font-black rounded-3xl bg-primary text-white shadow-2xl shadow-primary/30 gap-4 transition-premium hover:scale-[1.02] active:scale-95">
               <Save className="w-8 h-8" />
               حفظ جميع الإعدادات

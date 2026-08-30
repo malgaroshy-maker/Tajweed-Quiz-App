@@ -7,13 +7,21 @@ import path from 'path'
 export function getAiApiKeys(profile?: { gemini_api_key?: string | null; openrouter_api_key?: string | null } | null) {
   let gKey = (profile?.gemini_api_key?.trim() && profile.gemini_api_key.trim().length > 5)
     ? profile.gemini_api_key.trim()
-    : (process.env.GEMINI_API_KEY?.trim() || '')
+    : ''
 
   let oKey = (profile?.openrouter_api_key?.trim() && profile.openrouter_api_key.trim().length > 5)
     ? profile.openrouter_api_key.trim()
-    : (process.env.OPENROUTER_API_KEY?.trim() || '')
+    : ''
 
-  // If missing from process.env (e.g. Next.js dev server started before .env.local was edited), read fresh from .env.local
+  if (!gKey && process.env.GEMINI_API_KEY?.trim()) {
+    gKey = process.env.GEMINI_API_KEY.trim()
+  }
+
+  if (!oKey && process.env.OPENROUTER_API_KEY?.trim()) {
+    oKey = process.env.OPENROUTER_API_KEY.trim()
+  }
+
+  // If missing, read dynamically from .env.local
   if (!gKey || !oKey) {
     try {
       const envPath = path.resolve(process.cwd(), '.env.local')

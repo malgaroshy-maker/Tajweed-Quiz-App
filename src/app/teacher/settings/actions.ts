@@ -10,20 +10,31 @@ export async function saveSettings(formData: FormData) {
   if (!user) return
 
   const provider = formData.get('provider') as string
-  const openrouterKey = formData.get('openrouter_key') as string
-  const openrouterModel = formData.get('openrouter_model') as string
-  const geminiKey = formData.get('gemini_key') as string
-  const geminiModel = formData.get('gemini_model') as string
+  const openrouterKey = formData.get('openrouter_key') as string | null
+  const openrouterModel = formData.get('openrouter_model') as string | null
+  const geminiKey = formData.get('gemini_key') as string | null
+  const geminiModel = formData.get('gemini_model') as string | null
+
+  const updateData: Record<string, unknown> = {
+    ai_provider: provider || 'gemini',
+  }
+
+  if (openrouterKey !== null) {
+    updateData.openrouter_api_key = openrouterKey.trim() || null
+  }
+  if (openrouterModel !== null) {
+    updateData.openrouter_model = openrouterModel.trim() || 'auto-quality-free'
+  }
+  if (geminiKey !== null) {
+    updateData.gemini_api_key = geminiKey.trim() || null
+  }
+  if (geminiModel !== null) {
+    updateData.gemini_model = geminiModel.trim() || 'gemini-3.7-flash'
+  }
 
   const { error } = await supabase
     .from('profiles')
-    .update({
-      ai_provider: provider || 'openrouter',
-      openrouter_api_key: openrouterKey || null,
-      openrouter_model: openrouterModel || 'auto-quality-free',
-      gemini_api_key: geminiKey || null,
-      gemini_model: geminiModel || 'gemini-3.7-flash',
-    })
+    .update(updateData)
     .eq('id', user.id)
 
   if (!error) {
