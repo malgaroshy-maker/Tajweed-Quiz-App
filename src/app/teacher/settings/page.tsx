@@ -14,11 +14,10 @@ async function getOpenRouterModels() {
 }
 
 const DEFAULT_GEMINI_MODELS = [
-  { id: 'gemini-3.7-flash', name: 'Gemini 3.7 Flash (الأحدث - استدلال هجين وسرعة فائقة - الافتراضي)', description: 'الجيل الثالث الأحدث والأقوى من Google مع قدرات تفكير متقدمة' },
-  { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash-Lite (فائق السرعة والأخف استهلاكاً)', description: 'نموذج فائق الخفة والسرعة لعمليات التوليد الفورية' },
-  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash (متوازن وعالي الأداء)', description: 'توازن مثالي بين السرعة وجودة الصياغة التجويدية' },
-  { id: 'gemini-3-pro-image', name: 'Gemini 3 Pro Vision (متخصص في المخطوطات والمصاحف)', description: 'أعلى دقة في قراءة الصور والصفحات القرآنية المعقدة' },
-  { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (استدلال متقدم)', description: 'نموذج التفكير العميق للقضايا اللغوية المعقدة' },
+  { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash (الأسرع والأكثر استقراراً - موصى به)', description: 'استجابة فائقة السرعة (1-3 ثوانٍ) واستقرار تام لإنشاء الأسئلة والمحادثة' },
+  { id: 'gemini-3.7-flash', name: 'Gemini 3.7 Flash (استدلال هجين وتفكير متقدم)', description: 'الجيل الثالث الأحدث مع قدرات تفكير عميقة للمسائل التجويدية المعقدة' },
+  { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash-Lite (فائق الخفة للعمليات الفورية)', description: 'نموذج فائق الخفة والسرعة لعمليات التوليد وتلخيص العناوين' },
+  { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash (متوازن وعالي الأداء)', description: 'توازن ممتاز بين السرعة وجودة الصياغة التجويدية' },
 ]
 
 async function getGeminiModels(apiKey: string | null) {
