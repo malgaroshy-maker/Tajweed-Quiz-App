@@ -172,16 +172,29 @@ export async function POST(req: Request) {
         };
       }
 
+      const requestPayload: Record<string, unknown> = {
+        messages: [{ role: 'system', content: systemPrompt }, ...finalMessages],
+      };
+
+      if (selectedModel === 'auto-quality-free') {
+        requestPayload.models = [
+          "nvidia/nemotron-3.5-lightning:free",
+          "nvidia/nemotron-3-super-120b-a12b:free",
+          "minimax/minimax-m3:free",
+          "minimax/minimax-m2.7:free",
+          "openrouter/free"
+        ];
+      } else {
+        requestPayload.model = selectedModel;
+      }
+
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${oApiKey}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          model: selectedModel === 'auto-quality-free' ? 'google/gemini-3.7-flash' : selectedModel,
-          messages: [{ role: 'system', content: systemPrompt }, ...finalMessages],
-        }),
+        body: JSON.stringify(requestPayload),
       })
 
       const data = await response.json()

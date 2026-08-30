@@ -121,13 +121,10 @@ export async function POST(req: Request) {
 
       if (selectedModel === 'auto-quality-free') {
         requestBody.models = [
-          "google/gemini-3.7-flash",
-          "google/gemini-3.5-flash-lite",
-          "google/gemma-4-31b-it:free",
-          "google/gemma-4-26b-a4b-it:free",
+          "nvidia/nemotron-3.5-lightning:free",
           "nvidia/nemotron-3-super-120b-a12b:free",
           "minimax/minimax-m3:free",
-          "z-ai/glm-5.2:free",
+          "minimax/minimax-m2.7:free",
           "openrouter/free"
         ]
       } else {

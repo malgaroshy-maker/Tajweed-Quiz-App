@@ -1,16 +1,17 @@
 import { createClient } from '@/utils/supabase/server'
 import { SettingsPageClient } from './client-page'
 
+const CURATED_OPENROUTER_MODELS = [
+  { id: 'auto-quality-free', name: '⚡ التوجيه الذكي التلقائي (الأسرع والأعلى دقة مجاناً)', description: 'توجيه فوري لأسرع وأدق نموذج مجاني في التجويد (Nemotron Lightning/Super)' },
+  { id: 'nvidia/nemotron-3.5-lightning:free', name: 'NVIDIA Nemotron 3.5 Lightning (~350ms - دقة 100%)', description: 'أعلى دقة في أحكام التجويد وصياغة الأسئلة مع سرعة فائقة' },
+  { id: 'nvidia/nemotron-3-super-120b-a12b:free', name: 'NVIDIA Nemotron Super 120B (عملاق الاستدلال اللغوي)', description: 'نموذج ضخم 120 مليار معامل لصياغة التعليلات التجويدية العميقة' },
+  { id: 'minimax/minimax-m3:free', name: 'MiniMax M3 (سياق ضخم 1M - للملازم والكتب)', description: 'مناسب لتحليل النصوص والكتب التجويدية الطويلة' },
+  { id: 'minimax/minimax-m2.7:free', name: 'MiniMax M2.7 (خفيف ومتوازن)', description: 'نموذج سريع ومستقر للأسئلة المباشرة' },
+  { id: 'openrouter/free', name: 'موجّه النماذج المجانية المفتوح (OpenRouter Free Router)', description: 'توزيع الحمل على جميع النماذج المجانية المتاحة' }
+]
+
 async function getOpenRouterModels() {
-  try {
-    const res = await fetch('https://openrouter.ai/api/v1/models', { next: { revalidate: 3600 } })
-    if (!res.ok) return []
-    const data = await res.json()
-    return data.data || []
-  } catch (error) {
-    console.error('Failed to fetch models:', error)
-    return []
-  }
+  return CURATED_OPENROUTER_MODELS
 }
 
 const DEFAULT_GEMINI_MODELS = [
@@ -52,31 +53,12 @@ export default async function SettingsPage() {
 
   const allModels = await getOpenRouterModels()
   const geminiModels = await getGeminiModels(profile?.gemini_api_key)
-  
-  interface ModelPricing {
-    prompt: string;
-    completion: string;
-  }
-
-  interface Model {
-    name: string;
-    pricing: ModelPricing;
-  }
-
-  // Filter and sort models
-  const freeModels = allModels
-    .filter((m: Model) => parseFloat(m.pricing?.prompt || '1') === 0 && parseFloat(m.pricing?.completion || '1') === 0)
-    .sort((a: Model, b: Model) => a.name.localeCompare(b.name))
-
-  const paidModels = allModels
-    .filter((m: Model) => parseFloat(m.pricing?.prompt || '1') > 0 || parseFloat(m.pricing?.completion || '1') > 0)
-    .sort((a: Model, b: Model) => a.name.localeCompare(b.name))
 
   return (
     <SettingsPageClient 
       profile={profile} 
-      freeModels={freeModels} 
-      paidModels={paidModels}
+      freeModels={allModels} 
+      paidModels={[]}
       geminiModels={geminiModels}
     />
   )

@@ -108,25 +108,11 @@ export function SettingsPageClient({
                         onChange={(e) => setOpenrouterModel(e.target.value)}
                         className="flex h-16 w-full rounded-2xl border-2 border-primary/10 bg-white/50 px-6 text-xl shadow-inner focus:border-primary outline-none font-black appearance-none"
                     >
-                        <optgroup label="الأداء الموصى به (مجاني)" className="font-black text-primary">
-                        <option value="auto-quality-free" className="text-foreground font-bold">
-                            دقة عالية (الأفضل أداءً مجاناً)
-                        </option>
-                        <option value="openrouter/free" className="text-foreground font-bold">
-                            الأسرع (أي نموذج مجاني متاح)
-                        </option>
-                        </optgroup>
-                        {freeModels.length > 0 && (
-                        <optgroup label="تحديد نموذج مجاني يدوياً" className="font-black text-green-600">
-                            {freeModels.map((m) => (
-                            m.id !== 'openrouter/free' && (
-                                <option key={m.id} value={m.id} className="text-foreground font-bold">
-                                {m.name}
-                                </option>
-                            )
-                            ))}
-                        </optgroup>
-                        )}
+                        {freeModels.map((m) => (
+                          <option key={m.id} value={m.id} className="text-foreground font-bold">
+                            {m.name}
+                          </option>
+                        ))}
                     </select>
                     <div className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">
                         <Type className="w-5 h-5" />
