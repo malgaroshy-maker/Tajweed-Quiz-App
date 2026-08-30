@@ -34,7 +34,12 @@ export function SettingsPageClient({
   paidModels: Model[], 
   geminiModels: Model[] 
 }) {
-  const [provider, setProvider] = useState(profile?.ai_provider || 'openrouter')
+  const [provider, setProvider] = useState(profile?.ai_provider || 'gemini')
+  const [openrouterKey, setOpenrouterKey] = useState(profile?.openrouter_api_key || '')
+  const [geminiKey, setGeminiKey] = useState(profile?.gemini_api_key || '')
+  const [openrouterModel, setOpenrouterModel] = useState(profile?.openrouter_model || 'auto-quality-free')
+  const [geminiModel, setGeminiModel] = useState(profile?.gemini_model || 'gemini-3.7-flash')
+
   const { theme, setTheme } = useTheme()
   const { themeColor, setThemeColor } = useThemeColor()
 
@@ -83,7 +88,8 @@ export function SettingsPageClient({
                     id="openrouter_key" 
                     name="openrouter_key" 
                     type="password" 
-                    defaultValue={profile?.openrouter_api_key || ''} 
+                    value={openrouterKey}
+                    onChange={(e) => setOpenrouterKey(e.target.value)}
                     placeholder="sk-or-v1-..." 
                     className="h-16 rounded-2xl border-2 border-primary/10 bg-white/50 focus-visible:ring-primary font-mono text-lg shadow-inner"
                   />
@@ -98,7 +104,8 @@ export function SettingsPageClient({
                     <select
                         id="openrouter_model"
                         name="openrouter_model"
-                        defaultValue={profile?.openrouter_model || 'auto-quality-free'}
+                        value={openrouterModel}
+                        onChange={(e) => setOpenrouterModel(e.target.value)}
                         className="flex h-16 w-full rounded-2xl border-2 border-primary/10 bg-white/50 px-6 text-xl shadow-inner focus:border-primary outline-none font-black appearance-none"
                     >
                         <optgroup label="الأداء الموصى به (مجاني)" className="font-black text-primary">
@@ -137,7 +144,8 @@ export function SettingsPageClient({
                     id="gemini_key" 
                     name="gemini_key" 
                     type="password" 
-                    defaultValue={profile?.gemini_api_key || ''} 
+                    value={geminiKey}
+                    onChange={(e) => setGeminiKey(e.target.value)}
                     placeholder="AIzaSy..." 
                     className="h-16 rounded-2xl border-2 border-primary/10 bg-white/50 focus-visible:ring-primary font-mono text-lg shadow-inner"
                   />
@@ -152,7 +160,8 @@ export function SettingsPageClient({
                     <select
                         id="gemini_model"
                         name="gemini_model"
-                        defaultValue={profile?.gemini_model || 'gemini-3.7-flash'}
+                        value={geminiModel}
+                        onChange={(e) => setGeminiModel(e.target.value)}
                         className="flex h-16 w-full rounded-2xl border-2 border-primary/10 bg-white/50 px-6 text-xl shadow-inner focus:border-primary outline-none font-black appearance-none"
                     >
                         {geminiModels.length > 0 ? (
