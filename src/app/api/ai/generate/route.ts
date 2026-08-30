@@ -59,57 +59,65 @@ export async function POST(req: Request) {
     let parsedData;
     let generated = false;
 
+    const gApiKey = (profile?.gemini_api_key?.trim() && profile.gemini_api_key.trim().length > 5)
+      ? profile.gemini_api_key.trim()
+      : (process.env.GEMINI_API_KEY?.trim() || '')
+
+    const oApiKey = (profile?.openrouter_api_key?.trim() && profile.openrouter_api_key.trim().length > 5)
+      ? profile.openrouter_api_key.trim()
+      : (process.env.OPENROUTER_API_KEY?.trim() || '')
+
     if (provider === 'gemini') {
-      const gApiKey = profile?.gemini_api_key || process.env.GEMINI_API_KEY
       if (!gApiKey) {
-        return NextResponse.json({ error: 'مفتاح Gemini API غير متوفر. يرجى ضبطه في إعدادات الحساب.' }, { status: 400 })
-      }
+        if (!oApiKey) {
+          return NextResponse.json({ error: 'مفتاح Gemini API غير متوفر. يرجى ضبطه في إعدادات الحساب.' }, { status: 400 })
+        }
+      } else {
+        const ai = new GoogleGenAI({ apiKey: gApiKey, httpOptions: { timeout: 18000 } })
+        const requestedModel = profile?.gemini_model || 'gemini-3.7-flash'
+        const candidateModels = Array.from(new Set([
+          requestedModel,
+          'gemini-3.7-flash',
+          'gemini-3.6-flash',
+          'gemini-3.5-flash',
+          'gemini-3.5-flash-lite'
+        ]))
 
-      const ai = new GoogleGenAI({ apiKey: gApiKey, httpOptions: { timeout: 18000 } })
-      const requestedModel = profile?.gemini_model || 'gemini-3.7-flash'
-      const candidateModels = Array.from(new Set([
-        requestedModel,
-        'gemini-3.7-flash',
-        'gemini-3.6-flash',
-        'gemini-3.5-flash',
-        'gemini-3.5-flash-lite'
-      ]))
-
-      for (const modelName of candidateModels) {
-        try {
-          const response = await ai.models.generateContent({
-            model: modelName,
-            contents: systemPrompt,
-            config: {
-              responseMimeType: 'application/json',
-              temperature: 0.3,
-              thinkingConfig: {
-                thinkingLevel: ThinkingLevel.LOW
+        for (const modelName of candidateModels) {
+          try {
+            const response = await ai.models.generateContent({
+              model: modelName,
+              contents: systemPrompt,
+              config: {
+                responseMimeType: 'application/json',
+                temperature: 0.3,
+                thinkingConfig: {
+                  thinkingLevel: ThinkingLevel.LOW
+                }
               }
-            }
-          })
+            })
 
-          const textResult = response.text || '[]'
-          parsedData = JSON.parse(textResult)
-          if (Array.isArray(parsedData) && parsedData.length > 0) {
-            generated = true
-            break
+            const textResult = response.text || '[]'
+            parsedData = JSON.parse(textResult)
+            if (Array.isArray(parsedData) && parsedData.length > 0) {
+              generated = true
+              break
+            }
+          } catch (err: any) {
+            console.warn(`[AI Generate] Gemini candidate '${modelName}' unavailable (${err?.status || err?.message}). Trying next fallback...`)
           }
-        } catch (err: any) {
-          console.warn(`[AI Generate] Gemini candidate '${modelName}' unavailable (${err?.status || err?.message}). Trying next fallback...`)
         }
       }
     }
 
     // If OpenRouter selected or all Gemini candidates failed
     if (!generated) {
-      const oApiKey = profile?.openrouter_api_key || process.env.OPENROUTER_API_KEY
       const selectedModel = profile?.openrouter_model || 'auto-quality-free'
 
       if (!oApiKey) {
         if (provider === 'gemini') {
           return NextResponse.json({ 
-            error: 'خوادم Google تواجه ضغطاً مؤقتاً (503 High Demand). يرجى المحاولة بعد قليل أو إضافة مفتاح OpenRouter في الإعدادات كاحتياطي تلقائي.' 
+            error: 'خوادم Google تواجه ضغطاً مؤقتاً (503/504). يرجى المحاولة بعد قليل أو إضافة مفتاح OpenRouter في الإعدادات كاحتياطي تلقائي.' 
           }, { status: 503 })
         }
         return NextResponse.json({ error: 'مفتاح OpenRouter API غير متوفر. يرجى ضبطه في إعدادات الحساب.' }, { status: 400 })
@@ -136,6 +144,8 @@ export async function POST(req: Request) {
         headers: {
           'Authorization': `Bearer ${oApiKey}`,
           'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://tajweed-quiz-app.vercel.app',
+          'X-Title': 'Al-Qalam Tajweed Quiz App',
         },
         body: JSON.stringify(requestBody),
       })

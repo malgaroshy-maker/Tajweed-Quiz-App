@@ -25,10 +25,15 @@ export async function POST(req: Request) {
     let title = "محادثة تجويد جديدة";
     let generated = false;
 
-    if (provider === 'gemini') {
-      const gApiKey = profile?.gemini_api_key || process.env.GEMINI_API_KEY
-      if (!gApiKey) return NextResponse.json({ error: 'API Key missing' }, { status: 400 })
-      
+    const gApiKey = (profile?.gemini_api_key?.trim() && profile.gemini_api_key.trim().length > 5)
+      ? profile.gemini_api_key.trim()
+      : (process.env.GEMINI_API_KEY?.trim() || '')
+
+    const oApiKey = (profile?.openrouter_api_key?.trim() && profile.openrouter_api_key.trim().length > 5)
+      ? profile.openrouter_api_key.trim()
+      : (process.env.OPENROUTER_API_KEY?.trim() || '')
+
+    if (provider === 'gemini' && gApiKey) {
       const ai = new GoogleGenAI({ apiKey: gApiKey, httpOptions: { timeout: 6000 } })
       const candidateModels = ['gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-3.5-flash', 'gemini-3.7-flash']
 
@@ -50,13 +55,17 @@ export async function POST(req: Request) {
       }
     }
 
-    if (!generated) {
-      const oApiKey = profile?.openrouter_api_key || process.env.OPENROUTER_API_KEY
+    if (!generated && oApiKey) {
       const selectedModel = profile?.openrouter_model || 'auto-quality-free'
 
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${oApiKey}`, 'Content-Type': 'application/json' },
+        headers: { 
+          'Authorization': `Bearer ${oApiKey}`, 
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://tajweed-quiz-app.vercel.app',
+          'X-Title': 'Al-Qalam Tajweed Quiz App',
+        },
         body: JSON.stringify({
           model: selectedModel === 'auto-quality-free' ? 'openrouter/free' : selectedModel,
           messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: firstMessage }],

@@ -69,90 +69,99 @@ export async function POST(req: Request) {
     let aiResponse = "";
     let generated = false;
 
+    const gApiKey = (profile?.gemini_api_key?.trim() && profile.gemini_api_key.trim().length > 5)
+      ? profile.gemini_api_key.trim()
+      : (process.env.GEMINI_API_KEY?.trim() || '')
+
+    const oApiKey = (profile?.openrouter_api_key?.trim() && profile.openrouter_api_key.trim().length > 5)
+      ? profile.openrouter_api_key.trim()
+      : (process.env.OPENROUTER_API_KEY?.trim() || '')
+
     if (provider === 'gemini') {
-      const gApiKey = profile?.gemini_api_key || process.env.GEMINI_API_KEY
       if (!gApiKey) {
-        return NextResponse.json({ error: 'مفتاح Gemini API غير متوفر. يرجى ضبطه في الإعدادات.' }, { status: 400 })
-      }
+        // If Gemini selected but key not configured, check if OpenRouter is available
+        if (!oApiKey) {
+          return NextResponse.json({ error: 'مفتاح Gemini API غير متوفر. يرجى ضبطه في الإعدادات.' }, { status: 400 })
+        }
+      } else {
+        const ai = new GoogleGenAI({ apiKey: gApiKey, httpOptions: { timeout: 18000 } })
+        const requestedModel = profile?.gemini_model || 'gemini-3.7-flash'
+        const candidateModels = Array.from(new Set([
+          requestedModel,
+          'gemini-3.7-flash',
+          'gemini-3.6-flash',
+          'gemini-3.5-flash',
+          'gemini-3.5-flash-lite'
+        ]))
 
-      const ai = new GoogleGenAI({ apiKey: gApiKey, httpOptions: { timeout: 18000 } })
-      const requestedModel = profile?.gemini_model || 'gemini-3.7-flash'
-      const candidateModels = Array.from(new Set([
-        requestedModel,
-        'gemini-3.7-flash',
-        'gemini-3.6-flash',
-        'gemini-3.5-flash',
-        'gemini-3.5-flash-lite'
-      ]))
+        // Build contents array for GoogleGenAI
+        const contents = []
 
-      // Build contents array for GoogleGenAI
-      const contents = []
+        // Add prior message history
+        for (const m of messages.slice(0, -1)) {
+          contents.push({
+            role: m.role === 'user' ? 'user' : 'model',
+            parts: [{ text: m.content }]
+          })
+        }
 
-      // Add prior message history
-      for (const m of messages.slice(0, -1)) {
-        contents.push({
-          role: m.role === 'user' ? 'user' : 'model',
-          parts: [{ text: m.content }]
-        })
-      }
+        // Format last message with optional multimodal file
+        const lastMsg = messages[messages.length - 1]
+        const lastParts: Array<{ text?: string; inlineData?: { mimeType: string; data: string } }> = []
 
-      // Format last message with optional multimodal file
-      const lastMsg = messages[messages.length - 1]
-      const lastParts: Array<{ text?: string; inlineData?: { mimeType: string; data: string } }> = []
-
-      if (file && file.data) {
-        lastParts.push({
-          inlineData: {
-            mimeType: file.type || 'application/pdf',
-            data: file.data
-          }
-        })
-      }
-
-      lastParts.push({ text: lastMsg ? lastMsg.content : 'مرحباً' })
-
-      contents.push({
-        role: 'user',
-        parts: lastParts
-      })
-
-      for (const modelName of candidateModels) {
-        try {
-          const response = await ai.models.generateContent({
-            model: modelName,
-            contents: contents,
-            config: {
-              systemInstruction: systemPrompt,
-              temperature: 0.4,
-              thinkingConfig: {
-                thinkingLevel: ThinkingLevel.LOW
-              }
+        if (file && file.data) {
+          lastParts.push({
+            inlineData: {
+              mimeType: file.type || 'application/pdf',
+              data: file.data
             }
           })
+        }
 
-          if (response.text) {
-            aiResponse = response.text
-            generated = true
-            break
+        lastParts.push({ text: lastMsg ? lastMsg.content : 'مرحباً' })
+
+        contents.push({
+          role: 'user',
+          parts: lastParts
+        })
+
+        for (const modelName of candidateModels) {
+          try {
+            const response = await ai.models.generateContent({
+              model: modelName,
+              contents: contents,
+              config: {
+                systemInstruction: systemPrompt,
+                temperature: 0.4,
+                thinkingConfig: {
+                  thinkingLevel: ThinkingLevel.LOW
+                }
+              }
+            })
+
+            if (response.text) {
+              aiResponse = response.text
+              generated = true
+              break
+            }
+          } catch (err: any) {
+            console.warn(`[AI Chat] Gemini candidate '${modelName}' unavailable (${err?.status || err?.message}). Trying next fallback...`)
           }
-        } catch (err: any) {
-          console.warn(`[AI Chat] Gemini candidate '${modelName}' unavailable (${err?.status || err?.message}). Trying next fallback...`)
         }
       }
     }
 
-    // If OpenRouter selected or all Gemini models were unavailable
+    // If OpenRouter selected or all Gemini candidates failed
     if (!generated) {
-      const oApiKey = profile?.openrouter_api_key || process.env.OPENROUTER_API_KEY
       const selectedModel = profile?.openrouter_model || 'auto-quality-free'
 
       if (!oApiKey) {
         if (provider === 'gemini') {
           return NextResponse.json({ 
-            error: 'خوادم Google تواجه ضغطاً مؤقتاً (503 High Demand). يرجى المحاولة بعد قليل أو إضافة مفتاح OpenRouter في الإعدادات كاحتياطي تلقائي.' 
+            error: 'خوادم Google تواجه ضغطاً مؤقتاً (503/504). يرجى المحاولة بعد قليل أو إضافة مفتاح OpenRouter في الإعدادات كاحتياطي تلقائي.' 
           }, { status: 503 })
         }
-        return NextResponse.json({ error: 'مفتاح OpenRouter API غير متوفر.' }, { status: 400 })
+        return NextResponse.json({ error: 'مفتاح OpenRouter API غير متوفر. يرجى ضبطه في الإعدادات.' }, { status: 400 })
       }
 
       const finalMessages = [...messages];
@@ -193,6 +202,8 @@ export async function POST(req: Request) {
         headers: {
           'Authorization': `Bearer ${oApiKey}`,
           'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://tajweed-quiz-app.vercel.app',
+          'X-Title': 'Al-Qalam Tajweed Quiz App',
         },
         body: JSON.stringify(requestPayload),
       })
