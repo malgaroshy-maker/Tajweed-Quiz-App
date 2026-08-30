@@ -206,13 +206,23 @@ export async function POST(req: Request) {
       };
 
       if (selectedModel === 'auto-quality-free') {
-        requestPayload.models = [
-          "nvidia/nemotron-3.5-lightning:free",
-          "nvidia/nemotron-3-super-120b-a12b:free",
-          "minimax/minimax-m3:free",
-          "minimax/minimax-m2.7:free",
-          "openrouter/free"
-        ];
+        const hasImage = file && ((file.type && file.type.startsWith('image/')) || /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name || ''));
+        if (hasImage) {
+          requestPayload.models = [
+            "minimax/minimax-m3:free",
+            "openrouter/free",
+            "nvidia/nemotron-3.5-lightning:free",
+            "nvidia/nemotron-3-super-120b-a12b:free"
+          ];
+        } else {
+          requestPayload.models = [
+            "nvidia/nemotron-3.5-lightning:free",
+            "nvidia/nemotron-3-super-120b-a12b:free",
+            "minimax/minimax-m3:free",
+            "minimax/minimax-m2.7:free",
+            "openrouter/free"
+          ];
+        }
       } else {
         requestPayload.model = selectedModel;
       }
