@@ -89,16 +89,27 @@
 
 ---
 
-## Future Roadmap & Backlog
+## Phase 11: Audio Recitation & Multimedia Enhancements (Completed)
+- [x] **Audio Playback:** Embed official Quranic recitations (EveryAyah API with Al-Husary, El-Minshawi, Alafasy, Abdulbasit) directly inside quiz questions to test auditory Tajweed recognition.
+- [x] **Voice Answer Recording:** Allow students to record their voice recitation using browser MediaRecorder and save to Supabase storage.
+- [x] **Teacher Manual Grading:** Specialized teacher portal to listen to student recitation recordings, assign marks, and write constructive Tajweed feedback.
 
-### Phase 11: Audio Recitation & Multimedia Enhancements
-- [ ] **Audio Playback:** Embed official Quranic recitations (e.g. Minshawi, Husary) directly inside quiz questions to test auditory Tajweed recognition.
-- [ ] **Voice Answer Recording:** Allow students to record their voice recitation for teacher grading.
+---
 
-### Phase 12: Classroom & Halaqah Management
-- [ ] **Student Groups:** Group students into Halaqat (classes) for targeted quiz assignment.
-- [ ] **Scheduled Quizzes:** Add start/end dates and automatic quiz closing.
+## Phase 12: Classroom & Halaqah Management (Completed)
+- [x] **Halaqat Subsystem:** Teacher dashboard for creating distinct Halaqat with 6-character student join codes.
+- [x] **Student Roster:** Management of enrolled students per Halaqah with removal actions.
+- [x] **Timed Quizzes:** Countdown timer with visual tick and auto-submission on exam time expiration.
 
-### Phase 13: Printable Exams & Reports
-- [ ] **PDF Exam Generator:** Export formatted, printable paper exams with Arabic calligraphy and answer keys.
-- [ ] **Student Progress Certificates:** Generate downloadable completion certificates (PDF/PNG).
+---
+
+## Phase 13: Printable Exams & Certified Reports (Completed)
+- [x] **Printable Paper Exam Generator:** High-DPI manuscript A4 exam sheet generator with toggleable Teacher Answer Key (`/teacher/quizzes/[id]/print`).
+- [x] **Islamic Gold Completion Certificates:** High-resolution decorative gold completion certificate modal with Arabic calligraphy and print/PDF export for passing students.
+
+---
+
+## Phase 14: Next-Gen AI & Stack Modernization (Completed)
+- [x] Upgraded AI Engine to Google's official **`@google/genai`** SDK with structured JSON schemas and Gemini 2.0 Flash multimodal vision.
+- [x] Retained OpenRouter multi-model router as resilient fallback.
+- [x] Added `halaqat` and `halaqah_members` to redundant 24/7 keep-alive heartbeats.

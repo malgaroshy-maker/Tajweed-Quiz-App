@@ -8,7 +8,8 @@ import {
   History,
   Heart,
   Library,
-  Settings
+  Settings,
+  Users
 } from "lucide-react"
 
 import {
@@ -37,6 +38,11 @@ const items = [
     title: "مكتبة الاختبارات",
     url: "/student/quizzes",
     icon: Library,
+  },
+  {
+    title: "حلقاتي وفصولي",
+    url: "/student/halaqat",
+    icon: Users,
   },
   {
     title: "الانضمام برمز",

@@ -14,6 +14,11 @@ export async function addQuestion(quizId: string, formData: FormData) {
   const topic = formData.get('topic') as string
   const explanation = formData.get('explanation') as string
   const imageUrl = formData.get('image_url') as string | null
+  const audioUrl = formData.get('audio_url') as string | null
+  const surahNumber = formData.get('surah_number') ? parseInt(formData.get('surah_number') as string) : null
+  const ayahNumber = formData.get('ayah_number') ? parseInt(formData.get('ayah_number') as string) : null
+  const reciterId = (formData.get('reciter_id') as string) || null
+  const tajweedRule = (formData.get('tajweed_rule') as string) || null
 
   // Options logic depending on type
   const option1 = formData.get('option_1') as string
@@ -38,9 +43,14 @@ export async function addQuestion(quizId: string, formData: FormData) {
       teacher_id: user.id,
       quiz_id: quizId,
       text,
-      type: type as "multiple_choice" | "true_false" | "short_answer" | "fill_in_blank",
+      type: type as any,
       explanation,
       image_url: imageUrl,
+      audio_url: audioUrl,
+      surah_number: surahNumber,
+      ayah_number: ayahNumber,
+      reciter_id: reciterId,
+      tajweed_rule: tajweedRule,
       order_index: nextOrder,
       topic
     })
@@ -50,7 +60,7 @@ export async function addQuestion(quizId: string, formData: FormData) {
   if (qError || !question) return { error: qError?.message || 'Failed to add question' }
 
   // Insert options
-  if (type === 'multiple_choice' || type === 'true_false' || type === 'fill_in_blank') {
+  if (type === 'multiple_choice' || type === 'true_false' || type === 'fill_in_blank' || type === 'audio_mcq' || type === 'tajweed_rule') {
     const optionsToInsert = []
     
     if (type === 'multiple_choice') {

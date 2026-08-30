@@ -49,6 +49,11 @@ const items = [
     icon: BarChart2,
   },
   {
+    title: "الحلقات والفصول",
+    url: "/teacher/halaqat",
+    icon: Users,
+  },
+  {
     title: "طلابي",
     url: "/teacher/students",
     icon: Users,

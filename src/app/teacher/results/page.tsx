@@ -163,16 +163,21 @@ export default async function TeacherResultsPage() {
                                                         minute: '2-digit'
                                                     })}
                                                 </td>
-                                                <td className="py-6 px-10 text-center">
-                                                    {attempt.quizzes?.share_code ? (
-                                                        <Button asChild size="sm" variant="ghost" className="h-10 rounded-2xl font-black hover:bg-primary hover:text-white transition-premium px-6 shadow-sm border border-primary/10">
-                                                            <Link href={`/take-quiz/${attempt.quizzes.share_code}/result?attempt=${attempt.id}`}>
-                                                                عرض المراجعة
+                                                 <td className="py-6 px-10 text-center">
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        <Button asChild size="sm" variant="outline" className="h-10 rounded-2xl font-black text-xs hover:bg-primary hover:text-primary-foreground border-primary/20">
+                                                            <Link href={`/teacher/results/${attempt.id}/grade`}>
+                                                                تقييم التلاوة 🎙️
                                                             </Link>
                                                         </Button>
-                                                    ) : (
-                                                        <span className="text-xs text-muted-foreground opacity-30 italic font-bold">غير متاح</span>
-                                                    )}
+                                                        {attempt.quizzes?.share_code ? (
+                                                            <Button asChild size="sm" variant="ghost" className="h-10 rounded-2xl font-black hover:bg-primary/10 transition-premium px-4 shadow-sm border border-primary/10 text-xs">
+                                                                <Link href={`/take-quiz/${attempt.quizzes.share_code}/result?attempt=${attempt.id}`}>
+                                                                    المراجعة
+                                                                </Link>
+                                                            </Button>
+                                                        ) : null}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         )

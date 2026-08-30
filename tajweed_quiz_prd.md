@@ -47,6 +47,10 @@ The platform features a distinct **"Manuscript" (مخطوطة)** aesthetic combi
   - Quick summary stats: Total Quizzes, Active Quizzes, Total Attempts, Average Score.
   - "Learning Insights" panel highlighting common student mistake areas based on the `most_missed_questions` view.
   - Status-aware quiz feed with instant publish toggle and direct link copying.
+- **Halaqat & Classroom Management (`/teacher/halaqat`)**:
+  - Creation and management of distinct study circles (Halaqat) with unique 6-character student join codes (e.g. `H-AB12`).
+  - Roster management for enrolled students with removal capabilities.
+  - Assign quizzes to specific Halaqat with open/close dates and configurable countdown time limits.
 - **Folder & Category Management (`/teacher/folders`)**:
   - Nested folder organization for grouping quizzes by level, class, or topic (e.g. *Level 1: Ahkam Nun Sakinah*).
 - **Quiz Editor (`/teacher/quizzes/[id]`)**:
@@ -56,35 +60,46 @@ The platform features a distinct **"Manuscript" (مخطوطة)** aesthetic combi
     - True / False (صواب / خطأ).
     - Fill in the Blank (أكمل الفراغ).
     - Short Answer (إجابة قصيرة).
-    - Specialized Tajweed Rule Selector (أحكام التجويد).
+    - Specialized Tajweed Rule Selector (أحكام التجويد: أحكام النون الساكنة والتنوين، الميم الساكنة، القلقلة، المدود).
+    - Audio MCQ with official EveryAyah recitations.
+    - Voice Recitation Answer (تسجيل التلاوة).
+  - **EveryAyah Quran Audio Picker**: Direct Ayah audio embedding with reciter selector (*Al-Husary, El-Minshawi, Alafasy, Abdulbasit*).
   - **Media Attachments**: Direct image upload to Supabase Storage (`quiz-images`) for Ayah diagrams and articulation illustrations (Makhaarij).
-  - **Question Bank Integration**: Ability to import existing questions from the teacher's repository into any quiz.
-  - **Reordering**: Index-based ordering to sequence questions logically.
+  - **Printable Paper Exam Generator (`/teacher/quizzes/[id]/print`)**: High-DPI manuscript A4 exam sheet generator with Bismillah calligraphy, student info header, bubble sheets, and toggleable Teacher Answer Key.
+- **Teacher Manual Grading Portal (`/teacher/results/[attemptId]/grade`)**:
+  - Interactive playback of student voice recitation recordings from Supabase Storage (`quiz-audio`).
+  - Score assignment (Passing / Revision needed), written feedback, and automatic total score recalculation.
 - **Question Bank (`/teacher/questions`)**:
   - Central repository of all questions created by the teacher, filterable by topic, difficulty level (Easy, Medium, Hard), and question type.
 - **Student Performance & Analytics (`/teacher/results`)**:
   - Granular breakdown of each quiz attempt: student/guest name, score percentage, timestamp, and duration.
   - Most missed questions ranking to pinpoint topics requiring classroom review.
   - **CSV Export**: Server-side CSV generation (`/api/teacher/results/export`) for gradebook integration.
-- **AI Chat Assistant (`/teacher/ai`)**:
-  - Conversational "Content-to-Quiz" chat backed by `ai_chat_sessions` and `ai_chat_messages`.
+- **AI Assistant (`/teacher/ai`)**:
+  - Conversational "Content-to-Quiz" generation powered by **Gemini 3.7 Flash** and **Gemini 3.5 Flash-Lite**.
   - Multimodal PDF and image upload for automatic Arabic text extraction.
   - Direct "Add to Quiz" and "Add to Question Bank" buttons for generated questions.
 - **Teacher Account Settings (`/teacher/settings`)**:
-  - Profile update and single-use invitation code generation for onboarding assistant teachers.
+  - Provider selection (Gemini 3.x vs OpenRouter), model preference dropdown, and visual theme selection.
 
 ### 4.2. Student Portal (`/student`)
 - **Student Dashboard (`/student`)**:
-  - Active quizzes assigned to the student.
+  - Active and assigned quizzes from joined Halaqat.
   - Gamification metrics: **Lifetime Points**, **Attempt Count**, and **Achievement Medals**.
+- **Student Halaqat Portal (`/student/halaqat`)**:
+  - Join study circles using teacher 6-character codes (`H-XXXX`).
+  - View assigned group quizzes and due dates.
 - **Join Quiz Flow (`/student/join` & `/take-quiz/[code]`)**:
   - 6-character short code input field for instant access without mandatory login.
   - Support for guest attempts (prompts for guest name).
 - **Quiz Taking Experience (`/take-quiz/[code]`)**:
-  - Single-question focused flow with progress bar.
-  - Beautiful Arabic Ayah rendering with `.font-quran`.
-  - Question randomization and timer support.
-  - Immediate visual celebration (confetti animation) upon quiz completion.
+  - Single-question focused flow with progress bar and countdown timer for timed exams.
+  - In-browser **Web Audio Voice Recorder** for recitation questions.
+  - Embedded **Quran Audio Player** with speed controls (0.75x, 1x, 1.25x) and Ayah loop toggle.
+  - Beautiful Arabic Ayah rendering with `.font-quran` (`Amiri Quran`).
+  - Immediate visual celebration (confetti animation) upon completion.
+- **Islamic Gold Completion Certificates**:
+  - High-resolution ornate gold certificate modal with student name, score percentage, completion date, and official stamp.
 - **Student Attempt History (`/student/history`)**:
   - Historical record of all completed quizzes, scores, and reviewable answers.
 - **Student Settings (`/student/settings`)**:

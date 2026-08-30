@@ -22,7 +22,7 @@ export async function saveSettings(formData: FormData) {
       openrouter_api_key: openrouterKey || null,
       openrouter_model: openrouterModel || 'auto-quality-free',
       gemini_api_key: geminiKey || null,
-      gemini_model: geminiModel || 'gemini-2.5-flash',
+      gemini_model: geminiModel || 'gemini-3.7-flash',
     })
     .eq('id', user.id)
 

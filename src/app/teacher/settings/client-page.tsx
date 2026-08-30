@@ -152,7 +152,7 @@ export function SettingsPageClient({
                     <select
                         id="gemini_model"
                         name="gemini_model"
-                        defaultValue={profile?.gemini_model || 'gemini-2.0-flash'}
+                        defaultValue={profile?.gemini_model || 'gemini-3.7-flash'}
                         className="flex h-16 w-full rounded-2xl border-2 border-primary/10 bg-white/50 px-6 text-xl shadow-inner focus:border-primary outline-none font-black appearance-none"
                     >
                         {geminiModels.length > 0 ? (
@@ -162,7 +162,7 @@ export function SettingsPageClient({
                             </option>
                         ))
                         ) : (
-                        <option value="gemini-2.0-flash" className="font-bold">Gemini 2.0 Flash (الافتراضي)</option>
+                        <option value="gemini-3.7-flash" className="font-bold">Gemini 3.7 Flash (الأحدث - الافتراضي)</option>
                         )}
                     </select>
                     <div className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-50">

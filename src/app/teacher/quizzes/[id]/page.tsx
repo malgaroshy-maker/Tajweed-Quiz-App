@@ -1,5 +1,5 @@
 import { QuizTabs } from './quiz-tabs'
-import { Trash2, ArrowUp, ArrowDown, Plus, CheckCircle, Sparkles } from 'lucide-react'
+import { Trash2, ArrowUp, ArrowDown, Plus, CheckCircle, Sparkles, Printer } from 'lucide-react'
 import { EditQuestionDialog } from './edit-question-dialog'
 import { deleteQuestion } from './delete-question-action'
 import { reorderQuestion } from './question-actions'
@@ -9,6 +9,7 @@ import { deleteQuiz } from './delete-quiz-action'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default async function QuizEditorPage({
   params,
@@ -46,6 +47,13 @@ export default async function QuizEditorPage({
           {quiz.description && <p className="text-primary/60 mt-2 font-bold line-clamp-2 max-w-2xl">{quiz.description}</p>}
         </div>
         <div className="flex items-center gap-4 shrink-0">
+          <Button asChild variant="outline" size="lg" className="h-12 px-5 rounded-xl font-bold border-2 border-primary/20 gap-2 hover:bg-primary/10">
+            <Link href={`/teacher/quizzes/${quiz.id}/print`}>
+              <Printer className="w-5 h-5 text-primary" />
+              <span>طباعة ورقة الاختبار</span>
+            </Link>
+          </Button>
+
           {quiz.is_published ? (
             <div className="flex items-center gap-4 bg-white/50 dark:bg-black/20 p-3 pr-6 rounded-2xl border border-green-200 shadow-inner">
               <div className="flex flex-col items-end">

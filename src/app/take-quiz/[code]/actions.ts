@@ -34,7 +34,7 @@ export async function submitQuizAction(quizId: string, shareCode: string, formDa
     const submittedValue = formData.get(`question_${q.id}`) as string
     let isCorrect = false
 
-    if (q.type === 'multiple_choice' || q.type === 'true_false') {
+    if (q.type === 'multiple_choice' || q.type === 'true_false' || q.type === 'audio_mcq' || q.type === 'tajweed_rule') {
       const { data: correctOption } = await supabase
         .from('options')
         .select('is_correct')
@@ -74,6 +74,13 @@ export async function submitQuizAction(quizId: string, shareCode: string, formDa
         question_id: q.id,
         text_answer: submittedValue || null,
         is_correct: isCorrect
+      })
+    } else if (q.type === 'voice_recitation') {
+      // Voice recitation is saved for teacher manual grading
+      evaluatedAnswers.push({
+        question_id: q.id,
+        voice_recording_url: submittedValue || null,
+        is_correct: false // Default until teacher grades it
       })
     } else {
       evaluatedAnswers.push({

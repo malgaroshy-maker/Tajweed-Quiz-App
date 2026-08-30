@@ -3,15 +3,15 @@
   <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Gemini_AI-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini AI" />
+  <img src="https://img.shields.io/badge/Gemini_3.7_Flash-8E75B2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini AI" />
   <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
 
   <br />
   <br />
 
-  <h1 align="center">Al-Qalam (القلم) — Tajweed Quiz Platform</h1>
+  <h1 align="center">Al-Qalam (القلم) — Tajweed Quiz Platform v2.0</h1>
   <p align="center">
-    A premium, AI-powered educational platform designed specifically for Quran and Tajweed teachers to create, organize, and administer interactive quizzes with traditional Islamic manuscript aesthetics.
+    A premium, AI-powered educational platform designed specifically for Quran and Tajweed teachers to create, organize, and administer interactive quizzes with traditional Islamic manuscript aesthetics, Quranic audio recitations, student voice recording, and Halaqat classroom management.
   </p>
   <p align="center">
     <a href="https://tajweed-quiz-app.vercel.app/" target="_blank"><strong>🌐 Live Demo: tajweed-quiz-app.vercel.app</strong></a>
@@ -22,24 +22,29 @@
 
 ## 📖 Overview
 
-**Al-Qalam (القلم)** bridges traditional Quranic education with modern web technology. It provides a distraction-free **"Manuscript" (مخطوطة)** interface utilizing authentic Arabic typography (`Amiri Quran`, `Tajawal`) and parchment textures, powered by multimodal AI to convert Tajweed PDFs, textbooks, and notes directly into structured quizzes.
+**Al-Qalam (القلم)** bridges classical Quranic pedagogy with state-of-the-art web technology. It provides an authentic **"Manuscript" (مخطوطة)** interface utilizing Arabic typography (`Amiri Quran`, `Tajawal`) and parchment textures, powered by next-generation **Google Gemini 3.7 Flash** multimodal AI to convert Tajweed textbooks, PDFs, and notes directly into interactive audio and voice quizzes.
 
 ---
 
-## ✨ Key Features
+## ✨ Key Features (v2.0)
 
 ### 👩‍🏫 For Teachers
-- **AI Chat Assistant (Content-to-Quiz)**: Upload Tajweed PDFs or paste text, and let Gemini 2.0 Flash extract MCQs, True/False, and Fill-in-the-Blank questions with Harakat.
+- **Next-Gen Gemini 3.7 Flash & 3.5 Flash-Lite AI**: Automated structured Tajweed exam generation from Arabic PDFs and images with dynamic reasoning tokens.
+- **EveryAyah Quran Audio Integration**: Embed official recitations (*Mahmoud Khalil Al-Husary, Mohamed Siddiq El-Minshawi, Mishary Alafasy, Abdulbasit Abdulsamad*) with ayah repeat and speed controls.
+- **Voice Recitation Grading Portal**: Dedicated teacher interface to listen to student voice submissions, assign scores, and leave constructive Tajweed feedback.
+- **Halaqat (Classroom) Management**: Create distinct study groups (Halaqat), generate 6-character join codes (e.g. `H-AB12`), and assign targeted timed quizzes.
+- **Printable Paper Exams**: High-DPI manuscript A4 exam sheet generator with Bismillah calligraphy and toggleable Teacher Answer Keys.
 - **Split-View Quiz Editor**: Live Manuscript preview alongside question editing with drag/swap reordering.
-- **Question Bank & Folder Organization**: Organize quizzes into nested folders and build a reusable question repository.
 - **Student Analytics & CSV Export**: Real-time attempt tracking, average score metrics, most-missed questions analysis, and downloadable gradebooks.
-- **Image Attachments**: Direct upload of Ayah references and articulation diagrams (Makhaarij).
 
 ### 🎓 For Students
+- **Islamic Gold Completion Certificates**: High-resolution ornate gold certificates with student name, score, and official stamp.
+- **In-Browser Voice Recorder**: Record Quran recitation answers directly in the browser via Web Audio API.
+- **EveryAyah Audio Playback**: Listen to master reciters while answering auditory Tajweed recognition questions.
+- **Halaqat Portal**: Join teacher study groups via code and access scheduled class quizzes.
 - **Manuscript Experience**: Clear, beautiful Uthmani script rendering for Quranic verses.
-- **Frictionless Entry**: Join by 6-character code (`/take-quiz/[code]`) with or without an account.
-- **Gamified Progress**: Lifetime Points, Achievement Medals, and celebratory completion animations.
-- **Attempt History & Settings**: Review previous quiz submissions and manage profile preferences.
+- **Timed Quizzes**: Live countdown timer with auto-submit upon exam time expiration.
+- **Gamified Progress**: Lifetime Points, Achievement Medals, and celebratory confetti completion animations.
 
 ---
 
@@ -47,8 +52,9 @@
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Turbopack, Server Actions)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/) & Radix UI Primitives (shadcn/ui)
-- **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL 17, Row Level Security, Storage)
-- **AI Engines**: [Google Gemini 2.0 Flash](https://aistudio.google.com/) (Native Arabic Vision & PDF parsing) & [OpenRouter](https://openrouter.ai/)
+- **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL 17, Row Level Security, Storage Buckets `quiz-images`, `quiz-audio`)
+- **AI Engines**: [Google GenAI SDK (`@google/genai`)](https://github.com/googleapis/js-genai) with **Gemini 3.7 Flash** & **Gemini 3.5 Flash-Lite**, plus [OpenRouter](https://openrouter.ai/) fallback
+- **Multimedia**: EveryAyah Quran Audio API & Web Audio API MediaRecorder
 - **Keep-Alive Automation**: GitHub Actions scheduled workflow + Daily Vercel Cron
 
 ---
@@ -84,17 +90,12 @@ OPENROUTER_API_KEY=your-openrouter-api-key
 CRON_SECRET=your-random-cron-secret-token
 ```
 
-| Variable | Required | Purpose |
-| :--- | :---: | :--- |
-| `NEXT_PUBLIC_SUPABASE_URL` | **Yes** | Your Supabase project REST URL. |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | **Yes** | Public anonymous client API key. |
-| `SUPABASE_SERVICE_ROLE_KEY` | **Yes** | Secret admin key for verifying teacher invitation codes. |
-| `GEMINI_API_KEY` | Optional | Google Gemini API key for native PDF vision and question generation. |
-| `OPENROUTER_API_KEY` | Optional | OpenRouter API key for LLM question generation fallback. |
-| `CRON_SECRET` | **Yes** | Bearer authentication token protecting the `/api/cron/keep-alive` route. |
-
-### 3. Database Initialization
-Open the **SQL Editor** in your Supabase Dashboard and run [`database_schema.sql`](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/database_schema.sql) to set up all tables, views, storage buckets, and RLS policies.
+### 3. Database Migration & Schema
+Apply migrations using Supabase CLI:
+```bash
+npx supabase link --project-ref your-project-ref
+npx supabase db query --linked --file supabase/migrations/20260830210000_v2_halaqat_audio_ai.sql
+```
 
 ### 4. Run Development Server
 ```bash
@@ -118,15 +119,5 @@ To ensure your free Supabase database is never paused due to inactivity:
 
 ---
 
-## 🔒 Security & Architecture
-
-For detailed architecture diagrams, database ERD, and security specifications, refer to:
-- 📐 [**System Architecture Documentation** (`architecture.md`)](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/architecture.md)
-- 📋 [**Product Requirements Document** (`tajweed_quiz_prd.md`)](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/tajweed_quiz_prd.md)
-- 🗺️ [**Development Roadmap** (`tasks.md`)](file:///c:/Users/masal/Documents/opencode/tajweed-quiz-app/tasks.md)
-
----
-
-<div align="center">
-  Made with ❤️ for Quran educators worldwide.
-</div>
+## 📄 License
+This project is licensed under the MIT License.

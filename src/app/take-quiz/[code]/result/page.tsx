@@ -6,6 +6,7 @@ import { CheckCircle2, XCircle, ArrowRight, Trophy, Medal, ListTodo, Sparkles } 
 import Link from 'next/link'
 import Image from 'next/image'
 import { ConfettiCelebration } from '@/components/confetti-celebration'
+import { CertificateDialog } from '@/components/certificate-dialog'
 
 interface DedupedLeaderboardEntry {
   name: string;
@@ -118,6 +119,15 @@ export default async function QuizResultPage({
                     <Trophy className="w-12 h-12 text-amber-300" />
                 </div>
                 <span className="font-black text-3xl">أحسنتِ! أداء متميز ومبارك</span>
+                <div className="pt-4">
+                  <CertificateDialog
+                    studentName={attempt.guest_name || 'طالب متميز'}
+                    quizTitle={attempt.quizzes?.title || 'اختبار التجويد'}
+                    score={Number(attempt.score)}
+                    totalQuestions={attempt.total_questions}
+                    completionDate={attempt.completed_at || new Date().toISOString()}
+                  />
+                </div>
               </div>
             ) : (
               <div className="flex flex-col items-center mt-10 gap-4">

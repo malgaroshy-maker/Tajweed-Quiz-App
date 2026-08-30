@@ -50,7 +50,9 @@ const tablesToPing = [
   'profiles',
   'folders',
   'invitation_codes',
-  'ai_chat_sessions'
+  'ai_chat_sessions',
+  'halaqat',
+  'halaqah_members'
 ];
 
 async function pingTable(table) {

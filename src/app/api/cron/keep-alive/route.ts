@@ -44,7 +44,9 @@ export async function GET(request: Request) {
     'profiles',
     'folders',
     'invitation_codes',
-    'ai_chat_sessions'
+    'ai_chat_sessions',
+    'halaqat',
+    'halaqah_members'
   ];
 
   const results: Record<string, { status: string; latencyMs: number }> = {};

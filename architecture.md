@@ -11,8 +11,10 @@ This document describes the end-to-end software architecture, data models, AI in
 | **Frontend Framework** | **[Next.js 16](https://nextjs.org/)** (App Router, Turbopack) | Server Components (RSC), Server Actions, Route Handlers, SSR & streaming. |
 | **Language & Tooling** | **TypeScript 5** | Strict type safety across frontend components, database types, and API routes. |
 | **Styling & Design System** | **Tailwind CSS v4** + **Radix UI** (shadcn/ui) | Manuscript-inspired Islamic aesthetic (Olive Green `#666600`, Gold, Parchment textures). Full native Right-to-Left (RTL) Arabic typography (`Tajawal`, `Amiri Quran`). |
-| **Backend & Database** | **[Supabase](https://supabase.com/)** (PostgreSQL 17) | Relational database, GoTrue Auth (JWT/cookies), Row Level Security (RLS), and S3-compatible Storage (`quiz-images`). |
-| **AI Question Engine** | **Google Gemini 2.0 Flash** & **OpenRouter** | Multimodal PDF/document parsing with native Arabic RTL text extraction; LLM routing for automated question generation. |
+| **Backend & Database** | **[Supabase](https://supabase.com/)** (PostgreSQL 17) | Relational database, GoTrue Auth (JWT/cookies), Row Level Security (RLS), and S3-compatible Storage (`quiz-images`, `quiz-audio`). |
+| **AI Question Engine** | **Google GenAI SDK (`@google/genai`)** & **OpenRouter** | Next-gen unified Google GenAI SDK with Gemini 2.0 Flash schema output, native multimodal vision, and resilient OpenRouter routing. |
+| **Multimedia & Quran Audio** | **EveryAyah API & Web Audio API** | Real-time Quranic recitations (Al-Husary, El-Minshawi, Alafasy) and student voice recording with teacher manual grading portal. |
+| **Classroom & Printable Exams** | **Halaqat & High-DPI Vector Print Engine** | Class grouping by join code, timed countdown quizzes, printable A4 paper exams with Answer Keys, and Gold Completion Certificates. |
 | **Hosting & Deployment** | **[Vercel](https://vercel.com/)** | Edge network, serverless function execution, automatic SSL, and scheduled cron jobs. |
 | **Automated Keep-Alive** | **GitHub Actions** + **Vercel Cron** | Scheduled heartbeat runner ensuring 100% free tier uptime without Supabase inactivity pauses. |
 

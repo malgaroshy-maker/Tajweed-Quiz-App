@@ -18,7 +18,7 @@ export default async function TakeQuizPage({
   // 1. Fetch Quiz by share_code
   const { data: quiz } = await supabase
     .from('quizzes')
-    .select('id, title, description, is_published, share_code')
+    .select('id, title, description, is_published, share_code, time_limit_minutes')
     .eq('share_code', resolvedParams.code)
     .single()
 

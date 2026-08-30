@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 
 export async function POST(req: Request) {
   const supabase = await createClient()
@@ -18,34 +18,44 @@ export async function POST(req: Request) {
     .eq('id', user.id)
     .single()
 
-  const provider = profile?.ai_provider || 'openrouter'
-  const systemPrompt = "قم بتلخيص الرسالة التالية إلى عنوان قصير (لا يتجاوز 3 كلمات) ليكون عنواناً لمحادثة. أجب فقط بالعنوان."
+  const provider = profile?.ai_provider || 'gemini'
+  const systemPrompt = "قم بتلخيص الرسالة التالية إلى عنوان قصير جداً باللغة العربية (3 إلى 4 كلمات كحد أقصى) ليكون عنواناً لجلسة محادثة تجويد. أجب بالنص النهائي للعنوان فقط دون علامات تنصيص."
 
   try {
-    let title = "محادثة جديدة";
+    let title = "محادثة تجويد جديدة";
+
     if (provider === 'gemini') {
-        const gApiKey = profile?.gemini_api_key || process.env.GEMINI_API_KEY
-        if (!gApiKey) return NextResponse.json({ error: 'API Key missing' }, { status: 400 })
-        const genAI = new GoogleGenerativeAI(gApiKey)
-        const model = genAI.getGenerativeModel({ model: profile?.gemini_model || 'gemini-2.0-flash' })
-        const result = await model.generateContent(`${systemPrompt}\n\nالرسالة: ${firstMessage}`)
-        title = result.response.text() || title
+      const gApiKey = profile?.gemini_api_key || process.env.GEMINI_API_KEY
+      if (!gApiKey) return NextResponse.json({ error: 'API Key missing' }, { status: 400 })
+      
+      const ai = new GoogleGenAI({ apiKey: gApiKey })
+      const modelName = profile?.gemini_model || 'gemini-3.5-flash-lite'
+
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: `${systemPrompt}\n\nنص الرسالة: ${firstMessage}`,
+      })
+
+      title = response.text || title
     } else {
-        const oApiKey = profile?.openrouter_api_key || process.env.OPENROUTER_API_KEY
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${oApiKey}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                model: 'meta-llama/llama-3.3-70b-instruct:free',
-                messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: firstMessage }],
-            }),
-        })
-        const data = await response.json()
-        title = data.choices[0].message.content
+      const oApiKey = profile?.openrouter_api_key || process.env.OPENROUTER_API_KEY
+      const selectedModel = profile?.openrouter_model || 'auto-quality-free'
+
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${oApiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: selectedModel === 'auto-quality-free' ? 'openrouter/free' : selectedModel,
+          messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: firstMessage }],
+        }),
+      })
+      const data = await response.json()
+      title = data?.choices?.[0]?.message?.content || title
     }
 
-    await supabase.from('ai_chat_sessions').update({ title: title.replace(/['"]/g, '') }).eq('id', sessionId)
-    return NextResponse.json({ title })
+    const cleanTitle = title.replace(/['"«»]/g, '').trim()
+    await supabase.from('ai_chat_sessions').update({ title: cleanTitle }).eq('id', sessionId)
+    return NextResponse.json({ title: cleanTitle })
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json({ error: errorMessage }, { status: 500 })
