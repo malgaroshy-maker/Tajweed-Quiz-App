@@ -217,7 +217,18 @@ CREATE POLICY "Teachers can upload quiz images" ON storage.objects FOR INSERT WI
   bucket_id = 'quiz-images' AND auth.role() = 'authenticated'
 );
 
--- 15. AUTH TRIGGER TO AUTOMATICALLY CREATE PROFILE
+-- 15. PERFORMANCE INDEXES (Speed up queries as data scales)
+CREATE INDEX IF NOT EXISTS idx_questions_quiz_order ON public.questions(quiz_id, order_index);
+CREATE INDEX IF NOT EXISTS idx_questions_teacher ON public.questions(teacher_id);
+CREATE INDEX IF NOT EXISTS idx_options_question ON public.options(question_id);
+CREATE INDEX IF NOT EXISTS idx_quizzes_teacher ON public.quizzes(teacher_id);
+CREATE INDEX IF NOT EXISTS idx_quizzes_folder ON public.quizzes(folder_id);
+CREATE INDEX IF NOT EXISTS idx_quizzes_share_code ON public.quizzes(share_code);
+CREATE INDEX IF NOT EXISTS idx_attempts_quiz_student ON public.attempts(quiz_id, student_id);
+CREATE INDEX IF NOT EXISTS idx_attempt_answers_attempt ON public.attempt_answers(attempt_id, question_id);
+CREATE INDEX IF NOT EXISTS idx_ai_chat_messages_session ON public.ai_chat_messages(session_id);
+
+-- 16. AUTH TRIGGER TO AUTOMATICALLY CREATE PROFILE
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
@@ -237,3 +248,4 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+
