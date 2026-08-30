@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
-import { GoogleGenAI } from '@google/genai'
+import { GoogleGenAI, ThinkingLevel } from '@google/genai'
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -75,7 +75,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'مفتاح Gemini API غير متوفر. يرجى ضبطه في الإعدادات.' }, { status: 400 })
       }
 
-      const ai = new GoogleGenAI({ apiKey: gApiKey, httpOptions: { timeout: 12000 } })
+      const ai = new GoogleGenAI({ apiKey: gApiKey, httpOptions: { timeout: 45000 } })
       const requestedModel = profile?.gemini_model || 'gemini-3.7-flash'
       const candidateModels = Array.from(new Set([
         requestedModel,
@@ -123,7 +123,10 @@ export async function POST(req: Request) {
             contents: contents,
             config: {
               systemInstruction: systemPrompt,
-              temperature: 0.4
+              temperature: 0.4,
+              thinkingConfig: {
+                thinkingLevel: ThinkingLevel.LOW
+              }
             }
           })
 

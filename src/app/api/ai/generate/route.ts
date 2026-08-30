@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
-import { GoogleGenAI } from '@google/genai'
+import { GoogleGenAI, ThinkingLevel } from '@google/genai'
 
 export async function POST(req: Request) {
   const supabase = await createClient()
@@ -65,7 +65,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'مفتاح Gemini API غير متوفر. يرجى ضبطه في إعدادات الحساب.' }, { status: 400 })
       }
 
-      const ai = new GoogleGenAI({ apiKey: gApiKey, httpOptions: { timeout: 12000 } })
+      const ai = new GoogleGenAI({ apiKey: gApiKey, httpOptions: { timeout: 45000 } })
       const requestedModel = profile?.gemini_model || 'gemini-3.7-flash'
       const candidateModels = Array.from(new Set([
         requestedModel,
@@ -83,6 +83,9 @@ export async function POST(req: Request) {
             config: {
               responseMimeType: 'application/json',
               temperature: 0.3,
+              thinkingConfig: {
+                thinkingLevel: ThinkingLevel.LOW
+              }
             }
           })
 
