@@ -1,20 +1,48 @@
--- ENUMS
-CREATE TYPE user_role AS ENUM ('teacher', 'student');
-CREATE TYPE question_type AS ENUM ('multiple_choice', 'true_false', 'short_answer', 'fill_in_blank', 'tajweed_rule');
-CREATE TYPE difficulty_level AS ENUM ('easy', 'medium', 'hard');
+-- ====================================================================
+-- Tajweed Quiz App - Complete Supabase Database Schema & Setup Script
+-- ====================================================================
 
--- 1. PROFILES (Extends Supabase auth.users)
-CREATE TABLE public.profiles (
+-- 1. EXTENSIONS & ENUMS
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+DO $$ BEGIN
+  CREATE TYPE user_role AS ENUM ('teacher', 'student');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE question_type AS ENUM ('multiple_choice', 'true_false', 'short_answer', 'fill_in_blank', 'tajweed_rule');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+  CREATE TYPE difficulty_level AS ENUM ('easy', 'medium', 'hard');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+-- 2. PROFILES (Extends Supabase auth.users)
+CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
-  role user_role NOT NULL,
-  first_name TEXT NOT NULL,
-  last_name TEXT NOT NULL,
+  role user_role NOT NULL DEFAULT 'student',
+  first_name TEXT NOT NULL DEFAULT '',
+  last_name TEXT NOT NULL DEFAULT '',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2. FOLDERS (For organizing quizzes)
-CREATE TABLE public.folders (
+-- 3. INVITATION CODES (For Teacher Registration)
+CREATE TABLE IF NOT EXISTS public.invitation_codes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code TEXT UNIQUE NOT NULL,
+  used BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 4. FOLDERS (For organizing quizzes)
+CREATE TABLE IF NOT EXISTS public.folders (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   teacher_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
   name TEXT NOT NULL,
@@ -22,21 +50,21 @@ CREATE TABLE public.folders (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. QUIZZES
-CREATE TABLE public.quizzes (
+-- 5. QUIZZES
+CREATE TABLE IF NOT EXISTS public.quizzes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   teacher_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
   folder_id UUID REFERENCES public.folders(id) ON DELETE SET NULL,
   title TEXT NOT NULL,
   description TEXT,
-  share_code TEXT UNIQUE, -- 6-character short code for guest access
+  share_code TEXT UNIQUE, -- 6-character short code for student/guest access
   is_published BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. QUESTIONS (Acts as Question Bank + Quiz Questions)
-CREATE TABLE public.questions (
+-- 6. QUESTIONS (Question Bank & Quiz Questions)
+CREATE TABLE IF NOT EXISTS public.questions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   teacher_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
   quiz_id UUID REFERENCES public.quizzes(id) ON DELETE CASCADE, -- Null if only in bank
@@ -50,8 +78,8 @@ CREATE TABLE public.questions (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 5. OPTIONS (For MCQ / TF)
-CREATE TABLE public.options (
+-- 7. OPTIONS (For MCQ / TF)
+CREATE TABLE IF NOT EXISTS public.options (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   question_id UUID REFERENCES public.questions(id) ON DELETE CASCADE NOT NULL,
   text TEXT NOT NULL,
@@ -59,8 +87,8 @@ CREATE TABLE public.options (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 6. ATTEMPTS (Student taking a quiz)
-CREATE TABLE public.attempts (
+-- 8. ATTEMPTS (Student taking a quiz)
+CREATE TABLE IF NOT EXISTS public.attempts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   quiz_id UUID REFERENCES public.quizzes(id) ON DELETE CASCADE NOT NULL,
   student_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE, -- Null if guest
@@ -71,8 +99,8 @@ CREATE TABLE public.attempts (
   completed_at TIMESTAMPTZ
 );
 
--- 7. ATTEMPT ANSWERS
-CREATE TABLE public.attempt_answers (
+-- 9. ATTEMPT ANSWERS
+CREATE TABLE IF NOT EXISTS public.attempt_answers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   attempt_id UUID REFERENCES public.attempts(id) ON DELETE CASCADE NOT NULL,
   question_id UUID REFERENCES public.questions(id) ON DELETE CASCADE NOT NULL,
@@ -82,7 +110,41 @@ CREATE TABLE public.attempt_answers (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- RLS Policies
+-- 10. AI CHAT SESSIONS & MESSAGES (Teacher AI Assistant)
+CREATE TABLE IF NOT EXISTS public.ai_chat_sessions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  teacher_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+  title TEXT NOT NULL DEFAULT 'محادثة جديدة',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.ai_chat_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  session_id UUID REFERENCES public.ai_chat_sessions(id) ON DELETE CASCADE NOT NULL,
+  role TEXT NOT NULL CHECK (role IN ('user', 'assistant', 'system')),
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 11. MOST MISSED QUESTIONS VIEW
+CREATE OR REPLACE VIEW public.most_missed_questions AS
+SELECT 
+  q.id AS question_id,
+  q.teacher_id,
+  q.text AS question_text,
+  COUNT(aa.id) AS wrong_count
+FROM public.questions q
+JOIN public.attempt_answers aa ON aa.question_id = q.id
+WHERE aa.is_correct = FALSE
+GROUP BY q.id, q.teacher_id, q.text;
+
+-- 12. STORAGE BUCKET CONFIGURATION (For quiz images)
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('quiz-images', 'quiz-images', true) 
+ON CONFLICT (id) DO NOTHING;
+
+-- 13. ENABLE ROW LEVEL SECURITY
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.folders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.quizzes ENABLE ROW LEVEL SECURITY;
@@ -90,8 +152,72 @@ ALTER TABLE public.questions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.options ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.attempts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.attempt_answers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.invitation_codes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ai_chat_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ai_chat_messages ENABLE ROW LEVEL SECURITY;
 
--- Creating a trigger to automatically create profile for a newly signed up user
+-- 14. BASIC RLS POLICIES
+
+-- Profiles: Users can read/update their own profile
+CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Quizzes: Teachers manage own quizzes, published quizzes viewable by public/students
+CREATE POLICY "Teachers can CRUD own quizzes" ON public.quizzes FOR ALL USING (auth.uid() = teacher_id);
+CREATE POLICY "Public can view published quizzes" ON public.quizzes FOR SELECT USING (is_published = true);
+
+-- Questions & Options: Teachers manage own, public view for published quizzes
+CREATE POLICY "Teachers can CRUD own questions" ON public.questions FOR ALL USING (auth.uid() = teacher_id);
+CREATE POLICY "Public can view questions of published quizzes" ON public.questions FOR SELECT USING (
+  EXISTS (SELECT 1 FROM public.quizzes WHERE id = questions.quiz_id AND is_published = true)
+);
+
+CREATE POLICY "Teachers can CRUD own options" ON public.options FOR ALL USING (
+  EXISTS (SELECT 1 FROM public.questions WHERE id = options.question_id AND teacher_id = auth.uid())
+);
+CREATE POLICY "Public can view options of published quizzes" ON public.options FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM public.questions q 
+    JOIN public.quizzes qz ON qz.id = q.quiz_id 
+    WHERE q.id = options.question_id AND qz.is_published = true
+  )
+);
+
+-- Folders: Teachers manage own folders
+CREATE POLICY "Teachers can CRUD own folders" ON public.folders FOR ALL USING (auth.uid() = teacher_id);
+
+-- Attempts & Answers: Anyone can insert attempts (students / guests), users view own
+CREATE POLICY "Anyone can insert attempts" ON public.attempts FOR INSERT WITH CHECK (true);
+CREATE POLICY "Users can view own attempts" ON public.attempts FOR SELECT USING (auth.uid() = student_id OR auth.uid() IS NULL);
+CREATE POLICY "Teachers can view attempts for their quizzes" ON public.attempts FOR SELECT USING (
+  EXISTS (SELECT 1 FROM public.quizzes WHERE id = attempts.quiz_id AND teacher_id = auth.uid())
+);
+
+CREATE POLICY "Anyone can insert attempt answers" ON public.attempt_answers FOR INSERT WITH CHECK (true);
+CREATE POLICY "Teachers can view attempt answers for their quizzes" ON public.attempt_answers FOR SELECT USING (
+  EXISTS (
+    SELECT 1 FROM public.attempts a 
+    JOIN public.quizzes q ON q.id = a.quiz_id 
+    WHERE a.id = attempt_answers.attempt_id AND q.teacher_id = auth.uid()
+  )
+);
+
+-- AI Chat Sessions & Messages: Teachers manage own sessions
+CREATE POLICY "Teachers can CRUD own chat sessions" ON public.ai_chat_sessions FOR ALL USING (auth.uid() = teacher_id);
+CREATE POLICY "Teachers can CRUD own chat messages" ON public.ai_chat_messages FOR ALL USING (
+  EXISTS (SELECT 1 FROM public.ai_chat_sessions WHERE id = ai_chat_messages.session_id AND teacher_id = auth.uid())
+);
+
+-- Invitation Codes: Viewable by anyone with service role or authenticated
+CREATE POLICY "Allow select on invitation_codes" ON public.invitation_codes FOR SELECT USING (true);
+
+-- Storage Policies for 'quiz-images'
+CREATE POLICY "Public Access for quiz images" ON storage.objects FOR SELECT USING (bucket_id = 'quiz-images');
+CREATE POLICY "Teachers can upload quiz images" ON storage.objects FOR INSERT WITH CHECK (
+  bucket_id = 'quiz-images' AND auth.role() = 'authenticated'
+);
+
+-- 15. AUTH TRIGGER TO AUTOMATICALLY CREATE PROFILE
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
@@ -101,12 +227,13 @@ BEGIN
     COALESCE((new.raw_user_meta_data->>'role')::user_role, 'student'::user_role),
     COALESCE(new.raw_user_meta_data->>'first_name', ''),
     COALESCE(new.raw_user_meta_data->>'last_name', '')
-  );
+  )
+  ON CONFLICT (id) DO NOTHING;
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE OR REPLACE TRIGGER on_auth_user_created
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
-

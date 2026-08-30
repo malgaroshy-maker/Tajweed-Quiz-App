@@ -2,45 +2,80 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
 /**
- * Vercel Cron Job Route
- * Purpose: Keeps the Supabase project active by generating database activity.
- * Schedule: Configured in vercel.json
+ * Keep-Alive / Heartbeat Cron Route
+ * Purpose: Prevents Supabase project from pausing due to inactivity (7-day inactivity limit).
+ * Triggers:
+ *  - Vercel Cron (Daily via vercel.json)
+ *  - GitHub Actions (.github/workflows/keep-alive.yml)
+ *  - External Cron / Manual Ping (?key=CRON_SECRET)
  */
 export async function GET(request: Request) {
-  // 1. Verify the request is coming from Vercel's Cron scheduler
-  // This uses a secret set in Vercel environment variables
+  const cronSecret = process.env.CRON_SECRET;
   const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return new Response('Unauthorized', { status: 401 });
+  const { searchParams } = new URL(request.url);
+  const queryKey = searchParams.get('key');
+
+  // Verify authentication if CRON_SECRET is configured
+  if (cronSecret) {
+    const isBearerMatch = authHeader === `Bearer ${cronSecret}`;
+    const isQueryMatch = queryKey === cronSecret;
+    if (!isBearerMatch && !isQueryMatch) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid CRON_SECRET' }, { status: 401 });
+    }
   }
 
-  // 2. Initialize Supabase client
-  // Using direct environment variables to avoid session/cookie dependencies
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  // 3. Perform the "ping" (querying counts)
-  // These requests counts as "activity" for Supabase's monitoring
-  const tables = ['quizzes', 'questions', 'profiles', 'folders'];
-  const results: Record<string, string> = {};
+  if (!supabaseUrl || !supabaseKey) {
+    return NextResponse.json(
+      { error: 'Server misconfiguration: Supabase environment variables missing' },
+      { status: 500 }
+    );
+  }
+
+  // Initialize Supabase client directly
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  // Ping key application tables
+  const tables = [
+    'quizzes',
+    'questions',
+    'profiles',
+    'folders',
+    'invitation_codes',
+    'ai_chat_sessions'
+  ];
+
+  const results: Record<string, { status: string; latencyMs: number }> = {};
+  let totalSuccess = 0;
 
   for (const table of tables) {
+    const start = Date.now();
     try {
       const { error } = await supabase
         .from(table)
         .select('*', { count: 'exact', head: true });
       
-      results[table] = error ? `Sent (Access: ${error.message})` : 'Success';
+      const latency = Date.now() - start;
+      if (error) {
+        // Even if RLS denies full access, reaching PostgREST counts as active traffic for Supabase
+        results[table] = { status: `Reached (RLS/Access: ${error.message})`, latencyMs: latency };
+      } else {
+        results[table] = { status: 'Success (200 OK)', latencyMs: latency };
+      }
+      totalSuccess++;
     } catch (e: any) {
-      results[table] = `Failed: ${e.message}`;
+      const latency = Date.now() - start;
+      results[table] = { status: `Failed: ${e.message}`, latencyMs: latency };
     }
   }
 
-  return NextResponse.json({ 
-    message: 'Supabase activity generated successfully',
+  return NextResponse.json({
+    status: 'ok',
+    message: 'Supabase heartbeat activity generated successfully',
     timestamp: new Date().toISOString(),
-    results 
+    tables_pinged: `${totalSuccess}/${tables.length}`,
+    results
   });
 }

@@ -1,0 +1,48 @@
+name: Supabase Keep-Alive & Health Check
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every 2 days
+    - cron: '0 0 */2 * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  keep-alive:
+    name: Generate Activity & Ping App
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Ping Deployed Next.js Keep-Alive Endpoint
+        run: |
+          APP_URL="${{ secrets.APP_URL }}"
+          if [ -z "$APP_URL" ]; then
+            APP_URL="https://tajweed-quiz-app.vercel.app"
+          fi
+          
+          echo "Pinging: $APP_URL/api/cron/keep-alive"
+          
+          HTTP_STATUS=$(curl -s -o response.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "$APP_URL/api/cron/keep-alive" || echo "000")
+            
+          echo "HTTP Status: $HTTP_STATUS"
+          if [ -f response.json ]; then
+            cat response.json
+            echo ""
+          fi
+
+      - name: Direct Supabase REST API Ping
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          node scripts/ping-supabase.js
